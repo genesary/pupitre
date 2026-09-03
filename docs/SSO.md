@@ -74,8 +74,9 @@ For OIDC providers, the platform fetches claims from **both** the ID token and t
 
 ```
 Browser → GET /api/auth/oauth/{id}/authorize  → redirect to provider
+       ←   … + Set-Cookie: pupitre_pkce (HttpOnly, never sent to the provider)
        ← provider redirects to /auth/callback?code=...
-       → POST /api/auth/oauth/callback {code, state}
+       → POST /api/auth/oauth/callback {code, state} + pupitre_pkce cookie
        ← JWT token
 ```
 
@@ -94,6 +95,52 @@ The backend reads `sso.providers` from the Helm configmap. For each provider wit
 | anything else | OIDC discovery via `issuerUrl` |
 
 The `id` value is stored in the database as `authProvider` for each user — choose a stable, meaningful value and don't change it once users have signed in.
+
+---
+
+## Authorization code protection (PKCE)
+
+Both flows implement PKCE ([RFC 7636](https://datatracker.ietf.org/doc/html/rfc7636))
+with the `S256` challenge method. Nothing to configure — it is always on.
+
+**How it works**
+
+1. `/authorize` generates a random `code_verifier`.
+2. The verifier goes to the browser in a `pupitre_pkce` cookie: `HttpOnly`,
+   `SameSite=Lax`, `Path=/api/auth`, 10-minute lifetime, and `Secure` whenever
+   the redirect base is `https://`.
+3. Only the derived `code_challenge` is sent to the identity provider, and only
+   its `S256` hash is committed inside the signed `state` token.
+4. `/callback` reads the cookie back, checks it hashes to the challenge the
+   `state` token was issued for, clears the cookie, and sends the verifier as
+   `code_verifier` in the token exchange.
+
+**Why the verifier lives in a cookie and not in `state`**
+
+`state` is signed but not encrypted, and it travels to the identity provider and
+back through the same front channel as the authorization code. A verifier carried
+inside it would be captured by exactly the interceptor PKCE exists to defeat.
+The cookie never leaves our own origin, so an attacker holding a stolen `code`
+and `state` cannot complete the exchange.
+
+That check is enforced **locally, before any code is exchanged**, not delegated to
+the provider: GitHub's OAuth apps ignore `code_challenge` entirely, so a callback
+that cannot present the matching verifier is rejected here with `401` regardless of
+what the provider would have accepted.
+
+**Deployment requirement**
+
+The cookie is what binds a callback to the browser that started the login, so the
+frontend and `/api` must be reachable on the **same origin** — which is what the
+chart's single-host, path-routed Ingress gives you. Serving the API from a
+different origin than the frontend will drop the cookie on the callback request
+and every SSO login will fail with `401 Invalid or expired OAuth state` (or
+`… OIDC state` on the dedicated OIDC route).
+
+One-off note on upgrades: a login started on a pre-PKCE release and finished
+after the rollout fails once with the same error, because the `/authorize` half
+issued no cookie and the `/callback` half now requires one. Retrying the login
+succeeds. The window is at most the 10-minute `state` lifetime.
 
 ---
 
