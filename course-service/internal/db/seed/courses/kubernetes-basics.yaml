@@ -12,6 +12,8 @@ spec:
   modules:
     - name: "Concepts fondamentaux"
       type: text
+      skills:
+        - kubernetes
       content: |
         ## Concepts fondamentaux
 
@@ -37,6 +39,8 @@ spec:
 
     - name: "Deployments et Services"
       type: text
+      skills:
+        - kubernetes
       content: |
         ## Deployments et Services
 
@@ -89,6 +93,8 @@ spec:
 
     - name: "ConfigMaps et Secrets"
       type: text
+      skills:
+        - kubernetes
       content: |
         ## ConfigMaps et Secrets
 

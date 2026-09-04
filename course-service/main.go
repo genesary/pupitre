@@ -113,9 +113,9 @@ func run() error {
 	// No-op unless SEED_DEV_COURSES is set; see internal/db/seed_dev.go.
 	repos := repository.NewGormRepositories(gdb)
 
-	err = coursedb.SeedDevCourses(ctx, repos.Courses, os.Getenv("SEED_DEV_COURSES"))
+	err = seedDev(ctx, repos)
 	if err != nil {
-		return fmt.Errorf("seed dev courses: %w", err)
+		return err
 	}
 
 	// ── HTTP router ───────────────────────────────────────────────────────────
@@ -201,6 +201,25 @@ func serve(srv *http.Server) error {
 	}
 
 	zap.L().Info("server stopped")
+
+	return nil
+}
+
+// seedDev runs the dev-mode seed operations for courses and learning paths.
+// It is a no-op unless SEED_DEV_COURSES is set; extracted to keep run() within
+// the project's function-length limit.
+func seedDev(ctx context.Context, repos *repository.Repositories) error {
+	mode := os.Getenv("SEED_DEV_COURSES")
+
+	err := coursedb.SeedDevCourses(ctx, repos.Courses, mode)
+	if err != nil {
+		return fmt.Errorf("seed dev courses: %w", err)
+	}
+
+	err = coursedb.SeedDevPaths(ctx, repos.Paths, mode)
+	if err != nil {
+		return fmt.Errorf("seed dev paths: %w", err)
+	}
 
 	return nil
 }

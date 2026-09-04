@@ -12,6 +12,9 @@ spec:
   modules:
     - name: "Shift-left security"
       type: text
+      skills:
+        - devsecops
+        - securite
       content: |
         ## Shift-left security
 
@@ -54,6 +57,9 @@ spec:
 
     - name: "SAST et analyse de dépendances"
       type: text
+      skills:
+        - devsecops
+        - securite
       content: |
         ## SAST et analyse de dépendances
 
@@ -122,6 +128,9 @@ spec:
 
     - name: "Supply chain security"
       type: text
+      skills:
+        - devsecops
+        - securite
       content: |
         ## Supply chain security
 

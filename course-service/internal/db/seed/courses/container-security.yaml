@@ -12,6 +12,9 @@ spec:
   modules:
     - name: "Surface d'attaque des conteneurs"
       type: text
+      skills:
+        - containers
+        - cybersecurite
       content: |
         ## Surface d'attaque des conteneurs
 
@@ -58,6 +61,9 @@ spec:
 
     - name: "Bonnes pratiques Dockerfile"
       type: text
+      skills:
+        - containers
+        - cybersecurite
       content: |
         ## Bonnes pratiques Dockerfile
 
@@ -120,6 +126,9 @@ spec:
 
     - name: "Sécurité Kubernetes"
       type: text
+      skills:
+        - containers
+        - cybersecurite
       content: |
         ## Sécurité Kubernetes
 

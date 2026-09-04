@@ -12,6 +12,8 @@ spec:
   modules:
     - name: "Modèle TCP/IP et protocoles"
       type: text
+      skills:
+        - reseaux
       content: |
         ## Modèle TCP/IP et protocoles
 
@@ -58,6 +60,8 @@ spec:
 
     - name: "Adressage IP et sous-réseaux"
       type: text
+      skills:
+        - reseaux
       content: |
         ## Adressage IP et sous-réseaux
 
@@ -101,6 +105,8 @@ spec:
 
     - name: "Pare-feux et sécurité réseau"
       type: text
+      skills:
+        - reseaux
       content: |
         ## Pare-feux et sécurité réseau
 

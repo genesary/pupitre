@@ -11,6 +11,7 @@ import (
 
 	"go.uber.org/zap"
 
+	"github.com/genesary/pupitre/course-service/internal/content"
 	"github.com/genesary/pupitre/course-service/internal/definition"
 	"github.com/genesary/pupitre/course-service/internal/repository"
 )
@@ -130,4 +131,67 @@ func seedOneDevCourse(
 	default:
 		return seedCreated, nil
 	}
+}
+
+const (
+	// devPathKind is the path kind used for all dev seed learning paths.
+	devPathKind = "course"
+	// devPathLevel is the default level for dev seed learning paths.
+	devPathLevel = "beginner"
+)
+
+// seedPaths returns the learning paths to seed in dev/staging. Returned as a
+// function (not a package-level var) to avoid gochecknoglobals.
+func seedPaths() []content.Path {
+	return []content.Path{
+		{
+			Slug:        "parcours-devops",
+			Title:       "Parcours DevOps",
+			Description: "Maîtrise les outils et pratiques DevOps modernes, de la conteneurisation à l'orchestration en passant par l'intégration continue.",
+			Kind:        devPathKind,
+			Level:       devPathLevel,
+			Courses: []string{
+				"docker-fundamentals",
+				"kubernetes-basics",
+				"gitlab-cicd",
+				"infrastructure-as-code",
+				"monitoring-observability",
+			},
+		},
+		{
+			Slug:        "parcours-securite",
+			Title:       "Parcours Sécurité",
+			Description: "Développe tes compétences en cybersécurité, des fondamentaux jusqu'aux techniques offensives et défensives.",
+			Kind:        devPathKind,
+			Level:       devPathLevel,
+			Courses: []string{
+				"cybersecurity-intro",
+				"secrets-management",
+				"container-security",
+				"devsecops",
+				"pentesting-basics",
+			},
+		},
+	}
+}
+
+// SeedDevPaths upserts the dev learning paths. It runs whenever
+// SEED_DEV_COURSES is set, immediately after course seeding.
+func SeedDevPaths(ctx context.Context, paths repository.PathRepository, mode string) error {
+	if mode != SeedDevCoursesMissing && mode != SeedDevCoursesOverwrite {
+		return nil
+	}
+
+	devPaths := seedPaths()
+
+	for i := range devPaths {
+		err := paths.Upsert(ctx, &devPaths[i])
+		if err != nil {
+			return fmt.Errorf("seed dev path %s: %w", devPaths[i].Slug, err)
+		}
+	}
+
+	zap.L().Info("dev paths seeded", zap.Int("count", len(devPaths)))
+
+	return nil
 }

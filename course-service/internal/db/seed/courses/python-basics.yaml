@@ -12,11 +12,15 @@ spec:
   modules:
     - name: "Introduction à Python"
       type: "text"
+      skills:
+        - python
       src: "https://github.com/paulmascarilla/course-example"
       ref: "main"
       path: "lessons/01-intro.md"
     - name: "Variables et types"
       type: "text"
+      skills:
+        - python
       src: "https://github.com/paulmascarilla/course-example"
       ref: "main"
       path: "lessons/02-images.md"
@@ -24,6 +28,8 @@ spec:
         - "introduction-à-python"
     - name: "Structures de contrôle"
       type: "text"
+      skills:
+        - python
       src: "https://github.com/paulmascarilla/course-example"
       ref: "main"
       path: "lessons/03-networking.md"
@@ -31,6 +37,8 @@ spec:
         - "variables-et-types"
     - name: "Fonctions et modules"
       type: "text"
+      skills:
+        - python
       src: "https://github.com/paulmascarilla/course-example"
       ref: "main"
       path: "lessons/04-compose.md"
@@ -38,6 +46,8 @@ spec:
         - "structures-de-contrôle"
     - name: "Listes, tuples et dictionnaires"
       type: "text"
+      skills:
+        - python
       src: "https://github.com/paulmascarilla/course-example"
       ref: "main"
       path: "lessons/04-compose.md"
@@ -45,6 +55,8 @@ spec:
         - "fonctions-et-modules"
     - name: "Quiz Python Basics"
       type: "quiz"
+      skills:
+        - python
       inline: true
       prerequisites:
         - "introduction-à-python"

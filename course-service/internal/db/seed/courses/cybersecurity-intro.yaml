@@ -12,6 +12,8 @@ spec:
   modules:
     - name: "Les menaces du web"
       type: text
+      skills:
+        - cybersecurite
       content: |
         ## Les menaces du web
 
@@ -44,6 +46,8 @@ spec:
 
     - name: "OWASP Top 10"
       type: text
+      skills:
+        - cybersecurite
       content: |
         ## OWASP Top 10
 
@@ -84,6 +88,8 @@ spec:
 
     - name: "Authentification et gestion des sessions"
       type: text
+      skills:
+        - cybersecurite
       content: |
         ## Authentification et gestion des sessions
 
@@ -128,6 +134,8 @@ spec:
 
     - name: "Chiffrement et cryptographie"
       type: text
+      skills:
+        - cybersecurite
       content: |
         ## Chiffrement et cryptographie
 
