@@ -38,3 +38,23 @@
   --shadow: 0 4px 12px rgb(0 0 0 / 0.08), 0 1px 3px rgb(0 0 0 / 0.05);
   --shadow-lg: 0 8px 24px rgb(0 0 0 / 0.1), 0 2px 6px rgb(0 0 0 / 0.06);
 }
+
+/* ── Dark mode token overrides ──────────────────────────────────────── */
+:root.dark {
+  --color-ink: #dde1ea;
+  --color-ink-soft: #8b92a0;
+  --color-line: #252830;
+  --color-fill: #1a1d24;
+  --color-paper: #1e2128;
+  --color-page: #16181f;
+
+  --color-blue-soft: #162336;
+  --color-orange-soft: #271a08;
+  --color-good-soft: #0d2218;
+  --color-bad-soft: #270f0e;
+  --color-purple-soft: #1a0e38;
+
+  --shadow-sm: 0 1px 3px rgb(0 0 0 / 0.4), 0 1px 2px rgb(0 0 0 / 0.3);
+  --shadow: 0 4px 12px rgb(0 0 0 / 0.5), 0 1px 3px rgb(0 0 0 / 0.3);
+  --shadow-lg: 0 8px 24px rgb(0 0 0 / 0.6), 0 2px 6px rgb(0 0 0 / 0.4);
+}
