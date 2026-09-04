@@ -60,11 +60,6 @@ import App from '../layouts/App.astro';
       { bg:'#ffffff', iconBg:'#fef3c7', accent:'#d97706' },
     ];
 
-    const TH: Record<string,{fill:string;text:string;roadFill:string;badge:string;badgeTxt:string;label:string}> = {
-      completed: { fill:'#bbf7d0', text:'#15803d', roadFill:'#4ade80', badge:'#dcfce7', badgeTxt:'#15803d', label:'Terminé'    },
-      available:  { fill:'#bfdbfe', text:'#1d4ed8', roadFill:'#93c5fd', badge:'#dbeafe', badgeTxt:'#1d4ed8', label:'Disponible' },
-      locked:     { fill:'#f1f5f9', text:'#94a3b8', roadFill:'#e2e8f0', badge:'#f1f5f9', badgeTxt:'#94a3b8', label:'Verrouillé' },
-    };
 
     let allPaths: any[] = [];
 
@@ -126,6 +121,19 @@ import App from '../layouts/App.astro';
 
     function renderDetail(p: any): string {
       const isSkillPath = p.kind === 'skill';
+      const isDark = document.documentElement.classList.contains('dark');
+      const TH: Record<string,{fill:string;text:string;roadFill:string;badge:string;badgeTxt:string;label:string}> = isDark ? {
+        completed: { fill:'#0d2218', text:'#4ade80', roadFill:'#4ade80', badge:'#0d2218', badgeTxt:'#4ade80', label:'Terminé'    },
+        available:  { fill:'#162336', text:'#60a5fa', roadFill:'#3b82f6', badge:'#162336', badgeTxt:'#60a5fa', label:'Disponible' },
+        locked:     { fill:'#1a1d24', text:'#8b92a0', roadFill:'#252830', badge:'#1a1d24', badgeTxt:'#8b92a0', label:'Verrouillé' },
+      } : {
+        completed: { fill:'#bbf7d0', text:'#15803d', roadFill:'#4ade80', badge:'#dcfce7', badgeTxt:'#15803d', label:'Terminé'    },
+        available:  { fill:'#bfdbfe', text:'#1d4ed8', roadFill:'#93c5fd', badge:'#dbeafe', badgeTxt:'#1d4ed8', label:'Disponible' },
+        locked:     { fill:'#f1f5f9', text:'#94a3b8', roadFill:'#e2e8f0', badge:'#f1f5f9', badgeTxt:'#94a3b8', label:'Verrouillé' },
+      };
+      const circleFill = isDark ? '#1e2128' : 'white';
+      const roadStroke = isDark ? '#252830' : '#e2e8f0';
+      const nameFill   = isDark ? '#dde1ea' : '#334155';
       const courses: any[] = p.courses ?? [];
       const total = courses.length;
       const done  = courses.filter((c:any)=>c.status==='completed').length;
@@ -152,7 +160,7 @@ import App from '../layouts/App.astro';
         ? pts.slice(0, progEnd + 1)
         : [];
       const progD = buildRoad(progPts, CR);
-      const progCol = allDone ? '#4ade80' : '#93c5fd';
+      const progCol = allDone ? '#4ade80' : (isDark ? '#3b82f6' : '#93c5fd');
 
       let nodesSVG = '';
       courses.forEach((c: any, i: number) => {
@@ -174,7 +182,7 @@ import App from '../layouts/App.astro';
         const nameY0 = y + NR + 10;
         const nameEls = lines.map((ln: string, li: number) =>
           `<text x="${x}" y="${nameY0 + li*LINE_H}" text-anchor="middle" dominant-baseline="hanging"
-            font-size="9" font-weight="500" fill="#334155" font-family="system-ui,sans-serif">${ln}</text>`
+            font-size="9" font-weight="500" fill="${nameFill}" font-family="system-ui,sans-serif">${ln}</text>`
         ).join('');
         const badgeY = nameY0 + NAME_ROWS * LINE_H + 3;
         const badgeEl = `
@@ -182,11 +190,11 @@ import App from '../layouts/App.astro';
           <text x="${x}" y="${badgeY+BH/2}" text-anchor="middle" dominant-baseline="middle"
             font-size="7" font-weight="600" fill="${th.badgeTxt}" font-family="system-ui,sans-serif">${th.label}</text>`;
         const lockBadge = isLocked ? `
-          <circle cx="${x+NR-5}" cy="${y-NR+5}" r="9" fill="white" stroke="#e2e8f0" stroke-width="1"/>
+          <circle cx="${x+NR-5}" cy="${y-NR+5}" r="9" fill="${circleFill}" stroke="${roadStroke}" stroke-width="1"/>
           <text x="${x+NR-5}" y="${y-NR+5}" text-anchor="middle" dominant-baseline="middle" font-size="9">🔒</text>` : '';
         const inner = `
           ${pulse}
-          <circle cx="${x}" cy="${y}" r="${NR+3}" fill="white"/>
+          <circle cx="${x}" cy="${y}" r="${NR+3}" fill="${circleFill}"/>
           <circle cx="${x}" cy="${y}" r="${NR}" fill="${th.fill}"/>
           <text x="${x}" y="${y}" text-anchor="middle" dominant-baseline="middle"
             font-size="${fontSize}" font-weight="800" fill="${th.text}" font-family="system-ui,sans-serif">${icon}</text>
@@ -203,7 +211,7 @@ import App from '../layouts/App.astro';
       });
 
       const svgEl = `<svg width="100%" viewBox="0 0 ${VB_W} ${VB_H}" xmlns="http://www.w3.org/2000/svg">
-        <path d="${grayD}" fill="none" stroke="#e2e8f0" stroke-width="${ROAD}" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="${grayD}" fill="none" stroke="${roadStroke}" stroke-width="${ROAD}" stroke-linecap="round" stroke-linejoin="round"/>
         ${progD ? `<path d="${progD}" fill="none" stroke="${progCol}" stroke-width="${ROAD}" stroke-linecap="round" stroke-linejoin="round"/>` : ''}
         ${nodesSVG}
       </svg>`;

@@ -24,9 +24,9 @@
     display: flex;
     align-items: center;
     gap: 20px;
-    background: #ffffffcc;
+    background: color-mix(in srgb, var(--color-paper) 80%, transparent);
     backdrop-filter: blur(8px);
-    border: 1.5px solid #e2e8f0;
+    border: 1.5px solid var(--color-line);
     border-radius: 16px;
     padding: 20px;
     cursor: pointer;
@@ -167,8 +167,8 @@
     border-radius: 999px;
     font-size: 0.78rem;
     font-weight: 600;
-    border: 1.5px solid #e2e8f0;
-    background: #ffffffcc;
+    border: 1.5px solid var(--color-line);
+    background: color-mix(in srgb, var(--color-paper) 80%, transparent);
     backdrop-filter: blur(4px);
     color: var(--ink-soft);
     cursor: pointer;
@@ -206,8 +206,8 @@
     border-radius: 999px;
     font-size: 0.78rem;
     font-weight: 600;
-    border: 1.5px solid #e2e8f0;
-    background: #ffffffcc;
+    border: 1.5px solid var(--color-line);
+    background: color-mix(in srgb, var(--color-paper) 80%, transparent);
     backdrop-filter: blur(4px);
     color: var(--ink-soft);
     cursor: pointer;
@@ -255,10 +255,10 @@
     }
   }
   .rail-card {
-    border: 1.5px solid #e2e8f0;
-    border-top: 3px solid var(--cat-color, #e2e8f0);
+    border: 1.5px solid var(--color-line);
+    border-top: 3px solid var(--cat-color, var(--color-line));
     border-radius: 14px;
-    background: #ffffffcc;
+    background: color-mix(in srgb, var(--color-paper) 80%, transparent);
     backdrop-filter: blur(8px);
     overflow: hidden;
     cursor: pointer;
@@ -363,7 +363,7 @@
     top: 64px;
     height: calc(100vh - 64px);
     overflow-y: auto;
-    border-right: 1px solid #e2e8f0;
+    border-right: 1px solid var(--color-line);
     padding: 24px;
     display: flex;
     flex-direction: column;
@@ -407,9 +407,9 @@
     align-items: center;
     gap: 14px;
     padding: 14px 18px;
-    border: 1.5px solid #e2e8f0;
+    border: 1.5px solid var(--color-line);
     border-radius: 12px;
-    background: #ffffffcc;
+    background: color-mix(in srgb, var(--color-paper) 80%, transparent);
     backdrop-filter: blur(8px);
     text-decoration: none;
     color: inherit;
@@ -421,7 +421,7 @@
   }
   .mod-row:hover {
     border-color: #a5b4fc;
-    background: #ffffffee;
+    background: color-mix(in srgb, var(--color-paper) 93%, transparent);
     box-shadow: 0 4px 16px rgba(67, 97, 238, 0.1);
   }
   .mod-row.current {
@@ -470,7 +470,7 @@
       position: static;
       height: auto;
       border-right: none;
-      border-bottom: 1px solid #e2e8f0;
+      border-bottom: 1px solid var(--color-line);
       overflow-y: visible;
       padding: 20px 16px;
       gap: 12px;
@@ -1067,10 +1067,10 @@
     display: flex;
     flex-direction: column;
     min-width: 0;
-    background: #ffffffee;
+    background: color-mix(in srgb, var(--color-paper) 93%, transparent);
     backdrop-filter: blur(12px);
     border-radius: 16px;
-    border: 1.5px solid #e2e8f0;
+    border: 1.5px solid var(--color-line);
     box-shadow: 0 4px 24px rgba(67, 97, 238, 0.08);
     overflow: hidden;
   }
@@ -1079,9 +1079,9 @@
     align-items: center;
     gap: 16px;
     padding: 14px 20px;
-    border-bottom: 1px solid #e2e8f0;
+    border-bottom: 1px solid var(--color-line);
     flex-shrink: 0;
-    background: #fff;
+    background: var(--color-paper);
     border-radius: 16px 16px 0 0;
   }
   .cal-topbar-title {
@@ -1224,7 +1224,7 @@
   .cal-dow-row {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    border-bottom: 1px solid #e8edf5;
+    border-bottom: 1px solid var(--color-line);
     flex-shrink: 0;
     background: #f8faff;
   }
@@ -1236,7 +1236,7 @@
     padding: 9px 0;
     text-transform: uppercase;
     letter-spacing: 0.06em;
-    border-right: 1px solid #e8edf5;
+    border-right: 1px solid var(--color-line);
   }
   .cal-dow-cell:last-child {
     border-right: none;
@@ -1250,8 +1250,8 @@
     overflow: hidden;
   }
   .cal-cell {
-    border-right: 1px solid #e8edf5;
-    border-bottom: 1px solid #e8edf5;
+    border-right: 1px solid var(--color-line);
+    border-bottom: 1px solid var(--color-line);
     padding: 6px 8px;
     display: flex;
     flex-direction: column;
@@ -1322,10 +1322,10 @@
   .side-panel {
     width: 300px;
     flex-shrink: 0;
-    background: #ffffffee;
+    background: color-mix(in srgb, var(--color-paper) 93%, transparent);
     backdrop-filter: blur(12px);
     border-radius: 16px;
-    border: 1.5px solid #e2e8f0;
+    border: 1.5px solid var(--color-line);
     box-shadow: 0 4px 24px rgba(67, 97, 238, 0.08);
     display: flex;
     flex-direction: column;
@@ -1333,14 +1333,14 @@
   }
   .side-header {
     padding: 14px 18px;
-    border-bottom: 1px solid #e2e8f0;
+    border-bottom: 1px solid var(--color-line);
     font-size: 0.78rem;
     font-weight: 700;
     color: var(--ink-soft);
     text-transform: uppercase;
     letter-spacing: 0.06em;
     flex-shrink: 0;
-    background: #fff;
+    background: var(--color-paper);
     border-radius: 16px 16px 0 0;
   }
   .side-body {
@@ -1349,11 +1349,11 @@
     padding: 14px 16px;
   }
   .ev-card {
-    border: 1.5px solid #e2e8f0;
+    border: 1.5px solid var(--color-line);
     border-radius: 14px;
     padding: 14px 16px;
     margin-bottom: 10px;
-    background: #ffffffcc;
+    background: color-mix(in srgb, var(--color-paper) 80%, transparent);
     backdrop-filter: blur(8px);
     transition:
       border-color 0.15s,
@@ -1922,11 +1922,18 @@
     color: var(--blue);
   }
   .course-xp-card {
+    display: block;
     margin-bottom: 12px;
     padding: 10px 12px;
     background: #fefce8;
     border: 1.5px solid #fcd34d66;
     border-radius: 10px;
+    text-decoration: none;
+    color: inherit;
+    transition: opacity 0.15s;
+  }
+  .course-xp-card:hover {
+    opacity: 0.85;
   }
   .course-xp-row {
     display: flex;
@@ -2046,4 +2053,94 @@
     font-size: 0.85rem;
     flex-shrink: 0;
   }
+}
+
+/* ── Dark mode overrides ────────────────────────────────────────────── */
+:root.dark {
+  .cat-outer {
+    background: var(--color-page);
+  }
+  .continue-hero {
+    background: var(--color-paper);
+  }
+  .continue-thumb {
+    background: linear-gradient(135deg, #1a1f3a, #1e1535);
+    border-color: var(--color-line);
+  }
+  .rail-card {
+    background: var(--color-paper);
+  }
+  .rail-card-thumb {
+    filter: brightness(0.55) saturate(0.7);
+  }
+  .course-outer,
+  .lesson-outer,
+  .quiz-outer {
+    background: var(--color-page);
+  }
+  .course-sidebar {
+    background: var(--color-paper);
+  }
+  .skill-filter-banner {
+    background: var(--color-paper);
+    border-color: var(--color-line);
+  }
+  .cat-chip {
+    background: var(--color-paper);
+  }
+  .cat-chip.active {
+    background: var(--color-blue-soft);
+  }
+  .agenda-wrap {
+    background: var(--color-page);
+  }
+  .cal-dow-row {
+    background: var(--color-fill);
+  }
+  .cal-cell.other-month {
+    background: color-mix(in srgb, var(--color-fill) 60%, transparent);
+  }
+  .cal-cell.has-event:hover {
+    background: var(--color-blue-soft);
+  }
+  .cal-cell.selected {
+    background: var(--color-blue-soft) !important;
+  }
+  .ev-card.booked {
+    background: color-mix(in srgb, var(--color-good-soft) 80%, transparent);
+    border-color: #166534;
+  }
+  .lab-success-banner {
+    background: var(--color-good-soft);
+    border-color: #166534;
+    color: #4ade80;
+  }
+  .check-ok {
+    background: var(--color-good-soft);
+    border-color: #166534;
+    color: #4ade80;
+  }
+  .check-fail {
+    background: var(--color-bad-soft);
+    border-color: #7f1d1d;
+  }
+  .check-fail-title { color: #f87171; }
+  .check-fail-items { color: #fca5a5; }
+  .check-local {
+    background: var(--color-blue-soft);
+    border-color: #1d4ed8;
+    color: #93c5fd;
+  }
+  .check-local-link { color: #60a5fa; }
+  .course-badge-earned {
+    background: var(--color-good-soft);
+    border-color: #166534;
+  }
+  .course-badge-label-earned { color: #4ade80; }
+  .course-xp-card {
+    background: var(--color-orange-soft);
+    border-color: #92400e66;
+  }
+  .course-xp-row { color: #fbbf24; }
+  .course-xp-bar { background: #3a2800; }
 }

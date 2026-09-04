@@ -299,13 +299,13 @@ import App from '../../../layouts/App.astro';
               </div>
               <div class="progress-bar"><div class="progress-bar-fill" style="width:${pct}%"></div></div>
             </div>
-            <div class="course-xp-card">
+            <a href="/my-xp" class="course-xp-card no-underline cursor-pointer">
               <div class="course-xp-row ${pct < 100 ? 'mb-[5px]' : ''}">
                 <span>⚡ XP de ce cours</span>
                 <span class="course-xp-amount">${pct === 100 ? '+200 XP ✓' : `${xpEarned} / 200 XP`}</span>
               </div>
               ${pct < 100 ? `<div class="course-xp-bar"><div class="course-xp-bar-fill" style="width:${pct}%"></div></div>` : ''}
-            </div>
+            </a>
             <a href="${ctaHref}" class="btn btn-primary w-full inline-flex">
               ${pct === 0 ? 'Commencer le cours ▸' : pct === 100 ? 'Revoir le cours ▸' : 'Continuer le cours ▸'}
             </a>

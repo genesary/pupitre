@@ -111,6 +111,42 @@
     @apply text-base w-[22px] text-center shrink-0;
   }
 
+  /* ── Drawer dark mode ── */
+  :root.dark .nav-drawer {
+    background: linear-gradient(160deg, #0f1520 0%, #130f20 55%, #0f1a15 100%);
+    box-shadow: 10px 0 48px rgb(0 0 0 / 0.5);
+  }
+  :root.dark .nav-drawer-header {
+    background: color-mix(in srgb, var(--color-paper) 75%, transparent);
+    border-color: var(--color-line);
+  }
+  :root.dark .nav-drawer-section {
+    background: color-mix(in srgb, var(--color-paper) 60%, transparent);
+    border-color: var(--color-line);
+  }
+  :root.dark .nav-drawer-close:hover {
+    background: var(--color-fill);
+  }
+  :root.dark .page-outer {
+    background: var(--color-page);
+  }
+  :root.dark .stat-card {
+    background: color-mix(in srgb, var(--color-paper) 80%, transparent);
+    border-color: var(--color-line);
+  }
+  :root.dark .glass-card {
+    background: color-mix(in srgb, var(--color-paper) 80%, transparent);
+    border-color: var(--color-line);
+  }
+  :root.dark .badge-blue   { color: #60a5fa; }
+  :root.dark .badge-green  { color: #4ade80; }
+  :root.dark .badge-orange { color: #fb923c; }
+  :root.dark .badge-red    { color: #f87171; }
+  :root.dark .badge-purple { color: #a78bfa; }
+  :root.dark .course-card-thumb {
+    background: linear-gradient(135deg, #1a1f3a 0%, #1e1535 100%);
+  }
+
   /* ── Cards ── */
   .card {
     @apply bg-paper border border-line rounded-2xl p-6;
