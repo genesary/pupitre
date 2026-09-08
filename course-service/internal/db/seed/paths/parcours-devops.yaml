@@ -1,0 +1,13 @@
+# Dev seed path — loaded by SEED_DEV_COURSES.
+slug: parcours-devops
+spec:
+  title: "Parcours DevOps"
+  description: "Maîtrise les outils et pratiques DevOps modernes, de la conteneurisation à l'orchestration en passant par l'intégration continue."
+  kind: course
+  level: beginner
+  courses:
+    - docker-fundamentals
+    - kubernetes-basics
+    - gitlab-cicd
+    - infrastructure-as-code
+    - monitoring-observability

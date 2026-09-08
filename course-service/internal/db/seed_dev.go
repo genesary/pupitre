@@ -11,7 +11,6 @@ import (
 
 	"go.uber.org/zap"
 
-	"github.com/genesary/pupitre/course-service/internal/content"
 	"github.com/genesary/pupitre/course-service/internal/definition"
 	"github.com/genesary/pupitre/course-service/internal/repository"
 )
@@ -19,12 +18,21 @@ import (
 // devCourseDir is the embedded directory holding the dev seed courses.
 const devCourseDir = "seed/courses"
 
+// devPathDir is the embedded directory holding the dev seed learning paths.
+const devPathDir = "seed/paths"
+
 // devCourses holds the demo course catalogue used to browse and exercise
 // the app in a dev environment. It is embedded in the binary rather than
 // mounted, so seeding works the same in a KinD cluster and on a laptop.
 //
 //go:embed seed/courses/*.yaml
 var devCourses embed.FS
+
+// devPathFiles holds the dev learning-path definitions. Embedded alongside
+// the course files so that the same YAML-based pattern covers both resources.
+//
+//go:embed seed/paths/*.yaml
+var devPathFiles embed.FS
 
 // Dev-seed modes, selected by the SEED_DEV_COURSES environment variable.
 const (
@@ -133,65 +141,48 @@ func seedOneDevCourse(
 	}
 }
 
-const (
-	// devPathKind is the path kind used for all dev seed learning paths.
-	devPathKind = "course"
-	// devPathLevel is the default level for dev seed learning paths.
-	devPathLevel = "beginner"
-)
-
-// seedPaths returns the learning paths to seed in dev/staging. Returned as a
-// function (not a package-level var) to avoid gochecknoglobals.
-func seedPaths() []content.Path {
-	return []content.Path{
-		{
-			Slug:        "parcours-devops",
-			Title:       "Parcours DevOps",
-			Description: "Maîtrise les outils et pratiques DevOps modernes, de la conteneurisation à l'orchestration en passant par l'intégration continue.",
-			Kind:        devPathKind,
-			Level:       devPathLevel,
-			Courses: []string{
-				"docker-fundamentals",
-				"kubernetes-basics",
-				"gitlab-cicd",
-				"infrastructure-as-code",
-				"monitoring-observability",
-			},
-		},
-		{
-			Slug:        "parcours-securite",
-			Title:       "Parcours Sécurité",
-			Description: "Développe tes compétences en cybersécurité, des fondamentaux jusqu'aux techniques offensives et défensives.",
-			Kind:        devPathKind,
-			Level:       devPathLevel,
-			Courses: []string{
-				"cybersecurity-intro",
-				"secrets-management",
-				"container-security",
-				"devsecops",
-				"pentesting-basics",
-			},
-		},
-	}
-}
-
-// SeedDevPaths upserts the dev learning paths. It runs whenever
-// SEED_DEV_COURSES is set, immediately after course seeding.
+// SeedDevPaths loads the embedded dev path definitions into the database,
+// following the same YAML-file pattern as SeedDevCourses.
 func SeedDevPaths(ctx context.Context, paths repository.PathRepository, mode string) error {
 	if mode != SeedDevCoursesMissing && mode != SeedDevCoursesOverwrite {
 		return nil
 	}
 
-	devPaths := seedPaths()
+	entries, err := fs.ReadDir(devPathFiles, devPathDir)
+	if err != nil {
+		return fmt.Errorf("read embedded dev paths: %w", err)
+	}
 
-	for i := range devPaths {
-		err := paths.Upsert(ctx, &devPaths[i])
+	sort.Slice(entries, func(i, j int) bool { return entries[i].Name() < entries[j].Name() })
+
+	for _, entry := range entries {
+		data, err := devPathFiles.ReadFile(path.Join(devPathDir, entry.Name()))
 		if err != nil {
-			return fmt.Errorf("seed dev path %s: %w", devPaths[i].Slug, err)
+			return fmt.Errorf("read dev path %s: %w", entry.Name(), err)
+		}
+
+		file, err := definition.ParsePathFile(data)
+		if err != nil {
+			return fmt.Errorf("dev path %s: %w", entry.Name(), err)
+		}
+
+		p := file.Spec.ToPath(file.Slug)
+
+		if mode == SeedDevCoursesOverwrite {
+			err = paths.Upsert(ctx, p)
+		} else {
+			err = paths.Create(ctx, p)
+			if errors.Is(err, repository.ErrConflict) {
+				err = nil
+			}
+		}
+
+		if err != nil {
+			return fmt.Errorf("seed dev path %s: %w", file.Slug, err)
 		}
 	}
 
-	zap.L().Info("dev paths seeded", zap.Int("count", len(devPaths)))
+	zap.L().Info("dev paths seeded", zap.Int("count", len(entries)))
 
 	return nil
 }
