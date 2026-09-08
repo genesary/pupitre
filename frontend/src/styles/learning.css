@@ -602,6 +602,7 @@
     border-radius: 14px;
     padding: 24px;
     margin-top: 32px;
+    user-select: none;
   }
   .mini-quiz-header {
     display: flex;
@@ -724,7 +725,6 @@
     transition: 0.12s;
     text-align: left;
     width: 100%;
-    user-select: none;
   }
   .quiz-option:hover {
     border-color: var(--blue);
@@ -832,6 +832,7 @@
     gap: 0;
     min-height: calc(100vh - 56px);
     align-items: flex-start;
+    user-select: none;
   }
   .quiz-main {
     padding: 28px 34px;
@@ -941,7 +942,6 @@
     font-weight: 600;
     font-size: 0.95rem;
     line-height: 1.5;
-    user-select: none;
   }
   .quiz-q-points {
     font-size: 0.8rem;
@@ -1677,7 +1677,6 @@
     font-weight: 600;
     font-size: 0.875rem;
     margin-bottom: 4px;
-    user-select: none;
   }
   .review-q-score {
     font-size: 0.8rem;
