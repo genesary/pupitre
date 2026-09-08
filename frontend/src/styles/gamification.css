@@ -783,3 +783,155 @@
     }
   }
 }
+
+/* ── Gamification dark mode ───────────────────────────────────────────── */
+:root.dark .lb-row {
+  background: color-mix(in srgb, var(--color-paper) 80%, transparent);
+  border-color: var(--color-line);
+}
+:root.dark .lb-avatar {
+  background: var(--color-blue-soft);
+}
+
+:root.dark .mb-card {
+  background: color-mix(in srgb, var(--color-paper) 80%, transparent);
+  border-color: rgba(34, 197, 94, 0.15);
+}
+:root.dark .mb-card-icon {
+  background: var(--color-good-soft);
+  border-color: rgba(34, 197, 94, 0.2);
+  box-shadow: 0 4px 16px rgba(34, 197, 94, 0.12);
+}
+:root.dark .mb-card-earned-by {
+  background: var(--color-good-soft);
+  color: #4ade80;
+  border-color: rgba(34, 197, 94, 0.2);
+}
+:root.dark .mb-card-locked {
+  background: color-mix(in srgb, var(--color-paper) 60%, transparent);
+}
+
+:root.dark .xp-hero {
+  background: color-mix(in srgb, var(--color-paper) 80%, transparent);
+  border-color: var(--color-line);
+}
+:root.dark .xp-orb {
+  background: linear-gradient(135deg, #2a1d00, #3a2800);
+  border-color: #92400e;
+}
+:root.dark .xp-level-chip {
+  background: var(--color-orange-soft);
+  color: #fbbf24;
+  border-color: #92400e;
+}
+:root.dark .xp-progress-bar {
+  background: var(--color-orange-soft);
+}
+:root.dark .xp-level-card {
+  background: color-mix(in srgb, var(--color-paper) 80%, transparent);
+  border-color: var(--color-line);
+}
+:root.dark .xp-level-card.current {
+  background: var(--color-orange-soft);
+  border-color: #92400e;
+}
+:root.dark .xp-hist-item {
+  background: color-mix(in srgb, var(--color-paper) 80%, transparent);
+  border-color: var(--color-line);
+}
+:root.dark .xp-hist-icon {
+  background: linear-gradient(135deg, #2a1d00, #3a2800);
+  border-color: rgba(252, 211, 77, 0.15);
+}
+:root.dark .xp-hist-icon-inprogress {
+  background: var(--color-blue-soft);
+  border-color: rgba(99, 102, 241, 0.2);
+}
+
+:root.dark .path-list-card {
+  background: color-mix(in srgb, var(--color-paper) 80%, transparent);
+}
+:root.dark .path-list-banner {
+  background: var(--color-paper);
+}
+:root.dark .path-palette-0 { --p-icon-bg: #0d2218; }
+:root.dark .path-palette-1 { --p-icon-bg: var(--color-purple-soft); }
+:root.dark .path-palette-2 { --p-icon-bg: var(--color-blue-soft); }
+:root.dark .path-palette-3 { --p-icon-bg: #270f1e; }
+:root.dark .path-palette-4 { --p-icon-bg: var(--color-orange-soft); }
+
+:root.dark .level-beginner    { background: var(--color-good-soft);   color: #4ade80; }
+:root.dark .level-intermediate { background: var(--color-orange-soft); color: #fbbf24; }
+:root.dark .level-advanced     { background: var(--color-bad-soft);    color: #f87171; }
+:root.dark .level-maitre       { background: var(--color-orange-soft); color: #f59e0b; }
+:root.dark .level-inprogress   { background: var(--color-fill);        color: var(--color-ink-soft); }
+
+:root.dark .ms-card {
+  background: color-mix(in srgb, var(--color-paper) 80%, transparent);
+}
+:root.dark .ms-card.card-maitre {
+  background: rgba(39, 26, 8, 0.8);
+  border-color: #92400e;
+}
+
+:root.dark .mg-card {
+  background: color-mix(in srgb, var(--color-paper) 80%, transparent);
+  border-color: var(--color-line);
+}
+:root.dark .mg-course-link { background: var(--color-fill); }
+:root.dark .mg-course-link:hover {
+  background: var(--color-blue-soft);
+  border-color: rgba(165, 180, 252, 0.25);
+}
+:root.dark .mg-icon.local  { background: var(--color-blue-soft); }
+:root.dark .mg-icon.remote { background: var(--color-good-soft); }
+:root.dark .mg-role-admin   { background: var(--color-bad-soft);    color: #f87171; }
+:root.dark .mg-role-manager { background: var(--color-orange-soft); color: #fb923c; }
+:root.dark .mg-role-student { background: var(--color-blue-soft);   color: #60a5fa; }
+:root.dark .mg-empty-card {
+  background: color-mix(in srgb, var(--color-paper) 80%, transparent);
+  border-color: var(--color-line);
+}
+
+:root.dark .skill-outer { background: var(--color-page); }
+:root.dark .skill-chip {
+  background: var(--color-purple-soft);
+  color: #a78bfa;
+}
+:root.dark .skill-prog {
+  background: color-mix(in srgb, var(--color-paper) 80%, transparent);
+  border-color: var(--color-line);
+}
+:root.dark .level-section-title::after { background: var(--color-line); }
+:root.dark .sk-card {
+  background: color-mix(in srgb, var(--color-paper) 80%, transparent);
+  border-color: var(--color-line);
+}
+:root.dark .sk-card.card-done {
+  background: color-mix(in srgb, var(--color-good-soft) 80%, transparent);
+  border-color: #166534;
+}
+:root.dark .diff-beginner    { background: var(--color-good-soft);   color: #4ade80; }
+:root.dark .diff-intermediate { background: var(--color-orange-soft); color: #fbbf24; }
+:root.dark .diff-advanced     { background: var(--color-bad-soft);    color: #f87171; }
+:root.dark .badge-done   { background: var(--color-good-soft);  color: #4ade80; }
+:root.dark .badge-ongoing { background: var(--color-blue-soft); color: #60a5fa; }
+
+:root.dark .up-outer { background: var(--color-page); }
+:root.dark .up-header {
+  background: color-mix(in srgb, var(--color-paper) 80%, transparent);
+  border-color: var(--color-line);
+}
+:root.dark .up-card {
+  background: color-mix(in srgb, var(--color-paper) 80%, transparent);
+  border-color: rgba(34, 197, 94, 0.12);
+}
+:root.dark .up-card-icon {
+  background: var(--color-good-soft);
+  border-color: rgba(34, 197, 94, 0.2);
+}
+:root.dark .up-card-earners {
+  background: var(--color-good-soft);
+  color: #4ade80;
+  border-color: rgba(34, 197, 94, 0.2);
+}

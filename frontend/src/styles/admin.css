@@ -14,9 +14,9 @@
     color: var(--ink-soft);
   }
   .mu-table-wrap {
-    border: 1.5px solid #e2e8f0;
+    border: 1.5px solid var(--color-line);
     border-radius: 16px;
-    background: #ffffffcc;
+    background: color-mix(in srgb, var(--color-paper) 80%, transparent);
     backdrop-filter: blur(8px);
     overflow-x: auto;
   }
@@ -26,7 +26,7 @@
     font-size: 0.875rem;
   }
   .mu-table thead tr {
-    border-bottom: 1.5px solid #e2e8f0;
+    border-bottom: 1.5px solid var(--color-line);
     background: #f8faff;
   }
   .mu-table th {
@@ -1199,8 +1199,8 @@
     background: #f0fdf4cc;
   }
   .session-card-default {
-    border: 1.5px solid #e2e8f0;
-    background: #ffffffcc;
+    border: 1.5px solid var(--color-line);
+    background: color-mix(in srgb, var(--color-paper) 80%, transparent);
   }
   .preview-area {
     border: 1px solid var(--line);
@@ -1609,4 +1609,34 @@
   .export-cat-btn.active { border-color: var(--blue); background: var(--blue-soft); color: var(--blue); font-weight: 600; }
   .export-field-row { display: flex; align-items: center; gap: 10px; padding: 6px 0; cursor: pointer; border-radius: 6px; user-select: none; }
   .export-field-row:hover { color: var(--blue); }
+}
+
+/* ── Dark mode overrides ────────────────────────────────────────────── */
+:root.dark {
+  .mu-table thead tr {
+    background: var(--color-fill);
+  }
+  .mu-table tbody tr {
+    border-bottom-color: var(--color-line);
+  }
+  .mu-table tbody tr:hover {
+    background: var(--color-fill);
+  }
+  .mu-table tbody tr:hover td:first-child {
+    background: var(--color-fill);
+  }
+  .presence-outer {
+    background: linear-gradient(160deg, #0f1520 0%, #130f20 50%, #0f1a15 100%);
+  }
+  .shell-main {
+    background: linear-gradient(160deg, #0f1520 0%, #130f20 50%, #0f1a15 100%);
+  }
+  .info-box {
+    background: color-mix(in srgb, var(--color-blue) 10%, var(--color-paper));
+    border-color: color-mix(in srgb, var(--color-blue) 30%, transparent);
+  }
+  .warn-box {
+    background: color-mix(in srgb, var(--color-orange) 10%, var(--color-paper));
+    border-color: color-mix(in srgb, var(--color-orange) 30%, transparent);
+  }
 }

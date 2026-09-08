@@ -6,7 +6,7 @@ import App from '../layouts/App.astro';
   <div class="page-inner">
     <div class="flex items-baseline justify-between gap-4 mb-7 flex-wrap">
       <h1 class="page-title">Mes cours</h1>
-      <a href="/courses" class="btn btn-secondary btn-sm bg-white/80 backdrop-blur-[8px]">Parcourir le catalogue</a>
+      <a href="/courses" class="btn btn-secondary btn-sm">Parcourir le catalogue</a>
     </div>
 
     <div id="loading" class="loading-state"><div class="spinner"></div><span>Chargement…</span></div>
@@ -94,7 +94,7 @@ import App from '../layouts/App.astro';
 
       return `
         <div class="glass-card flex flex-col transition-[border-color,box-shadow,transform] duration-150 hover:-translate-y-[3px]">
-          <div class="w-full h-[130px] bg-gradient-to-br from-[#e0e7ff] to-[#ede9fe] flex items-center justify-center text-5xl overflow-hidden border-b-[1.5px] border-line shrink-0">${thumb}</div>
+          <div class="course-card-thumb w-full overflow-hidden border-b-[1.5px] border-line shrink-0">${thumb}</div>
           <div class="p-4 flex flex-col gap-2.5 flex-1">
             <div class="flex items-start justify-between gap-2">
               <div class="font-semibold text-[.95rem] leading-snug line-clamp-2">${c.title}</div>
