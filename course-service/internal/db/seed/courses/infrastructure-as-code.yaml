@@ -12,6 +12,9 @@ spec:
   modules:
     - name: "Principes de l'IaC"
       type: text
+      skills:
+        - terraform
+        - iac
       content: |
         ## Principes de l'IaC
 
@@ -55,6 +58,9 @@ spec:
 
     - name: "Terraform — les bases"
       type: text
+      skills:
+        - terraform
+        - iac
       content: |
         ## Terraform — les bases
 
@@ -123,6 +129,9 @@ spec:
 
     - name: "State et collaboration"
       type: text
+      skills:
+        - terraform
+        - iac
       content: |
         ## State et collaboration
 

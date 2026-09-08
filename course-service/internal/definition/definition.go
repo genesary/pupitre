@@ -219,6 +219,28 @@ func EncodeYAML(source any) ([]byte, error) {
 	return out, nil
 }
 
+// PathFile is a path definition read from a YAML seed file.
+type PathFile struct {
+	Slug string `json:"slug"`
+	Spec Path   `json:"spec"`
+}
+
+// ParsePathFile decodes a learning-path definition file.
+func ParsePathFile(data []byte) (PathFile, error) {
+	var file PathFile
+
+	err := DecodeYAML(data, &file)
+	if err != nil {
+		return PathFile{}, fmt.Errorf("parse path file: %w", err)
+	}
+
+	if file.Slug == "" {
+		return PathFile{}, errMissingSlug
+	}
+
+	return file, nil
+}
+
 // ParseCourseFile decodes a course definition file.
 func ParseCourseFile(data []byte) (File, error) {
 	var file File

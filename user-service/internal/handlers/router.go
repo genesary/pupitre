@@ -30,10 +30,6 @@ func remoteIP(r *http.Request) (string, error) {
 // corsMaxAgeSeconds bounds CORS preflight cache duration, in seconds.
 const corsMaxAgeSeconds = 300
 
-// compressionLevel is the gzip level used for responses: level 5 is the
-// usual knee of the ratio/CPU curve for JSON and markdown.
-const compressionLevel = 5
-
 // Routing invariant: no path registered here may sit under a prefix that
 // course-service owns (/api/courses, /api/admin/courses).
 //
@@ -70,12 +66,6 @@ func BuildRouter(state *State, cfg *config.Config, withLogger bool) *chi.Mux {
 	}
 
 	router.Use(chiMiddleware.Recoverer)
-
-	// Course markdown, module listings and CSV exports are all highly
-	// compressible text, and the clients are browsers on links this
-	// service does not control. Compressing costs a little CPU per
-	// response and saves the bulk of the bytes on the wire.
-	router.Use(chiMiddleware.Compress(compressionLevel))
 	router.Use(chiMiddleware.RequestSize(maxRequestBodyBytes))
 	router.Use(corsHandler(cfg).Handler)
 
