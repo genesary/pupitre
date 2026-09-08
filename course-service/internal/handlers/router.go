@@ -14,10 +14,6 @@ import (
 // response caching.
 const routerCORSMaxAgeSeconds = 300
 
-// compressionLevel is the gzip level used for responses: level 5 is the
-// usual knee of the ratio/CPU curve for JSON and markdown.
-const compressionLevel = 5
-
 // BuildRouter constructs the course-service chi router, wiring public
 // routes, user-authenticated routes, and admin-only routes behind their
 // respective middleware, plus CORS/logging middleware.
@@ -44,12 +40,6 @@ func BuildRouter(state *State, cfg *config.Config, withLogger bool) *chi.Mux {
 	}
 
 	router.Use(chiMiddleware.Recoverer)
-
-	// Course markdown, module listings and CSV exports are all highly
-	// compressible text, and the clients are browsers on links this
-	// service does not control. Compressing costs a little CPU per
-	// response and saves the bulk of the bytes on the wire.
-	router.Use(chiMiddleware.Compress(compressionLevel))
 	router.Use(corsOptions.Handler)
 
 	// The body cap is per group rather than global: an admin importing a
