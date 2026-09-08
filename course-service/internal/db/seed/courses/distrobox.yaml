@@ -132,3 +132,74 @@ spec:
         |---|---|
         | Documentation Distrobox | distrobox.it |
         | GitHub Distrobox | github.com/89luca89/distrobox |
+    - name: "Quiz Distrobox"
+      type: "quiz"
+      inline: true
+      prerequisites:
+        - "distrobox-creation-and-application-export"
+      passingScore: 75
+      questions:
+        - id: q1
+          type: single
+          question: "Quel est le rôle principal de Distrobox ?"
+          answers:
+            - id: a
+              text: "Faire tourner n'importe quelle distribution Linux dans un conteneur avec une intégration complète avec l'hôte"
+              correct: true
+            - id: b
+              text: "Construire et publier des images Docker"
+              correct: false
+            - id: c
+              text: "Gérer des machines virtuelles sous Linux"
+              correct: false
+            - id: d
+              text: "Orchestrer des conteneurs sur plusieurs nœuds"
+              correct: false
+        - id: q2
+          type: single
+          question: "Quelle commande crée une Distrobox nommée 'mybox' à partir de l'image Ubuntu ?"
+          answers:
+            - id: a
+              text: "distrobox create --name mybox --image ubuntu"
+              correct: true
+            - id: b
+              text: "distrobox run --name mybox ubuntu"
+              correct: false
+            - id: c
+              text: "distrobox new ubuntu mybox"
+              correct: false
+            - id: d
+              text: "distrobox start mybox ubuntu"
+              correct: false
+        - id: q3
+          type: single
+          question: "Que fait la commande distrobox-export --app ?"
+          answers:
+            - id: a
+              text: "Exporte une application graphique du conteneur vers le bureau de l'hôte"
+              correct: true
+            - id: b
+              text: "Exporte le conteneur sous forme d'archive compressée"
+              correct: false
+            - id: c
+              text: "Copie le système de fichiers du conteneur vers l'hôte"
+              correct: false
+            - id: d
+              text: "Crée une image Docker à partir de la Distrobox"
+              correct: false
+        - id: q4
+          type: single
+          question: "Quelle commande permet d'entrer dans une Distrobox existante nommée 'mybox' ?"
+          answers:
+            - id: a
+              text: "distrobox enter mybox"
+              correct: true
+            - id: b
+              text: "distrobox run mybox"
+              correct: false
+            - id: c
+              text: "distrobox shell mybox"
+              correct: false
+            - id: d
+              text: "distrobox exec mybox bash"
+              correct: false

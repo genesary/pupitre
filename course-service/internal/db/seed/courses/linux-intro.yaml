@@ -150,3 +150,92 @@ spec:
         journalctl -f          # tous les logs en temps réel
         journalctl --since "1 hour ago"   # dernière heure
         ```
+    - name: "Quiz Introduction à Linux"
+      type: "quiz"
+      inline: true
+      prerequisites:
+        - "navigation-et-système-de-fichiers"
+        - "utilisateurs,-groupes-et-permissions"
+        - "processus,-services-et-réseau"
+      passingScore: 75
+      questions:
+        - id: q1
+          type: single
+          question: "Quelle commande affiche le répertoire de travail courant ?"
+          answers:
+            - id: a
+              text: "pwd"
+              correct: true
+            - id: b
+              text: "cwd"
+              correct: false
+            - id: c
+              text: "dir"
+              correct: false
+            - id: d
+              text: "ls ."
+              correct: false
+        - id: q2
+          type: single
+          question: "Quelles permissions chmod 755 applique-t-il sur un fichier ?"
+          answers:
+            - id: a
+              text: "rwxr-xr-x (propriétaire : tout, groupe/autres : lecture+exécution)"
+              correct: true
+            - id: b
+              text: "rwxrwxrwx (tous : tout)"
+              correct: false
+            - id: c
+              text: "rw-r--r-- (propriétaire : lecture+écriture, autres : lecture)"
+              correct: false
+            - id: d
+              text: "r-xr-xr-x (lecture+exécution pour tous, pas d'écriture)"
+              correct: false
+        - id: q3
+          type: single
+          question: "Quelle commande active un service systemd pour qu'il démarre automatiquement au boot ?"
+          answers:
+            - id: a
+              text: "systemctl enable <service>"
+              correct: true
+            - id: b
+              text: "systemctl start <service>"
+              correct: false
+            - id: c
+              text: "systemctl activate <service>"
+              correct: false
+            - id: d
+              text: "service <service> autostart"
+              correct: false
+        - id: q4
+          type: single
+          question: "Que affiche ps aux ?"
+          answers:
+            - id: a
+              text: "Tous les processus en cours pour tous les utilisateurs"
+              correct: true
+            - id: b
+              text: "Uniquement les processus de l'utilisateur courant"
+              correct: false
+            - id: c
+              text: "Les connexions réseau et les ports en écoute"
+              correct: false
+            - id: d
+              text: "L'utilisation du disque par processus"
+              correct: false
+        - id: q5
+          type: single
+          question: "Quelle commande ajoute l'utilisateur alice au groupe docker ?"
+          answers:
+            - id: a
+              text: "usermod -aG docker alice"
+              correct: true
+            - id: b
+              text: "groupadd alice docker"
+              correct: false
+            - id: c
+              text: "adduser docker alice"
+              correct: false
+            - id: d
+              text: "chgrp docker alice"
+              correct: false

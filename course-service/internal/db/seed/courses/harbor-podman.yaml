@@ -133,3 +133,74 @@ spec:
         |---|---|
         | Docs Podman | docs.podman.io |
         | Manuel Podman | `man podman-run` dans le terminal |
+    - name: "Quiz Harbor & Podman"
+      type: "quiz"
+      inline: true
+      prerequisites:
+        - "harbor-searching-&-podman-running"
+      passingScore: 75
+      questions:
+        - id: q1
+          type: single
+          question: "Qu'est-ce que Harbor ?"
+          answers:
+            - id: a
+              text: "Un registre d'images de conteneurs open-source avec gestion de la sécurité et des accès"
+              correct: true
+            - id: b
+              text: "Un runtime de conteneurs alternatif à Docker"
+              correct: false
+            - id: c
+              text: "Un plugin réseau pour Kubernetes"
+              correct: false
+            - id: d
+              text: "Un outil de pipeline CI/CD"
+              correct: false
+        - id: q2
+          type: single
+          question: "Quelle commande Podman télécharge une image depuis un registre ?"
+          answers:
+            - id: a
+              text: "podman pull <image>"
+              correct: true
+            - id: b
+              text: "podman fetch <image>"
+              correct: false
+            - id: c
+              text: "podman get <image>"
+              correct: false
+            - id: d
+              text: "podman download <image>"
+              correct: false
+        - id: q3
+          type: single
+          question: "Quelle est la principale différence entre Podman et Docker par défaut ?"
+          answers:
+            - id: a
+              text: "Podman fonctionne sans daemon et est rootless par défaut"
+              correct: true
+            - id: b
+              text: "Podman ne supporte que les conteneurs Windows"
+              correct: false
+            - id: c
+              text: "Podman ne peut pas construire des images"
+              correct: false
+            - id: d
+              text: "Podman nécessite un cluster Kubernetes pour fonctionner"
+              correct: false
+        - id: q4
+          type: single
+          question: "Que montre la commande podman ps -a ?"
+          answers:
+            - id: a
+              text: "Tous les conteneurs, y compris ceux qui sont arrêtés"
+              correct: true
+            - id: b
+              text: "Uniquement les conteneurs en cours d'exécution"
+              correct: false
+            - id: c
+              text: "Toutes les images disponibles sur le système"
+              correct: false
+            - id: d
+              text: "Tous les volumes Podman"
+              correct: false
