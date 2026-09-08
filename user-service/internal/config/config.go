@@ -36,6 +36,9 @@ const (
 	// defaultLeaderboardMaxEntries is the default number of rows returned by
 	// the badge leaderboard endpoint.
 	defaultLeaderboardMaxEntries = 20
+	// defaultUploadsDir is the directory where uploaded files (e.g. avatars)
+	// are stored on disk.
+	defaultUploadsDir = "./uploads"
 	// defaultDBMaxOpenConns is the default maximum number of open database
 	// connections held in the pool.
 	defaultDBMaxOpenConns = 20
@@ -147,6 +150,10 @@ type Config struct {
 	// LeaderboardMaxEntries caps the number of rows returned by the badge
 	// leaderboard endpoint. Override with LEADERBOARD_MAX_ENTRIES env var.
 	LeaderboardMaxEntries int `yaml:"leaderboardMaxEntries"`
+
+	// UploadsDir is the directory where uploaded files (avatars, etc.) are
+	// stored. Override with UPLOADS_DIR env var.
+	UploadsDir string `yaml:"uploadsDir"`
 }
 
 // FindProvider returns the ProviderConfig with the given id, or nil if no
@@ -186,6 +193,7 @@ func Load() (cfg *Config, warnings []string) { //nolint:nonamedreturns // gocrit
 	cfg.AuthRateLimitRequests = intFromEnv("AUTH_RATE_LIMIT_REQUESTS", cfg.AuthRateLimitRequests)
 	cfg.AuthRateLimitWindowSeconds = intFromEnv("AUTH_RATE_LIMIT_WINDOW_SECONDS", cfg.AuthRateLimitWindowSeconds)
 	cfg.LeaderboardMaxEntries = positiveIntFromEnv("LEADERBOARD_MAX_ENTRIES", cfg.LeaderboardMaxEntries)
+	cfg.UploadsDir = stringFromEnv("UPLOADS_DIR", cfg.UploadsDir)
 
 	loadAdminPassword(cfg)
 
@@ -213,6 +221,7 @@ func defaultConfig() *Config {
 		AuthRateLimitRequests:      defaultAuthRateLimitRequests,
 		AuthRateLimitWindowSeconds: defaultAuthRateLimitWindowSeconds,
 		LeaderboardMaxEntries:      defaultLeaderboardMaxEntries,
+		UploadsDir:                 defaultUploadsDir,
 	}
 }
 

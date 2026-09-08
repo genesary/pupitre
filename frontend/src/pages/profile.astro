@@ -135,7 +135,11 @@ import App from '../layouts/App.astro';
 
       // Sidebar mini-profile
       const avatarArea = document.getElementById('avatar-area')!;
-      const avatarIsUrl = user.avatarUrl && (user.avatarUrl.startsWith('http://') || user.avatarUrl.startsWith('https://'));
+      const avatarIsUrl = user.avatarUrl && (
+        user.avatarUrl.startsWith('http://') ||
+        user.avatarUrl.startsWith('https://') ||
+        user.avatarUrl.startsWith('/uploads/avatars/')
+      );
       if (avatarIsUrl) {
         avatarArea.innerHTML = `<img src="${user.avatarUrl}" alt="${user.username}" class="avatar-circle" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" /><div class="avatar-initial" style="display:none">${initial}</div>`;
       } else if (user.avatarUrl) {
@@ -161,7 +165,7 @@ import App from '../layouts/App.astro';
       document.getElementById('view-email')!.textContent = user.email;
       document.getElementById('view-bio')!.textContent = user.bio || '—';
 
-      if (!isSso && user.avatarUrl) {
+      if (!isSso && user.avatarUrl && !user.avatarUrl.startsWith('/uploads/avatars/')) {
         const row = document.getElementById('view-avatar-row')!;
         row.style.display = 'grid';
         document.getElementById('view-avatar')!.textContent = user.avatarUrl;
@@ -318,11 +322,19 @@ import App from '../layouts/App.astro';
 
       const bio = (document.getElementById('edit-bio') as HTMLTextAreaElement).value;
       const avatarInput = document.getElementById('edit-avatar') as HTMLInputElement;
-      const body: Record<string, string> = { bio };
-      if (avatarInput && avatarInput.value) body.avatarUrl = avatarInput.value;
+      const avatarVal = avatarInput?.value?.trim() ?? '';
 
       try {
-        const updated = await apiFetch('/auth/profile', { method: 'PUT', body, token: token! }) as any;
+        let updated: any;
+        if (avatarVal.startsWith('http://') || avatarVal.startsWith('https://')) {
+          // Server-side fetch + SSRF-safe re-encode; then save bio separately.
+          await apiFetch('/auth/avatar/fetch', { method: 'POST', body: { url: avatarVal }, token: token! });
+          updated = await apiFetch('/auth/profile', { method: 'PUT', body: { bio }, token: token! });
+        } else {
+          const body: Record<string, string> = { bio };
+          if (avatarVal) body.avatarUrl = avatarVal;
+          updated = await apiFetch('/auth/profile', { method: 'PUT', body, token: token! });
+        }
         user = updated;
         localStorage.setItem('user', JSON.stringify(updated));
         document.getElementById('view-mode')!.style.display = 'block';
