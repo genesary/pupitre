@@ -128,3 +128,92 @@ spec:
         ```
 
         > Ne jamais commiter des manifests Secret avec des valeurs en clair dans git — utiliser Sealed Secrets ou un coffre-fort externe.
+    - name: "Quiz Kubernetes Basics"
+      type: "quiz"
+      inline: true
+      prerequisites:
+        - "concepts-fondamentaux"
+        - "deployments-et-services"
+        - "configmaps-et-secrets"
+      passingScore: 75
+      questions:
+        - id: q1
+          type: single
+          question: "What is the smallest deployable unit in Kubernetes?"
+          answers:
+            - id: a
+              text: "Pod"
+              correct: true
+            - id: b
+              text: "Container"
+              correct: false
+            - id: c
+              text: "Node"
+              correct: false
+            - id: d
+              text: "ReplicaSet"
+              correct: false
+        - id: q2
+          type: single
+          question: "Which Kubernetes resource manages rolling updates and rollbacks for a set of Pods?"
+          answers:
+            - id: a
+              text: "Deployment"
+              correct: true
+            - id: b
+              text: "Service"
+              correct: false
+            - id: c
+              text: "ConfigMap"
+              correct: false
+            - id: d
+              text: "Namespace"
+              correct: false
+        - id: q3
+          type: single
+          question: "What is the main purpose of a Kubernetes Service?"
+          answers:
+            - id: a
+              text: "Expose a set of Pods with a stable network endpoint"
+              correct: true
+            - id: b
+              text: "Store sensitive configuration values"
+              correct: false
+            - id: c
+              text: "Schedule Pods onto nodes"
+              correct: false
+            - id: d
+              text: "Persist data across Pod restarts"
+              correct: false
+        - id: q4
+          type: single
+          question: "How does a Secret differ from a ConfigMap?"
+          answers:
+            - id: a
+              text: "Secrets are base64-encoded and intended for sensitive data"
+              correct: true
+            - id: b
+              text: "Secrets are stored on disk while ConfigMaps stay in memory"
+              correct: false
+            - id: c
+              text: "Secrets can only be mounted as volumes, not env vars"
+              correct: false
+            - id: d
+              text: "There is no difference; both are identical resources"
+              correct: false
+        - id: q5
+          type: single
+          question: "Which command lists all Pods in the current namespace?"
+          answers:
+            - id: a
+              text: "kubectl get pods"
+              correct: true
+            - id: b
+              text: "kubectl list pods"
+              correct: false
+            - id: c
+              text: "kubectl describe pods"
+              correct: false
+            - id: d
+              text: "kubectl show pods"
+              correct: false

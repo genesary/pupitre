@@ -130,3 +130,74 @@ spec:
         |---|---|
         | Docs Podman | docs.podman.io |
         | Manuel Podman | `man podman-run` dans le terminal |
+    - name: "Quiz Harbor & Podman"
+      type: "quiz"
+      inline: true
+      prerequisites:
+        - "harbor-searching-&-podman-running"
+      passingScore: 75
+      questions:
+        - id: q1
+          type: single
+          question: "What is Harbor?"
+          answers:
+            - id: a
+              text: "An open-source container image registry with security and access control"
+              correct: true
+            - id: b
+              text: "A container runtime alternative to Docker"
+              correct: false
+            - id: c
+              text: "A Kubernetes network plugin"
+              correct: false
+            - id: d
+              text: "A CI/CD pipeline tool"
+              correct: false
+        - id: q2
+          type: single
+          question: "Which Podman command pulls an image from a registry?"
+          answers:
+            - id: a
+              text: "podman pull <image>"
+              correct: true
+            - id: b
+              text: "podman fetch <image>"
+              correct: false
+            - id: c
+              text: "podman get <image>"
+              correct: false
+            - id: d
+              text: "podman download <image>"
+              correct: false
+        - id: q3
+          type: single
+          question: "What makes Podman different from Docker by default?"
+          answers:
+            - id: a
+              text: "Podman runs containers without a daemon and is rootless by default"
+              correct: true
+            - id: b
+              text: "Podman only supports Windows containers"
+              correct: false
+            - id: c
+              text: "Podman cannot build images"
+              correct: false
+            - id: d
+              text: "Podman requires a Kubernetes cluster to run"
+              correct: false
+        - id: q4
+          type: single
+          question: "What does podman ps -a show?"
+          answers:
+            - id: a
+              text: "All containers, including stopped ones"
+              correct: true
+            - id: b
+              text: "Only currently running containers"
+              correct: false
+            - id: c
+              text: "All available images on the system"
+              correct: false
+            - id: d
+              text: "All Podman volumes"
+              correct: false

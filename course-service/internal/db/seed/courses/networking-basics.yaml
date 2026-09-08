@@ -165,3 +165,92 @@ spec:
         # Débannir une IP
         fail2ban-client set sshd unbanip 1.2.3.4
         ```
+    - name: "Quiz Networking Basics"
+      type: "quiz"
+      inline: true
+      prerequisites:
+        - "modèle-tcp/ip-et-protocoles"
+        - "adressage-ip-et-sous-réseaux"
+        - "pare-feux-et-sécurité-réseau"
+      passingScore: 75
+      questions:
+        - id: q1
+          type: single
+          question: "How many layers does the TCP/IP model have?"
+          answers:
+            - id: a
+              text: "4"
+              correct: true
+            - id: b
+              text: "7"
+              correct: false
+            - id: c
+              text: "5"
+              correct: false
+            - id: d
+              text: "3"
+              correct: false
+        - id: q2
+          type: single
+          question: "What subnet mask corresponds to the CIDR notation /24?"
+          answers:
+            - id: a
+              text: "255.255.255.0"
+              correct: true
+            - id: b
+              text: "255.255.0.0"
+              correct: false
+            - id: c
+              text: "255.0.0.0"
+              correct: false
+            - id: d
+              text: "255.255.255.128"
+              correct: false
+        - id: q3
+          type: single
+          question: "Which protocol is connectionless and does not guarantee delivery?"
+          answers:
+            - id: a
+              text: "UDP"
+              correct: true
+            - id: b
+              text: "TCP"
+              correct: false
+            - id: c
+              text: "HTTP"
+              correct: false
+            - id: d
+              text: "FTP"
+              correct: false
+        - id: q4
+          type: single
+          question: "Which command shows all open listening TCP ports on a Linux system?"
+          answers:
+            - id: a
+              text: "ss -tlnp"
+              correct: true
+            - id: b
+              text: "ifconfig -a"
+              correct: false
+            - id: c
+              text: "ip route show"
+              correct: false
+            - id: d
+              text: "ping localhost"
+              correct: false
+        - id: q5
+          type: single
+          question: "What does NAT (Network Address Translation) allow?"
+          answers:
+            - id: a
+              text: "Multiple devices on a private network to share a single public IP"
+              correct: true
+            - id: b
+              text: "Encrypt traffic between two endpoints"
+              correct: false
+            - id: c
+              text: "Assign dynamic IP addresses to hosts"
+              correct: false
+            - id: d
+              text: "Route packets between VLANs"
+              correct: false

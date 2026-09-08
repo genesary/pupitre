@@ -103,3 +103,92 @@ spec:
         docker compose logs -f    # suivre les logs
         docker compose down -v    # arrêter et supprimer les volumes
         ```
+    - name: "Quiz Docker Fundamentals"
+      type: "quiz"
+      inline: true
+      prerequisites:
+        - "images-et-conteneurs"
+        - "volumes-et-réseau"
+        - "docker-compose"
+      passingScore: 75
+      questions:
+        - id: q1
+          type: single
+          question: "Which command builds a Docker image from a Dockerfile in the current directory?"
+          answers:
+            - id: a
+              text: "docker build ."
+              correct: true
+            - id: b
+              text: "docker create ."
+              correct: false
+            - id: c
+              text: "docker run ."
+              correct: false
+            - id: d
+              text: "docker compile ."
+              correct: false
+        - id: q2
+          type: single
+          question: "What is the main purpose of a Docker volume?"
+          answers:
+            - id: a
+              text: "Persist data independently of the container lifecycle"
+              correct: true
+            - id: b
+              text: "Expose container ports to the host"
+              correct: false
+            - id: c
+              text: "Reduce image size"
+              correct: false
+            - id: d
+              text: "Share environment variables between containers"
+              correct: false
+        - id: q3
+          type: single
+          question: "Which flag runs a container in detached (background) mode?"
+          answers:
+            - id: a
+              text: "-d"
+              correct: true
+            - id: b
+              text: "-b"
+              correct: false
+            - id: c
+              text: "--background"
+              correct: false
+            - id: d
+              text: "-r"
+              correct: false
+        - id: q4
+          type: single
+          question: "What file does Docker Compose read by default to define a multi-container application?"
+          answers:
+            - id: a
+              text: "docker-compose.yml"
+              correct: true
+            - id: b
+              text: "Dockerfile"
+              correct: false
+            - id: c
+              text: "compose.json"
+              correct: false
+            - id: d
+              text: "services.yaml"
+              correct: false
+        - id: q5
+          type: single
+          question: "What does the EXPOSE instruction in a Dockerfile do?"
+          answers:
+            - id: a
+              text: "Documents which port the container listens on at runtime"
+              correct: true
+            - id: b
+              text: "Automatically publishes the port to the host"
+              correct: false
+            - id: c
+              text: "Opens a firewall rule on the host"
+              correct: false
+            - id: d
+              text: "Starts the container process on that port"
+              correct: false

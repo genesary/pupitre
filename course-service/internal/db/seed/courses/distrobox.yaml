@@ -129,3 +129,74 @@ spec:
         |---|---|
         | Documentation Distrobox | distrobox.it |
         | GitHub Distrobox | github.com/89luca89/distrobox |
+    - name: "Quiz Distrobox"
+      type: "quiz"
+      inline: true
+      prerequisites:
+        - "distrobox-creation-and-application-export"
+      passingScore: 75
+      questions:
+        - id: q1
+          type: single
+          question: "What is the primary purpose of Distrobox?"
+          answers:
+            - id: a
+              text: "Run any Linux distribution inside a container with full host integration"
+              correct: true
+            - id: b
+              text: "Build and publish Docker images"
+              correct: false
+            - id: c
+              text: "Manage virtual machines on Linux"
+              correct: false
+            - id: d
+              text: "Orchestrate containers across multiple nodes"
+              correct: false
+        - id: q2
+          type: single
+          question: "Which command creates a new Distrobox named 'mybox' using the Ubuntu image?"
+          answers:
+            - id: a
+              text: "distrobox create --name mybox --image ubuntu"
+              correct: true
+            - id: b
+              text: "distrobox run --name mybox ubuntu"
+              correct: false
+            - id: c
+              text: "distrobox new ubuntu mybox"
+              correct: false
+            - id: d
+              text: "distrobox start mybox ubuntu"
+              correct: false
+        - id: q3
+          type: single
+          question: "What does distrobox-export --app do?"
+          answers:
+            - id: a
+              text: "Exports a GUI application from the container to the host desktop"
+              correct: true
+            - id: b
+              text: "Exports the container as a compressed archive"
+              correct: false
+            - id: c
+              text: "Copies the container filesystem to the host"
+              correct: false
+            - id: d
+              text: "Creates a Docker image from the Distrobox"
+              correct: false
+        - id: q4
+          type: single
+          question: "Which command enters an existing Distrobox named 'mybox'?"
+          answers:
+            - id: a
+              text: "distrobox enter mybox"
+              correct: true
+            - id: b
+              text: "distrobox run mybox"
+              correct: false
+            - id: c
+              text: "distrobox shell mybox"
+              correct: false
+            - id: d
+              text: "distrobox exec mybox bash"
+              correct: false
