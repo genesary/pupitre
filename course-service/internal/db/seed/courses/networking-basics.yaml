@@ -176,7 +176,7 @@ spec:
       questions:
         - id: q1
           type: single
-          question: "How many layers does the TCP/IP model have?"
+          question: "Combien de couches comporte le modèle TCP/IP ?"
           answers:
             - id: a
               text: "4"
@@ -192,7 +192,7 @@ spec:
               correct: false
         - id: q2
           type: single
-          question: "What subnet mask corresponds to the CIDR notation /24?"
+          question: "Quel masque de sous-réseau correspond à la notation CIDR /24 ?"
           answers:
             - id: a
               text: "255.255.255.0"
@@ -208,7 +208,7 @@ spec:
               correct: false
         - id: q3
           type: single
-          question: "Which protocol is connectionless and does not guarantee delivery?"
+          question: "Quel protocole est sans connexion et ne garantit pas la livraison des paquets ?"
           answers:
             - id: a
               text: "UDP"
@@ -224,7 +224,7 @@ spec:
               correct: false
         - id: q4
           type: single
-          question: "Which command shows all open listening TCP ports on a Linux system?"
+          question: "Quelle commande affiche tous les ports TCP en écoute sur un système Linux ?"
           answers:
             - id: a
               text: "ss -tlnp"
@@ -240,17 +240,17 @@ spec:
               correct: false
         - id: q5
           type: single
-          question: "What does NAT (Network Address Translation) allow?"
+          question: "À quoi sert le NAT (Network Address Translation) ?"
           answers:
             - id: a
-              text: "Multiple devices on a private network to share a single public IP"
+              text: "Permettre à plusieurs machines d'un réseau privé de partager une seule IP publique"
               correct: true
             - id: b
-              text: "Encrypt traffic between two endpoints"
+              text: "Chiffrer le trafic entre deux points d'extrémité"
               correct: false
             - id: c
-              text: "Assign dynamic IP addresses to hosts"
+              text: "Attribuer dynamiquement des adresses IP aux hôtes"
               correct: false
             - id: d
-              text: "Route packets between VLANs"
+              text: "Router les paquets entre des VLANs"
               correct: false

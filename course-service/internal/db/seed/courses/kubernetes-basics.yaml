@@ -139,7 +139,7 @@ spec:
       questions:
         - id: q1
           type: single
-          question: "What is the smallest deployable unit in Kubernetes?"
+          question: "Quelle est la plus petite unité déployable dans Kubernetes ?"
           answers:
             - id: a
               text: "Pod"
@@ -155,7 +155,7 @@ spec:
               correct: false
         - id: q2
           type: single
-          question: "Which Kubernetes resource manages rolling updates and rollbacks for a set of Pods?"
+          question: "Quelle ressource Kubernetes gère les mises à jour progressives et les rollbacks d'un ensemble de Pods ?"
           answers:
             - id: a
               text: "Deployment"
@@ -171,39 +171,39 @@ spec:
               correct: false
         - id: q3
           type: single
-          question: "What is the main purpose of a Kubernetes Service?"
+          question: "Quel est le rôle principal d'un Service Kubernetes ?"
           answers:
             - id: a
-              text: "Expose a set of Pods with a stable network endpoint"
+              text: "Exposer un ensemble de Pods avec un point d'accès réseau stable"
               correct: true
             - id: b
-              text: "Store sensitive configuration values"
+              text: "Stocker des valeurs de configuration sensibles"
               correct: false
             - id: c
-              text: "Schedule Pods onto nodes"
+              text: "Planifier les Pods sur les nœuds"
               correct: false
             - id: d
-              text: "Persist data across Pod restarts"
+              text: "Persister les données entre les redémarrages de Pods"
               correct: false
         - id: q4
           type: single
-          question: "How does a Secret differ from a ConfigMap?"
+          question: "En quoi un Secret diffère-t-il d'un ConfigMap ?"
           answers:
             - id: a
-              text: "Secrets are base64-encoded and intended for sensitive data"
+              text: "Les Secrets sont encodés en base64 et destinés aux données sensibles"
               correct: true
             - id: b
-              text: "Secrets are stored on disk while ConfigMaps stay in memory"
+              text: "Les Secrets sont stockés sur disque tandis que les ConfigMaps restent en mémoire"
               correct: false
             - id: c
-              text: "Secrets can only be mounted as volumes, not env vars"
+              text: "Les Secrets ne peuvent être montés qu'en volumes, pas en variables d'environnement"
               correct: false
             - id: d
-              text: "There is no difference; both are identical resources"
+              text: "Il n'y a aucune différence, ce sont des ressources identiques"
               correct: false
         - id: q5
           type: single
-          question: "Which command lists all Pods in the current namespace?"
+          question: "Quelle commande liste tous les Pods du namespace courant ?"
           answers:
             - id: a
               text: "kubectl get pods"

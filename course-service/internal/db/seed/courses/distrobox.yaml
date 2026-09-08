@@ -138,23 +138,23 @@ spec:
       questions:
         - id: q1
           type: single
-          question: "What is the primary purpose of Distrobox?"
+          question: "Quel est le rôle principal de Distrobox ?"
           answers:
             - id: a
-              text: "Run any Linux distribution inside a container with full host integration"
+              text: "Faire tourner n'importe quelle distribution Linux dans un conteneur avec une intégration complète avec l'hôte"
               correct: true
             - id: b
-              text: "Build and publish Docker images"
+              text: "Construire et publier des images Docker"
               correct: false
             - id: c
-              text: "Manage virtual machines on Linux"
+              text: "Gérer des machines virtuelles sous Linux"
               correct: false
             - id: d
-              text: "Orchestrate containers across multiple nodes"
+              text: "Orchestrer des conteneurs sur plusieurs nœuds"
               correct: false
         - id: q2
           type: single
-          question: "Which command creates a new Distrobox named 'mybox' using the Ubuntu image?"
+          question: "Quelle commande crée une Distrobox nommée 'mybox' à partir de l'image Ubuntu ?"
           answers:
             - id: a
               text: "distrobox create --name mybox --image ubuntu"
@@ -170,23 +170,23 @@ spec:
               correct: false
         - id: q3
           type: single
-          question: "What does distrobox-export --app do?"
+          question: "Que fait la commande distrobox-export --app ?"
           answers:
             - id: a
-              text: "Exports a GUI application from the container to the host desktop"
+              text: "Exporte une application graphique du conteneur vers le bureau de l'hôte"
               correct: true
             - id: b
-              text: "Exports the container as a compressed archive"
+              text: "Exporte le conteneur sous forme d'archive compressée"
               correct: false
             - id: c
-              text: "Copies the container filesystem to the host"
+              text: "Copie le système de fichiers du conteneur vers l'hôte"
               correct: false
             - id: d
-              text: "Creates a Docker image from the Distrobox"
+              text: "Crée une image Docker à partir de la Distrobox"
               correct: false
         - id: q4
           type: single
-          question: "Which command enters an existing Distrobox named 'mybox'?"
+          question: "Quelle commande permet d'entrer dans une Distrobox existante nommée 'mybox' ?"
           answers:
             - id: a
               text: "distrobox enter mybox"

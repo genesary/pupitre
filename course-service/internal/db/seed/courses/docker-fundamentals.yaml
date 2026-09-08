@@ -114,7 +114,7 @@ spec:
       questions:
         - id: q1
           type: single
-          question: "Which command builds a Docker image from a Dockerfile in the current directory?"
+          question: "Quelle commande construit une image Docker à partir du Dockerfile du répertoire courant ?"
           answers:
             - id: a
               text: "docker build ."
@@ -130,23 +130,23 @@ spec:
               correct: false
         - id: q2
           type: single
-          question: "What is the main purpose of a Docker volume?"
+          question: "Quel est le rôle principal d'un volume Docker ?"
           answers:
             - id: a
-              text: "Persist data independently of the container lifecycle"
+              text: "Persister des données indépendamment du cycle de vie du conteneur"
               correct: true
             - id: b
-              text: "Expose container ports to the host"
+              text: "Exposer les ports du conteneur vers l'hôte"
               correct: false
             - id: c
-              text: "Reduce image size"
+              text: "Réduire la taille de l'image"
               correct: false
             - id: d
-              text: "Share environment variables between containers"
+              text: "Partager des variables d'environnement entre conteneurs"
               correct: false
         - id: q3
           type: single
-          question: "Which flag runs a container in detached (background) mode?"
+          question: "Quel flag lance un conteneur en mode détaché (arrière-plan) ?"
           answers:
             - id: a
               text: "-d"
@@ -162,7 +162,7 @@ spec:
               correct: false
         - id: q4
           type: single
-          question: "What file does Docker Compose read by default to define a multi-container application?"
+          question: "Quel fichier Docker Compose lit-il par défaut pour définir une application multi-conteneurs ?"
           answers:
             - id: a
               text: "docker-compose.yml"
@@ -178,17 +178,17 @@ spec:
               correct: false
         - id: q5
           type: single
-          question: "What does the EXPOSE instruction in a Dockerfile do?"
+          question: "Que fait l'instruction EXPOSE dans un Dockerfile ?"
           answers:
             - id: a
-              text: "Documents which port the container listens on at runtime"
+              text: "Documente le port sur lequel le conteneur écoute à l'exécution"
               correct: true
             - id: b
-              text: "Automatically publishes the port to the host"
+              text: "Publie automatiquement le port vers l'hôte"
               correct: false
             - id: c
-              text: "Opens a firewall rule on the host"
+              text: "Ouvre une règle pare-feu sur l'hôte"
               correct: false
             - id: d
-              text: "Starts the container process on that port"
+              text: "Lance le processus du conteneur sur ce port"
               correct: false

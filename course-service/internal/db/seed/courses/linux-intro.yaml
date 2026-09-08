@@ -155,7 +155,7 @@ spec:
       questions:
         - id: q1
           type: single
-          question: "Which command prints your current working directory?"
+          question: "Quelle commande affiche le répertoire de travail courant ?"
           answers:
             - id: a
               text: "pwd"
@@ -171,23 +171,23 @@ spec:
               correct: false
         - id: q2
           type: single
-          question: "What permissions does chmod 755 set on a file?"
+          question: "Quelles permissions chmod 755 applique-t-il sur un fichier ?"
           answers:
             - id: a
-              text: "rwxr-xr-x (owner: all, group/others: read+execute)"
+              text: "rwxr-xr-x (propriétaire : tout, groupe/autres : lecture+exécution)"
               correct: true
             - id: b
-              text: "rwxrwxrwx (everyone: all)"
+              text: "rwxrwxrwx (tous : tout)"
               correct: false
             - id: c
-              text: "rw-r--r-- (owner: read+write, others: read)"
+              text: "rw-r--r-- (propriétaire : lecture+écriture, autres : lecture)"
               correct: false
             - id: d
-              text: "r-xr-xr-x (read+execute for all, no write)"
+              text: "r-xr-xr-x (lecture+exécution pour tous, pas d'écriture)"
               correct: false
         - id: q3
           type: single
-          question: "Which command enables a systemd service to start automatically at boot?"
+          question: "Quelle commande active un service systemd pour qu'il démarre automatiquement au boot ?"
           answers:
             - id: a
               text: "systemctl enable <service>"
@@ -203,23 +203,23 @@ spec:
               correct: false
         - id: q4
           type: single
-          question: "What does ps aux display?"
+          question: "Que affiche ps aux ?"
           answers:
             - id: a
-              text: "All running processes for all users"
+              text: "Tous les processus en cours pour tous les utilisateurs"
               correct: true
             - id: b
-              text: "Only processes of the current user"
+              text: "Uniquement les processus de l'utilisateur courant"
               correct: false
             - id: c
-              text: "Network connections and listening ports"
+              text: "Les connexions réseau et les ports en écoute"
               correct: false
             - id: d
-              text: "Disk usage per process"
+              text: "L'utilisation du disque par processus"
               correct: false
         - id: q5
           type: single
-          question: "Which command adds user alice to the docker group?"
+          question: "Quelle commande ajoute l'utilisateur alice au groupe docker ?"
           answers:
             - id: a
               text: "usermod -aG docker alice"
