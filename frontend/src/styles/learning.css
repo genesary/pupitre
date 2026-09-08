@@ -724,6 +724,7 @@
     transition: 0.12s;
     text-align: left;
     width: 100%;
+    user-select: none;
   }
   .quiz-option:hover {
     border-color: var(--blue);
@@ -940,6 +941,7 @@
     font-weight: 600;
     font-size: 0.95rem;
     line-height: 1.5;
+    user-select: none;
   }
   .quiz-q-points {
     font-size: 0.8rem;
@@ -1675,6 +1677,7 @@
     font-weight: 600;
     font-size: 0.875rem;
     margin-bottom: 4px;
+    user-select: none;
   }
   .review-q-score {
     font-size: 0.8rem;
