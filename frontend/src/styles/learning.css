@@ -602,6 +602,7 @@
     border-radius: 14px;
     padding: 24px;
     margin-top: 32px;
+    user-select: none;
   }
   .mini-quiz-header {
     display: flex;
@@ -831,6 +832,7 @@
     gap: 0;
     min-height: calc(100vh - 56px);
     align-items: flex-start;
+    user-select: none;
   }
   .quiz-main {
     padding: 28px 34px;

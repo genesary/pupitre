@@ -608,6 +608,13 @@ import App from '../../../../layouts/App.astro';
     function renderMiniQuiz(quizMod: any, quizIndex: number, onPassed?: () => void) {
       const container = document.getElementById('mini-quiz')!;
       container.style.display = 'block';
+
+      container.addEventListener('copy', (e) => { e.preventDefault(); });
+      container.addEventListener('cut',  (e) => { e.preventDefault(); });
+      container.addEventListener('contextmenu', (e) => {
+        if (!(e.target as HTMLElement).closest('input, textarea')) e.preventDefault();
+      });
+
       const questions = quizMod.questions;
 
       let answers: Record<string, any> = {};
