@@ -1,0 +1,13 @@
+# Dev seed path — loaded by SEED_DEV_COURSES.
+slug: parcours-securite
+spec:
+  title: "Parcours Sécurité"
+  description: "Développe tes compétences en cybersécurité, des fondamentaux jusqu'aux techniques offensives et défensives."
+  kind: course
+  level: beginner
+  courses:
+    - cybersecurity-intro
+    - secrets-management
+    - container-security
+    - devsecops
+    - pentesting-basics

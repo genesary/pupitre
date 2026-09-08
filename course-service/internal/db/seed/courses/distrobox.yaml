@@ -28,6 +28,9 @@ spec:
           checkParams:
             container_name: lab
             app: xcowfortune
+      skills:
+        - linux
+        - containers
       content: |
         ## Objectifs
 

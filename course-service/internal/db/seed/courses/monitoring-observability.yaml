@@ -12,6 +12,8 @@ spec:
   modules:
     - name: "Les trois piliers de l'observabilité"
       type: text
+      skills:
+        - monitoring
       content: |
         ## Les trois piliers de l'observabilité
 
@@ -67,6 +69,8 @@ spec:
 
     - name: "Prometheus & Grafana"
       type: text
+      skills:
+        - monitoring
       content: |
         ## Prometheus & Grafana
 
@@ -136,6 +140,8 @@ spec:
 
     - name: "Alerting et SLOs"
       type: text
+      skills:
+        - monitoring
       content: |
         ## Alerting et SLOs
 

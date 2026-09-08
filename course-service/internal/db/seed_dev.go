@@ -18,12 +18,21 @@ import (
 // devCourseDir is the embedded directory holding the dev seed courses.
 const devCourseDir = "seed/courses"
 
+// devPathDir is the embedded directory holding the dev seed learning paths.
+const devPathDir = "seed/paths"
+
 // devCourses holds the demo course catalogue used to browse and exercise
 // the app in a dev environment. It is embedded in the binary rather than
 // mounted, so seeding works the same in a KinD cluster and on a laptop.
 //
 //go:embed seed/courses/*.yaml
 var devCourses embed.FS
+
+// devPathFiles holds the dev learning-path definitions. Embedded alongside
+// the course files so that the same YAML-based pattern covers both resources.
+//
+//go:embed seed/paths/*.yaml
+var devPathFiles embed.FS
 
 // Dev-seed modes, selected by the SEED_DEV_COURSES environment variable.
 const (
@@ -130,4 +139,50 @@ func seedOneDevCourse(
 	default:
 		return seedCreated, nil
 	}
+}
+
+// SeedDevPaths loads the embedded dev path definitions into the database,
+// following the same YAML-file pattern as SeedDevCourses.
+func SeedDevPaths(ctx context.Context, paths repository.PathRepository, mode string) error {
+	if mode != SeedDevCoursesMissing && mode != SeedDevCoursesOverwrite {
+		return nil
+	}
+
+	entries, err := fs.ReadDir(devPathFiles, devPathDir)
+	if err != nil {
+		return fmt.Errorf("read embedded dev paths: %w", err)
+	}
+
+	sort.Slice(entries, func(i, j int) bool { return entries[i].Name() < entries[j].Name() })
+
+	for _, entry := range entries {
+		data, err := devPathFiles.ReadFile(path.Join(devPathDir, entry.Name()))
+		if err != nil {
+			return fmt.Errorf("read dev path %s: %w", entry.Name(), err)
+		}
+
+		file, err := definition.ParsePathFile(data)
+		if err != nil {
+			return fmt.Errorf("dev path %s: %w", entry.Name(), err)
+		}
+
+		p := file.Spec.ToPath(file.Slug)
+
+		if mode == SeedDevCoursesOverwrite {
+			err = paths.Upsert(ctx, p)
+		} else {
+			err = paths.Create(ctx, p)
+			if errors.Is(err, repository.ErrConflict) {
+				err = nil
+			}
+		}
+
+		if err != nil {
+			return fmt.Errorf("seed dev path %s: %w", file.Slug, err)
+		}
+	}
+
+	zap.L().Info("dev paths seeded", zap.Int("count", len(entries)))
+
+	return nil
 }
