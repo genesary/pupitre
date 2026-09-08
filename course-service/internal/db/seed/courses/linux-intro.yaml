@@ -12,6 +12,8 @@ spec:
   modules:
     - name: "Navigation et système de fichiers"
       type: text
+      skills:
+        - linux
       content: |
         ## Navigation et système de fichiers
 
@@ -53,6 +55,8 @@ spec:
 
     - name: "Utilisateurs, groupes et permissions"
       type: text
+      skills:
+        - linux
       content: |
         ## Utilisateurs, groupes et permissions
 
@@ -96,6 +100,8 @@ spec:
 
     - name: "Processus, services et réseau"
       type: text
+      skills:
+        - linux
       content: |
         ## Processus, services et réseau
 

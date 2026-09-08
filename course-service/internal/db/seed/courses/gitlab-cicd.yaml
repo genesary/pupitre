@@ -12,6 +12,9 @@ spec:
   modules:
     - name: Introduction au CI/CD avec GitLab
       type: text
+      skills:
+        - gitlab
+        - cicd
       content: |
         ## Qu'est-ce que le CI/CD ?
 

@@ -12,11 +12,15 @@ spec:
   modules:
     - name: "Le modèle OSI"
       type: "text"
+      skills:
+        - reseaux
       src: "https://github.com/paulmascarilla/course-example"
       ref: "main"
       path: "lessons/01-intro.md"
     - name: "TCP/IP en pratique"
       type: "text"
+      skills:
+        - reseaux
       src: "https://github.com/paulmascarilla/course-example"
       ref: "main"
       path: "lessons/02-images.md"
@@ -24,6 +28,8 @@ spec:
         - "le-modèle-osi"
     - name: "DNS et résolution de noms"
       type: "text"
+      skills:
+        - reseaux
       src: "https://github.com/paulmascarilla/course-example"
       ref: "main"
       path: "lessons/03-networking.md"
@@ -31,6 +37,8 @@ spec:
         - "tcp-ip-en-pratique"
     - name: "HTTP et HTTPS"
       type: "text"
+      skills:
+        - reseaux
       src: "https://github.com/paulmascarilla/course-example"
       ref: "main"
       path: "lessons/04-compose.md"
@@ -38,6 +46,8 @@ spec:
         - "dns-et-résolution-de-noms"
     - name: "Quiz Réseaux"
       type: "quiz"
+      skills:
+        - reseaux
       inline: true
       prerequisites:
         - "le-modèle-osi"

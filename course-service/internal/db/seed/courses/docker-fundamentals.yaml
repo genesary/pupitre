@@ -12,6 +12,8 @@ spec:
   modules:
     - name: "Images et conteneurs"
       type: text
+      skills:
+        - docker
       content: |
         ## Images et conteneurs
 
@@ -49,6 +51,8 @@ spec:
 
     - name: "Volumes et réseau"
       type: text
+      skills:
+        - docker
       content: |
         ## Volumes et réseau
 
@@ -71,6 +75,8 @@ spec:
 
     - name: "Docker Compose"
       type: text
+      skills:
+        - docker
       content: |
         ## Docker Compose
 

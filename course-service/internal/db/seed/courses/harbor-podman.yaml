@@ -23,6 +23,9 @@ spec:
           checkParams:
             image: nginx
             container_name: my-nginx
+      skills:
+        - docker
+        - containers
       content: |
         ## Objectifs
 
