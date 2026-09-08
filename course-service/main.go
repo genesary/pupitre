@@ -111,12 +111,14 @@ func run() error {
 
 	// ── Dev seed ──────────────────────────────────────────────────────────────
 	// No-op unless SEED_DEV_COURSES is set; see internal/db/seed_dev.go.
-	repos := repository.NewGormRepositories(gdb)
-
-	err = coursedb.SeedDevCourses(ctx, repos.Courses, os.Getenv("SEED_DEV_COURSES"))
+	// Courses and paths are seeded inside a single transaction so a partial
+	// failure leaves the database in a consistent state.
+	err = seedDev(ctx, gdb)
 	if err != nil {
-		return fmt.Errorf("seed dev courses: %w", err)
+		return err
 	}
+
+	repos := repository.NewGormRepositories(gdb)
 
 	// ── HTTP router ───────────────────────────────────────────────────────────
 	zap.L().Info("building HTTP router")
@@ -201,6 +203,35 @@ func serve(srv *http.Server) error {
 	}
 
 	zap.L().Info("server stopped")
+
+	return nil
+}
+
+// seedDev runs the dev-mode seed operations for courses and learning paths
+// inside a single database transaction, so a mid-run failure rolls back
+// everything rather than leaving the database in a partially-seeded state.
+// It is a no-op unless SEED_DEV_COURSES is set.
+func seedDev(ctx context.Context, db *gorm.DB) error {
+	mode := os.Getenv("SEED_DEV_COURSES")
+
+	err := db.Transaction(func(tx *gorm.DB) error {
+		txRepos := repository.NewGormRepositories(tx)
+
+		seedErr := coursedb.SeedDevCourses(ctx, txRepos.Courses, mode)
+		if seedErr != nil {
+			return fmt.Errorf("seed dev courses: %w", seedErr)
+		}
+
+		seedErr = coursedb.SeedDevPaths(ctx, txRepos.Paths, mode)
+		if seedErr != nil {
+			return fmt.Errorf("seed dev paths: %w", seedErr)
+		}
+
+		return nil
+	})
+	if err != nil {
+		return fmt.Errorf("seed dev transaction: %w", err)
+	}
 
 	return nil
 }
