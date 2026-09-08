@@ -259,6 +259,70 @@ func fetchImage(ctx context.Context, rawURL string) (image.Image, string, error)
 	return img, format, nil
 }
 
+// UploadAvatar godoc
+// @Summary   Upload a local image file as profile avatar
+// @Tags      Auth
+// @Security  BearerAuth
+// @Accept    multipart/form-data
+// @Produce   json
+// @Param     avatar  formData  file  true  "Image file (max 5 MB)"
+// @Success   200  {object}  userPublicRow
+// @Failure   400  {object}  map[string]string
+// @Router    /api/auth/avatar/upload [post].
+func (s *State) UploadAvatar(writer http.ResponseWriter, request *http.Request) {
+	//nolint:gosec // memory is bounded by the avatarMaxBytes constant (5 MB)
+	err := request.ParseMultipartForm(avatarMaxBytes)
+	if err != nil {
+		s.Error(writer, http.StatusBadRequest, "File too large or invalid form")
+
+		return
+	}
+
+	file, _, err := request.FormFile("avatar")
+	if err != nil {
+		s.Error(writer, http.StatusBadRequest, "avatar field is required")
+
+		return
+	}
+
+	defer func() { _ = file.Close() }()
+
+	limited := io.LimitReader(file, avatarMaxBytes+1)
+
+	img, format, err := image.Decode(limited)
+	if err != nil {
+		s.Error(writer, http.StatusBadRequest, "could not decode image")
+
+		return
+	}
+
+	claims := s.claims(request)
+
+	internalURL, storeErr := storeAvatar(s.Config.UploadsDir, claims.Subject, img, format)
+	if storeErr != nil {
+		zap.L().Error("avatar upload store failed", zap.Error(storeErr))
+		s.Error(writer, http.StatusInternalServerError, "Failed to store avatar")
+
+		return
+	}
+
+	userID, err := uuid.Parse(claims.Subject)
+	if err != nil {
+		s.Error(writer, http.StatusInternalServerError, errDatabase)
+
+		return
+	}
+
+	user, err := s.Repos.Users.UpdateProfile(request.Context(), userID, nil, nil, &internalURL)
+	if err != nil {
+		s.Error(writer, http.StatusInternalServerError, errDatabase)
+
+		return
+	}
+
+	s.JSON(writer, http.StatusOK, toUserPublicRow(user))
+}
+
 // storeAvatar re-encodes img (stripping EXIF and any embedded payload in the
 // process) and writes it to uploadsDir/avatars/<userID>.<ext>. It returns the
 // internal serving path /uploads/avatars/<filename>.

@@ -129,6 +129,7 @@ func registerAuthenticatedRoutes(router chi.Router, state *State, authMW func(ht
 		group.Put("/api/auth/profile", state.UpdateProfile)
 		group.Put("/api/auth/password", state.ChangePassword)
 		group.Post("/api/auth/avatar/fetch", state.FetchAvatar)
+		group.Post("/api/auth/avatar/upload", state.UploadAvatar)
 
 		// Enrolling is a user-service concern keyed by course slug, so it is
 		// its own resource rather than a verb hung off the catalog's URL —
