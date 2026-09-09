@@ -171,3 +171,92 @@ spec:
         # Débannir une IP
         fail2ban-client set sshd unbanip 1.2.3.4
         ```
+    - name: "Quiz Networking Basics"
+      type: "quiz"
+      inline: true
+      prerequisites:
+        - "modèle-tcp/ip-et-protocoles"
+        - "adressage-ip-et-sous-réseaux"
+        - "pare-feux-et-sécurité-réseau"
+      passingScore: 75
+      questions:
+        - id: q1
+          type: single
+          question: "Combien de couches comporte le modèle TCP/IP ?"
+          answers:
+            - id: a
+              text: "4"
+              correct: true
+            - id: b
+              text: "7"
+              correct: false
+            - id: c
+              text: "5"
+              correct: false
+            - id: d
+              text: "3"
+              correct: false
+        - id: q2
+          type: single
+          question: "Quel masque de sous-réseau correspond à la notation CIDR /24 ?"
+          answers:
+            - id: a
+              text: "255.255.255.0"
+              correct: true
+            - id: b
+              text: "255.255.0.0"
+              correct: false
+            - id: c
+              text: "255.0.0.0"
+              correct: false
+            - id: d
+              text: "255.255.255.128"
+              correct: false
+        - id: q3
+          type: single
+          question: "Quel protocole est sans connexion et ne garantit pas la livraison des paquets ?"
+          answers:
+            - id: a
+              text: "UDP"
+              correct: true
+            - id: b
+              text: "TCP"
+              correct: false
+            - id: c
+              text: "HTTP"
+              correct: false
+            - id: d
+              text: "FTP"
+              correct: false
+        - id: q4
+          type: single
+          question: "Quelle commande affiche tous les ports TCP en écoute sur un système Linux ?"
+          answers:
+            - id: a
+              text: "ss -tlnp"
+              correct: true
+            - id: b
+              text: "ifconfig -a"
+              correct: false
+            - id: c
+              text: "ip route show"
+              correct: false
+            - id: d
+              text: "ping localhost"
+              correct: false
+        - id: q5
+          type: single
+          question: "À quoi sert le NAT (Network Address Translation) ?"
+          answers:
+            - id: a
+              text: "Permettre à plusieurs machines d'un réseau privé de partager une seule IP publique"
+              correct: true
+            - id: b
+              text: "Chiffrer le trafic entre deux points d'extrémité"
+              correct: false
+            - id: c
+              text: "Attribuer dynamiquement des adresses IP aux hôtes"
+              correct: false
+            - id: d
+              text: "Router les paquets entre des VLANs"
+              correct: false

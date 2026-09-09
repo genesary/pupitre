@@ -109,3 +109,92 @@ spec:
         docker compose logs -f    # suivre les logs
         docker compose down -v    # arrêter et supprimer les volumes
         ```
+    - name: "Quiz Docker Fundamentals"
+      type: "quiz"
+      inline: true
+      prerequisites:
+        - "images-et-conteneurs"
+        - "volumes-et-réseau"
+        - "docker-compose"
+      passingScore: 75
+      questions:
+        - id: q1
+          type: single
+          question: "Quelle commande construit une image Docker à partir du Dockerfile du répertoire courant ?"
+          answers:
+            - id: a
+              text: "docker build ."
+              correct: true
+            - id: b
+              text: "docker create ."
+              correct: false
+            - id: c
+              text: "docker run ."
+              correct: false
+            - id: d
+              text: "docker compile ."
+              correct: false
+        - id: q2
+          type: single
+          question: "Quel est le rôle principal d'un volume Docker ?"
+          answers:
+            - id: a
+              text: "Persister des données indépendamment du cycle de vie du conteneur"
+              correct: true
+            - id: b
+              text: "Exposer les ports du conteneur vers l'hôte"
+              correct: false
+            - id: c
+              text: "Réduire la taille de l'image"
+              correct: false
+            - id: d
+              text: "Partager des variables d'environnement entre conteneurs"
+              correct: false
+        - id: q3
+          type: single
+          question: "Quel flag lance un conteneur en mode détaché (arrière-plan) ?"
+          answers:
+            - id: a
+              text: "-d"
+              correct: true
+            - id: b
+              text: "-b"
+              correct: false
+            - id: c
+              text: "--background"
+              correct: false
+            - id: d
+              text: "-r"
+              correct: false
+        - id: q4
+          type: single
+          question: "Quel fichier Docker Compose lit-il par défaut pour définir une application multi-conteneurs ?"
+          answers:
+            - id: a
+              text: "docker-compose.yml"
+              correct: true
+            - id: b
+              text: "Dockerfile"
+              correct: false
+            - id: c
+              text: "compose.json"
+              correct: false
+            - id: d
+              text: "services.yaml"
+              correct: false
+        - id: q5
+          type: single
+          question: "Que fait l'instruction EXPOSE dans un Dockerfile ?"
+          answers:
+            - id: a
+              text: "Documente le port sur lequel le conteneur écoute à l'exécution"
+              correct: true
+            - id: b
+              text: "Publie automatiquement le port vers l'hôte"
+              correct: false
+            - id: c
+              text: "Ouvre une règle pare-feu sur l'hôte"
+              correct: false
+            - id: d
+              text: "Lance le processus du conteneur sur ce port"
+              correct: false
