@@ -32,15 +32,13 @@
   }
   @media (max-width: 480px) {
     .lb-row {
-      padding-left: 12px;
-      padding-right: 12px;
-      gap: 10px;
+      @apply pl-3 pr-3 gap-2.5;
     }
     .lb-icons {
-      max-width: 100px;
+      @apply max-w-[100px];
     }
     .lb-podium-block {
-      width: 70px;
+      @apply w-[70px];
     }
   }
   .lb-podium-card {
@@ -76,9 +74,8 @@
     transform: translateY(-3px);
   }
   .mb-card-icon {
-    @apply w-20 h-20 rounded-full flex items-center justify-center text-[2.4rem];
+    @apply w-20 h-20 rounded-full flex items-center justify-center text-[2.4rem] border-[3px] border-green-500/27;
     background: linear-gradient(135deg, #f0fdf4, #dcfce7);
-    border: 3px solid rgba(34, 197, 94, 0.27);
     box-shadow: 0 4px 16px rgba(34, 197, 94, 0.2);
   }
   .mb-card-name {
@@ -114,17 +111,15 @@
     @apply flex flex-col items-center text-center gap-4 bg-white/80 backdrop-blur-[8px] border-[1.5px] border-slate-200 rounded-[20px] px-6 py-6 mb-5 sm:flex-row sm:text-left sm:gap-7 sm:px-8 sm:py-7;
   }
   .xp-orb {
-    @apply w-[88px] h-[88px] rounded-full flex items-center justify-center text-[2.4rem] shrink-0;
+    @apply w-[88px] h-[88px] rounded-full flex items-center justify-center text-[2.4rem] shrink-0 border-[3px] border-[#fcd34d];
     background: linear-gradient(135deg, #fefce8, #fef08a);
-    border: 3px solid #fcd34d;
     box-shadow: 0 4px 20px rgba(251, 191, 36, 0.25);
   }
   .xp-total {
-    @apply text-[2rem] font-extrabold leading-none;
+    @apply text-[2rem] font-extrabold leading-none bg-clip-text;
     background: linear-gradient(135deg, #f59e0b, #d97706);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    background-clip: text;
   }
   .xp-total-label {
     @apply text-[.82rem] text-ink-soft mt-0.5;
@@ -167,13 +162,12 @@
     box-shadow: 0 4px 16px rgba(251, 191, 36, 0.12);
   }
   .xp-hist-icon {
-    @apply w-10 h-10 rounded-full flex items-center justify-center text-[1.1rem] shrink-0;
+    @apply w-10 h-10 rounded-full flex items-center justify-center text-[1.1rem] shrink-0 border-[1.5px] border-[rgba(252,211,77,0.27)];
     background: linear-gradient(135deg, #fefce8, #fef08a);
-    border: 1.5px solid rgba(252, 211, 77, 0.27);
   }
   .xp-hist-icon-inprogress {
+    @apply border-[rgba(199,210,254,0.27)];
     background: linear-gradient(135deg, #f0f4ff, #e0e7ff);
-    border-color: rgba(199, 210, 254, 0.27);
   }
   .xp-hist-meta {
     @apply flex-1 min-w-0;
@@ -185,11 +179,10 @@
     @apply text-[.75rem] text-ink-soft mt-px;
   }
   .xp-hist-amount {
-    @apply text-[.95rem] font-extrabold whitespace-nowrap;
+    @apply text-[.95rem] font-extrabold whitespace-nowrap bg-clip-text;
     background: linear-gradient(135deg, #f59e0b, #d97706);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    background-clip: text;
   }
   .xp-empty {
     @apply text-center text-ink-soft py-12 text-[.95rem];
@@ -302,10 +295,7 @@
     @apply w-full py-2 flex justify-start;
   }
   .snake-wrap svg {
-    display: block;
-    height: auto;
-    overflow: visible;
-    max-width: 100%;
+    @apply block h-auto overflow-visible max-w-full;
   }
 
   /* ── Skills page ── */
@@ -317,12 +307,11 @@
     box-shadow: 0 6px 24px rgba(67, 97, 238, 0.12);
   }
   .ms-card.card-maitre {
-    border-color: #fcd34d;
-    background: rgba(255, 251, 235, 0.8);
+    @apply border-[#fcd34d] bg-amber-50/80;
   }
   .ms-card.card-maitre:hover {
+    @apply border-[#f59e0b];
     box-shadow: 0 6px 24px rgba(217, 119, 6, 0.18);
-    border-color: #f59e0b;
   }
   .ms-card-skill {
     @apply text-[.95rem] font-bold text-ink flex items-center gap-1.5;
@@ -430,74 +419,35 @@
 
   /* ── Skills detail page ────────────────────────────────────────────── */
   .skill-outer {
-    min-height: calc(100vh - 64px);
+    @apply min-h-[calc(100vh-64px)] pt-10 pr-8 pb-20 pl-8;
     background: linear-gradient(160deg, #f0f4ff 0%, #faf5ff 50%, #f0fdf4 100%);
-    padding: 40px 32px 80px;
   }
   @media (max-width: 640px) {
     .skill-outer {
-      padding: 20px 14px 80px;
+      @apply pt-5 pr-3.5 pb-20 pl-3.5;
     }
   }
   .skill-back {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: var(--blue);
-    cursor: pointer;
-    margin-bottom: 24px;
-    background: none;
-    border: none;
-    padding: 0;
-    text-decoration: none;
+    @apply inline-flex items-center gap-1.5 text-[0.85rem] font-semibold text-blue cursor-pointer mb-6 no-underline bg-none border-0 p-0;
   }
   .skill-back:hover {
-    text-decoration: underline;
+    @apply underline;
   }
   .skill-chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    background: #f3e8ff;
-    color: #7c3aed;
-    padding: 6px 14px;
-    border-radius: 20px;
-    font-weight: 700;
-    font-size: 0.95rem;
-    margin-bottom: 12px;
+    @apply inline-flex items-center gap-1.5 font-bold text-[0.95rem] mb-3 bg-[#f3e8ff] text-purple py-1.5 px-3.5 rounded-[20px];
   }
   .skill-prog {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-top: 12px;
-    padding: 12px 16px;
-    background: #ffffffcc;
-    border: 1.5px solid #e2e8f0;
-    border-radius: 14px;
+    @apply flex items-center gap-2.5 mt-3 pt-3 pr-4 pb-3 pl-4 text-[0.82rem] text-ink-soft bg-[#ffffffcc] border-[1.5px] border-[#e2e8f0] rounded-[14px];
     backdrop-filter: blur(8px);
-    font-size: 0.82rem;
-    color: var(--ink-soft);
   }
   .skill-prog-pct {
-    font-weight: 700;
-    font-size: 1rem;
+    @apply font-bold text-base;
   }
   .level-section {
-    margin-top: 32px;
+    @apply mt-8;
   }
   .level-section-title {
-    font-size: 0.78rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.07em;
-    color: var(--ink-soft);
-    margin-bottom: 12px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    @apply text-[0.78rem] font-bold uppercase tracking-[0.07em] text-ink-soft mb-3 flex items-center gap-2;
   }
   .level-section-title::after {
     content: "";
@@ -506,264 +456,151 @@
     background: #e2e8f0;
   }
   .sk-courses-grid {
-    display: grid;
+    @apply grid gap-4;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 16px;
   }
   .sk-card {
-    background: #ffffffcc;
-    border: 1.5px solid #e2e8f0;
-    border-radius: 14px;
+    @apply no-underline text-inherit flex flex-col gap-2 bg-[#ffffffcc] border-[1.5px] border-[#e2e8f0] rounded-[14px] py-[18px] px-5;
     backdrop-filter: blur(8px);
-    padding: 18px 20px;
-    text-decoration: none;
-    color: inherit;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
     transition:
       box-shadow 0.15s,
       border-color 0.15s,
       transform 0.15s;
   }
   .sk-card:hover {
+    @apply border-[#a5b4fc];
     box-shadow: 0 6px 24px rgba(67, 97, 238, 0.12);
-    border-color: #a5b4fc;
     transform: translateY(-2px);
   }
   .sk-card.card-done {
-    border-color: #86efac;
-    background: #f0fdf4cc;
+    @apply border-[#86efac] bg-[#f0fdf4cc];
   }
   .sk-card.card-done:hover {
-    border-color: #22c55e;
+    @apply border-[#22c55e];
     box-shadow: 0 6px 24px rgba(34, 197, 94, 0.12);
   }
   .sk-card.card-ongoing {
-    border-color: #93c5fd;
+    @apply border-[#93c5fd];
   }
   .sk-card-title {
-    font-size: 1rem;
-    font-weight: 700;
-    color: var(--ink);
+    @apply text-base font-bold text-ink;
   }
   .sk-card-desc {
-    font-size: 0.83rem;
-    color: var(--ink-soft);
-    line-height: 1.5;
+    @apply text-[0.83rem] text-ink-soft leading-[1.5];
   }
   .sk-card-meta {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    align-items: center;
-    margin-top: 2px;
+    @apply flex gap-2 flex-wrap items-center mt-0.5;
   }
   .sk-modules-hint {
-    font-size: 0.75rem;
-    color: var(--ink-soft);
+    @apply text-[0.75rem] text-ink-soft;
   }
   .badge-diff {
-    font-size: 0.68rem;
-    font-weight: 700;
-    padding: 2px 8px;
-    border-radius: 20px;
+    @apply text-[0.68rem] font-bold py-px px-2 rounded-[20px];
   }
   .diff-beginner {
-    background: #dcfce7;
-    color: #15803d;
+    @apply bg-[#dcfce7] text-[#15803d];
   }
   .diff-intermediate {
-    background: #fef9c3;
-    color: #a16207;
+    @apply bg-[#fef9c3] text-[#a16207];
   }
   .diff-advanced {
-    background: #fee2e2;
-    color: #b91c1c;
+    @apply bg-[#fee2e2] text-[#b91c1c];
   }
   .diff-default {
-    background: var(--fill);
-    color: var(--ink-soft);
+    @apply bg-fill text-ink-soft;
   }
   .badge-status {
-    font-size: 0.68rem;
-    font-weight: 700;
-    padding: 2px 8px;
-    border-radius: 20px;
+    @apply text-[0.68rem] font-bold py-px px-2 rounded-[20px];
   }
   .badge-done {
-    background: #dcfce7;
-    color: #15803d;
+    @apply bg-[#dcfce7] text-[#15803d];
   }
   .badge-ongoing {
-    background: #dbeafe;
-    color: #1d4ed8;
+    @apply bg-[#dbeafe] text-[#1d4ed8];
   }
   .cc-progress-wrap {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-top: 2px;
+    @apply flex items-center gap-2 mt-0.5;
   }
   .cc-progress-bar {
-    flex: 1;
-    height: 4px;
-    background: var(--line);
-    border-radius: 4px;
-    overflow: hidden;
+    @apply flex-1 h-1 bg-line rounded overflow-hidden;
   }
   .cc-progress-fill {
-    height: 100%;
-    width: 0%;
-    background: var(--blue);
-    border-radius: 4px;
+    @apply h-full w-[0%] bg-blue rounded;
   }
   .cc-progress-label {
-    font-size: 0.7rem;
-    color: var(--ink-soft);
-    white-space: nowrap;
+    @apply text-[0.7rem] text-ink-soft whitespace-nowrap;
   }
   .cc-cta {
-    font-size: 0.78rem;
-    font-weight: 600;
-    color: var(--blue);
-    margin-top: 2px;
+    @apply text-[0.78rem] font-semibold text-blue mt-0.5;
   }
   .skill-empty {
-    text-align: center;
-    padding: 60px 24px;
-    color: var(--ink-soft);
+    @apply text-center py-[60px] px-6 text-ink-soft;
   }
 
   /* ── User profile page ─────────────────────────────────────────────── */
   .up-outer {
-    min-height: calc(100vh - 64px);
+    @apply min-h-[calc(100vh-64px)] pt-10 pr-8 pb-20 pl-8;
     background: linear-gradient(160deg, #f0f4ff 0%, #faf5ff 50%, #f0fdf4 100%);
-    padding: 40px 32px 80px;
   }
   .up-back {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    margin-bottom: 18px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: var(--blue);
-    text-decoration: none;
+    @apply inline-flex items-center gap-1.5 mb-[18px] text-[0.85rem] font-semibold text-blue no-underline;
   }
   .up-back:hover {
-    text-decoration: underline;
+    @apply underline;
   }
   .up-header {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    margin-bottom: 32px;
-    padding: 24px;
-    border: 1.5px solid #e2e8f0;
-    border-radius: 14px;
-    background: #ffffffcc;
+    @apply flex items-center gap-5 mb-8 p-6 border-[1.5px] border-[#e2e8f0] rounded-[14px] bg-[#ffffffcc];
     backdrop-filter: blur(8px);
   }
   .up-avatar {
-    width: 72px;
-    height: 72px;
-    border-radius: 50%;
+    @apply w-[72px] h-[72px] rounded-full flex items-center justify-center text-[2rem] font-bold text-blue shrink-0 overflow-hidden;
     background: linear-gradient(135deg, var(--blue-soft), #d6ecfd);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 2rem;
-    font-weight: 700;
-    color: var(--blue);
-    flex-shrink: 0;
-    overflow: hidden;
   }
   .up-avatar img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+    @apply w-full h-full object-cover;
   }
   .up-username {
-    font-size: 1.6rem;
-    font-weight: 800;
+    @apply text-[1.6rem] font-extrabold bg-clip-text;
     background: linear-gradient(135deg, #4361ee, #7c3aed);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    background-clip: text;
   }
   .up-subtitle {
-    font-size: 0.82rem;
-    color: var(--ink-soft);
-    margin-top: 2px;
+    @apply text-[0.82rem] text-ink-soft mt-0.5;
   }
   .up-section-title {
-    font-size: 0.78rem;
-    font-weight: 600;
-    margin-bottom: 16px;
-    color: var(--ink-soft);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+    @apply text-[0.78rem] font-semibold mb-4 text-ink-soft uppercase tracking-[0.05em];
   }
   .up-grid {
-    display: grid;
+    @apply grid gap-4;
     grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
   }
   .up-card {
-    border: 1.5px solid #22c55e33;
-    border-radius: 14px;
-    background: #ffffffcc;
+    @apply flex flex-col items-center gap-2.5 text-center no-underline text-inherit border-[1.5px] border-[#22c55e33] rounded-[14px] bg-[#ffffffcc] pt-5 px-4 pb-4;
     backdrop-filter: blur(8px);
-    padding: 20px 16px 16px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-    text-align: center;
-    text-decoration: none;
-    color: inherit;
     transition:
       box-shadow 0.15s,
       border-color 0.15s;
   }
   .up-card:hover {
-    border-color: #22c55e;
+    @apply border-[#22c55e];
     box-shadow: 0 4px 18px rgba(34, 197, 94, 0.12);
   }
   .up-card-icon {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
+    @apply flex items-center justify-center text-[1.8rem] w-[60px] h-[60px] rounded-full border-2 border-[#22c55e44];
     background: linear-gradient(135deg, #f0fdf4, #dcfce7);
-    border: 2px solid #22c55e44;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.8rem;
   }
   .up-card-name {
-    font-weight: 700;
-    font-size: 0.9rem;
+    @apply font-bold text-[0.9rem];
   }
   .up-card-course {
-    font-size: 0.75rem;
-    color: var(--ink-soft);
+    @apply text-[0.75rem] text-ink-soft;
   }
   .up-card-earners {
-    font-size: 0.68rem;
-    color: #16a34a;
-    background: #f0fdf4;
-    border: 1px solid #22c55e33;
-    border-radius: 20px;
-    padding: 2px 10px;
-    margin-top: auto;
+    @apply text-[0.68rem] mt-auto text-[#16a34a] bg-[#f0fdf4] border border-[#22c55e33] rounded-[20px] py-px px-[10px];
   }
   .up-empty {
-    text-align: center;
-    padding: 48px 24px;
-    color: var(--ink-soft);
-    font-size: 0.9rem;
+    @apply text-center py-12 px-6 text-ink-soft text-[0.9rem];
   }
   @media (max-width: 768px) {
     .up-grid {
@@ -772,14 +609,13 @@
   }
   @media (max-width: 480px) {
     .up-outer {
-      padding: 20px 14px 80px;
+      @apply pt-5 pr-3.5 pb-20 pl-3.5;
     }
     .up-grid {
       grid-template-columns: 1fr;
     }
     .up-header {
-      flex-direction: column;
-      text-align: center;
+      @apply flex-col text-center;
     }
   }
 }
