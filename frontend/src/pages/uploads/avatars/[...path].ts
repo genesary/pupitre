@@ -9,8 +9,9 @@ export const GET: APIRoute = async ({ params }) => {
   let res: Response;
   try {
     res = await fetch(upstream);
-  } catch {
-    return new Response('Upstream unavailable', { status: 502 });
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : 'Upstream unavailable';
+    return new Response(msg, { status: 502 });
   }
 
   const headers = new Headers();
