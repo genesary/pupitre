@@ -12,11 +12,26 @@ import App from '../layouts/App.astro';
             <div id="avatar-wrapper" class="profile-avatar-wrapper" title="Changer la photo de profil">
               <div id="avatar-area" class="w-20 h-20"></div>
               <div id="avatar-edit-overlay" class="profile-avatar-overlay">✏️<br>Modifier</div>
+              <input type="file" id="avatar-file-input" accept="image/*" class="sr-only" />
             </div>
-            <!-- Emoji picker for profile photo -->
-            <div id="avatar-picker" class="mb-3" style="display:none">
-              <div class="text-[.72rem] text-ink-soft mb-1.5">Photo de profil</div>
-              <div id="avatar-picker-grid" class="flex flex-wrap gap-1.5 justify-center"></div>
+            <!-- Avatar change popup -->
+            <div id="avatar-menu" class="mb-3" style="display:none">
+              <div class="card-sm p-2 text-left" style="box-shadow:0 4px 16px rgba(0,0,0,.12)">
+                <button id="avatar-btn-file" class="flex items-center gap-2 w-full px-2 py-1.5 rounded hover:bg-surface-2 text-sm transition-colors">
+                  🖼️ <span>Depuis mon Mac</span>
+                </button>
+                <button id="avatar-btn-url-toggle" class="flex items-center gap-2 w-full px-2 py-1.5 rounded hover:bg-surface-2 text-sm transition-colors">
+                  🔗 <span>URL externe</span>
+                </button>
+                <div id="avatar-url-row" style="display:none" class="flex gap-1 mt-1 px-1">
+                  <input class="input text-sm flex-1" type="url" id="avatar-popup-url" placeholder="https://…" />
+                  <button class="btn btn-primary btn-sm shrink-0" id="avatar-url-save">OK</button>
+                </div>
+                <div id="avatar-emoji-section" style="display:none">
+                  <div class="text-[.72rem] text-ink-soft mt-2 mb-1 px-2">Emoji de badge</div>
+                  <div id="avatar-picker-grid" class="flex flex-wrap gap-1.5 justify-center px-1 pb-1"></div>
+                </div>
+              </div>
             </div>
             <div id="profile-name" class="font-bold mb-0.5"></div>
             <div id="profile-email" class="text-[.8rem] text-ink-soft"></div>
@@ -62,15 +77,10 @@ import App from '../layouts/App.astro';
 
             <!-- Edit mode -->
             <form id="edit-mode" class="stack gap-[14px]" style="display:none">
-              <div id="avatar-field" class="form-group" style="display:none">
-                <label class="label" for="edit-avatar">URL de l'avatar</label>
-                <input class="input" type="url" id="edit-avatar" placeholder="https://example.com/avatar.png" />
-              </div>
               <div class="form-group">
                 <label class="label" for="edit-bio">Bio</label>
                 <textarea class="input" id="edit-bio" rows="3" placeholder="Dites-nous quelque chose sur vous…"></textarea>
               </div>
-              <div id="sso-avatar-notice" class="sso-notice" style="display:none"></div>
               <div class="flex gap-2.5">
                 <button type="submit" class="btn btn-primary" id="save-btn">Enregistrer</button>
                 <button type="button" class="btn btn-secondary" id="cancel-btn">Annuler</button>
@@ -135,7 +145,11 @@ import App from '../layouts/App.astro';
 
       // Sidebar mini-profile
       const avatarArea = document.getElementById('avatar-area')!;
-      const avatarIsUrl = user.avatarUrl && (user.avatarUrl.startsWith('http://') || user.avatarUrl.startsWith('https://'));
+      const avatarIsUrl = user.avatarUrl && (
+        user.avatarUrl.startsWith('http://') ||
+        user.avatarUrl.startsWith('https://') ||
+        user.avatarUrl.startsWith('/uploads/avatars/')
+      );
       if (avatarIsUrl) {
         avatarArea.innerHTML = `<img src="${user.avatarUrl}" alt="${user.username}" class="avatar-circle" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" /><div class="avatar-initial" style="display:none">${initial}</div>`;
       } else if (user.avatarUrl) {
@@ -161,22 +175,13 @@ import App from '../layouts/App.astro';
       document.getElementById('view-email')!.textContent = user.email;
       document.getElementById('view-bio')!.textContent = user.bio || '—';
 
-      if (!isSso && user.avatarUrl) {
+      if (!isSso && user.avatarUrl && !user.avatarUrl.startsWith('/uploads/avatars/')) {
         const row = document.getElementById('view-avatar-row')!;
         row.style.display = 'grid';
         document.getElementById('view-avatar')!.textContent = user.avatarUrl;
       }
 
       // Edit mode setup
-      if (!isSso) {
-        document.getElementById('avatar-field')!.style.display = 'block';
-        const currentAvatarForInput = (user.avatarUrl && (user.avatarUrl.startsWith('http://') || user.avatarUrl.startsWith('https://'))) ? user.avatarUrl : '';
-        (document.getElementById('edit-avatar') as HTMLInputElement).value = currentAvatarForInput;
-      } else {
-        const notice = document.getElementById('sso-avatar-notice')!;
-        notice.style.display = 'block';
-        notice.textContent = `Votre avatar est synchronisé automatiquement depuis ${providerLabels[user.authProvider] || user.authProvider} à chaque connexion.`;
-      }
       (document.getElementById('edit-bio') as HTMLTextAreaElement).value = user.bio || '';
 
       // Security section
@@ -248,7 +253,7 @@ import App from '../layouts/App.astro';
 
     }
 
-    // Avatar emoji picker
+    // Avatar menu logic
     let earnedIcons: string[] = [];
 
     async function loadEarnedIcons() {
@@ -259,11 +264,10 @@ import App from '../layouts/App.astro';
     }
 
     function buildPicker() {
+      if (earnedIcons.length === 0) return;
+      const section = document.getElementById('avatar-emoji-section')!;
+      section.style.display = 'block';
       const grid = document.getElementById('avatar-picker-grid')!;
-      if (earnedIcons.length === 0) {
-        document.getElementById('avatar-picker')!.style.display = 'none';
-        return;
-      }
       grid.innerHTML = earnedIcons.map(icon => `
         <button class="avatar-pick-btn" data-icon="${icon}" title="${icon}">${icon}</button>
       `).join('');
@@ -274,7 +278,7 @@ import App from '../layouts/App.astro';
             const updated = await apiFetch('/auth/profile', { method: 'PUT', body: { avatarUrl: icon }, token: token! }) as any;
             user = updated;
             localStorage.setItem('user', JSON.stringify(updated));
-            document.getElementById('avatar-picker')!.style.display = 'none';
+            document.getElementById('avatar-menu')!.style.display = 'none';
             render();
             (window as any).showToast?.('Photo de profil mise à jour', 'success');
           } catch {
@@ -284,7 +288,21 @@ import App from '../layouts/App.astro';
       });
     }
 
+    async function uploadAvatarFile(file: File) {
+      const fd = new FormData();
+      fd.append('avatar', file);
+      const res = await fetch('/api/auth/avatar/upload', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+        body: fd,
+      });
+      if (res.status === 401) { localStorage.clear(); window.location.href = '/login'; throw new Error('Session expirée'); }
+      if (!res.ok) { const err = await res.json().catch(() => ({})); throw new Error((err as any).error || `HTTP ${res.status}`); }
+    }
+
     const avatarWrapper = document.getElementById('avatar-wrapper')!;
+    const avatarMenu = document.getElementById('avatar-menu')!;
+
     avatarWrapper.addEventListener('mouseenter', () => {
       document.getElementById('avatar-edit-overlay')!.style.display = 'flex';
     });
@@ -292,10 +310,64 @@ import App from '../layouts/App.astro';
       document.getElementById('avatar-edit-overlay')!.style.display = 'none';
     });
     avatarWrapper.addEventListener('click', () => {
-      const picker = document.getElementById('avatar-picker')!;
-      if (earnedIcons.length === 0) return;
-      const isOpen = picker.style.display !== 'none';
-      picker.style.display = isOpen ? 'none' : 'block';
+      const isOpen = avatarMenu.style.display !== 'none';
+      avatarMenu.style.display = isOpen ? 'none' : 'block';
+      document.getElementById('avatar-url-row')!.style.display = 'none';
+    });
+
+    // Close menu when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!avatarWrapper.contains(e.target as Node) && !avatarMenu.contains(e.target as Node)) {
+        avatarMenu.style.display = 'none';
+      }
+    });
+
+    // "Depuis mon Mac" → trigger file input
+    document.getElementById('avatar-btn-file')!.addEventListener('click', () => {
+      document.getElementById('avatar-file-input')!.click();
+    });
+
+    document.getElementById('avatar-file-input')!.addEventListener('change', async (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (!file) return;
+      avatarMenu.style.display = 'none';
+      try {
+        await uploadAvatarFile(file);
+        const updated = await apiFetch('/auth/me', { token: token! });
+        user = updated;
+        localStorage.setItem('user', JSON.stringify(updated));
+        render();
+        (window as any).showToast?.('Photo de profil mise à jour', 'success');
+      } catch (err: any) {
+        (window as any).showToast?.(err.message || 'Erreur lors de l\'upload', 'error');
+      }
+      (e.target as HTMLInputElement).value = '';
+    });
+
+    // "URL externe" → show inline URL input
+    document.getElementById('avatar-btn-url-toggle')!.addEventListener('click', () => {
+      const row = document.getElementById('avatar-url-row')!;
+      const isOpen = row.style.display !== 'none';
+      row.style.display = isOpen ? 'none' : 'flex';
+      if (!isOpen) document.getElementById('avatar-popup-url')!.focus();
+    });
+
+    document.getElementById('avatar-url-save')!.addEventListener('click', async () => {
+      const urlInput = document.getElementById('avatar-popup-url') as HTMLInputElement;
+      const rawURL = urlInput.value.trim();
+      if (!rawURL) return;
+      avatarMenu.style.display = 'none';
+      try {
+        await apiFetch('/auth/avatar/fetch', { method: 'POST', body: { url: rawURL }, token: token! });
+        const updated = await apiFetch('/auth/me', { token: token! });
+        user = updated;
+        localStorage.setItem('user', JSON.stringify(updated));
+        render();
+        (window as any).showToast?.('Photo de profil mise à jour', 'success');
+      } catch (err: any) {
+        (window as any).showToast?.(err.message || 'Erreur lors de la récupération', 'error');
+      }
+      urlInput.value = '';
     });
 
     // Edit profile events
@@ -317,12 +389,10 @@ import App from '../layouts/App.astro';
       btn.disabled = true; btn.textContent = 'Enregistrement…';
 
       const bio = (document.getElementById('edit-bio') as HTMLTextAreaElement).value;
-      const avatarInput = document.getElementById('edit-avatar') as HTMLInputElement;
-      const body: Record<string, string> = { bio };
-      if (avatarInput && avatarInput.value) body.avatarUrl = avatarInput.value;
 
       try {
-        const updated = await apiFetch('/auth/profile', { method: 'PUT', body, token: token! }) as any;
+        let updated: any;
+        updated = await apiFetch('/auth/profile', { method: 'PUT', body: { bio }, token: token! });
         user = updated;
         localStorage.setItem('user', JSON.stringify(updated));
         document.getElementById('view-mode')!.style.display = 'block';
