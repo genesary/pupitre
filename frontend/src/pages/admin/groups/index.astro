@@ -2,19 +2,19 @@
 import Admin from '../../../layouts/Admin.astro';
 ---
 <Admin title="Groupes">
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;flex-wrap:wrap;gap:12px">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:36px;flex-wrap:wrap;gap:16px">
     <div>
       <h1 style="font-size:1.5rem">Groupes</h1>
-      <p class="text-soft text-sm" style="margin-top:4px">Groupes synchronisés depuis les providers SSO/LDAP et groupes locaux</p>
+      <p class="text-soft text-sm" style="margin-top:6px">Groupes synchronisés depuis les providers SSO/LDAP et groupes locaux</p>
     </div>
     <button class="btn btn-primary" id="new-group-btn">+ Nouveau groupe</button>
   </div>
 
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:start">
 
     <!-- Groups tree -->
     <div>
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">
         <h2 style="font-size:1.1rem">Groupes <span id="groups-count" class="badge badge-gray" style="margin-left:6px"></span></h2>
       </div>
       <div class="card" style="padding:0;overflow:hidden">
@@ -26,10 +26,10 @@ import Admin from '../../../layouts/Admin.astro';
 
     <!-- Role mappings -->
     <div>
-      <div style="margin-bottom:14px">
+      <div style="margin-bottom:18px">
         <h2 style="font-size:1.1rem">Mappings de rôles</h2>
       </div>
-      <div class="card" style="padding:0;overflow:hidden;margin-bottom:16px">
+      <div class="card" style="padding:0;overflow:hidden;margin-bottom:20px">
         <div id="mappings-list">
           <div class="loading-state" style="padding:24px"><div class="spinner"></div></div>
         </div>
@@ -225,7 +225,7 @@ import Admin from '../../../layouts/Admin.astro';
       ].filter(Boolean).join('');
 
       const row = `
-        <div class="group-row" data-id="${node.id}" style="display:flex;align-items:center;gap:8px;padding:10px 16px;border-bottom:1px solid var(--line);padding-left:${indentPx + 16}px">
+        <div class="group-row" data-id="${node.id}" style="display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid var(--line);padding-left:${indentPx + 20}px">
           ${toggleBtn}
           <div style="flex:1;min-width:0">
             <div style="font-weight:500;font-size:.875rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${node.name}</div>
@@ -528,9 +528,9 @@ import Admin from '../../../layouts/Admin.astro';
       try {
         const { mappings } = await api('/admin/groups/mappings');
         const el = document.getElementById('mappings-list')!;
-        if (!mappings.length) { el.innerHTML = '<p class="text-soft text-sm" style="padding:16px">Aucun mapping défini.</p>'; return; }
+        if (!mappings.length) { el.innerHTML = '<p class="text-soft text-sm" style="padding:20px">Aucun mapping défini.</p>'; return; }
         el.innerHTML = mappings.map((m: any) => `
-          <div style="display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--line)">
+          <div style="display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid var(--line)">
             <code style="flex:1;font-size:.82rem;background:var(--fill);padding:3px 7px;border-radius:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${m.groupName}</code>
             <span style="color:var(--ink-soft);flex-shrink:0">→</span>
             <span class="badge ${m.platformRole === 'admin' ? 'badge-red' : m.platformRole === 'manager' ? 'badge-orange' : 'badge-blue'}" style="flex-shrink:0">${m.platformRole}</span>

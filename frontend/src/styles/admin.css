@@ -756,34 +756,34 @@
 
   /* ── Leaderboard rows (admin/index + admin/leaderboard) ──────────────── */
   .lb-row {
-    @apply flex items-center gap-4 py-[14px] px-1;
+    @apply flex items-center gap-5 py-5 px-2;
   }
   .lb-row + .lb-row {
     @apply border-t border-line;
   }
   .lb-row-padded {
-    @apply flex items-center gap-4 py-[16px] px-5;
+    @apply flex items-center gap-5 py-5 px-6;
   }
   .lb-row-padded + .lb-row-padded {
     @apply border-t border-line;
   }
   .lb-rank {
-    @apply text-center font-bold text-ink-soft shrink-0 w-6 text-[0.9rem];
+    @apply text-center font-bold text-ink-soft shrink-0 w-7 text-[1rem];
   }
   .lb-rank.top {
     @apply text-orange;
   }
   .lb-rank-lg {
-    @apply text-center font-bold text-ink-soft shrink-0 w-7 text-[0.9rem];
+    @apply text-center font-bold text-ink-soft shrink-0 w-8 text-[1rem];
   }
   .lb-rank-lg.top {
     @apply text-orange;
   }
   .lb-avatar {
-    @apply bg-blue-soft flex items-center justify-center font-bold text-blue shrink-0 rounded-full w-8 h-8 text-[0.82rem];
+    @apply bg-blue-soft flex items-center justify-center font-bold text-blue shrink-0 rounded-full w-10 h-10 text-[0.9rem];
   }
   .lb-avatar-lg {
-    @apply flex items-center justify-center font-bold shrink-0 rounded-full w-9 h-9 text-[0.82rem];
+    @apply flex items-center justify-center font-bold shrink-0 rounded-full w-11 h-11 text-[0.9rem];
   }
   .lb-avatar-user {
     @apply bg-blue-soft text-blue;
