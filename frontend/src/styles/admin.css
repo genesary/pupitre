@@ -526,7 +526,7 @@
     grid-template-columns: 220px 1fr;
   }
   .shell-sidebar {
-    @apply border-r border-line bg-paper sticky top-14 overflow-y-auto py-5 px-3 h-[calc(100vh-56px)];
+    @apply border-r border-line bg-paper sticky top-14 overflow-y-auto py-5 px-3 h-[calc(100vh-56px)] flex flex-col;
   }
   .shell-sidebar-label {
     @apply font-bold uppercase tracking-[0.08em] text-ink-soft text-[0.7rem] px-[10px] mb-[10px];
@@ -535,7 +535,7 @@
     @apply flex flex-col gap-0.5;
   }
   .shell-sidebar-bottom {
-    @apply border-t border-line mt-4 pt-3;
+    @apply border-t border-line mt-auto pt-3;
   }
   .shell-back-btn {
     @apply flex items-center gap-2 px-[10px] py-[9px] rounded-[var(--radius)] text-[0.82rem] font-medium text-ink-soft no-underline transition-colors duration-150 w-full;
@@ -946,13 +946,13 @@
     @apply inline-flex items-center gap-1 font-semibold text-[0.78rem] rounded-[20px] bg-[#fee2e2] text-[#991b1b] py-px px-[10px];
   }
   .stat-card {
-    @apply text-center p-5;
+    @apply text-center py-10 px-6;
   }
   .stat-card-value {
-    @apply text-[2rem] font-bold leading-none;
+    @apply text-[2.4rem] font-bold leading-none mb-2;
   }
   .stat-card-label {
-    @apply text-sm text-ink-soft mt-1;
+    @apply text-sm text-ink-soft;
   }
 
   /* ── Monitoring page ─────────────────────────────────────────────────── */
