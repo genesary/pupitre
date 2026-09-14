@@ -534,8 +534,22 @@
   .shell-sidebar-nav {
     @apply flex flex-col gap-0.5;
   }
-  .shell-sidebar-bottom {
-    @apply border-t border-line mt-4 pt-4;
+  .shell-back-btn {
+    @apply flex items-center gap-2 px-[10px] py-[9px] mb-3 rounded-[var(--radius)] text-[0.82rem] font-semibold text-ink-soft no-underline transition-colors duration-150;
+    border: 1.5px solid transparent;
+  }
+  .shell-back-btn:hover {
+    @apply text-ink bg-fill;
+    border-color: var(--color-line);
+  }
+  .shell-back-icon {
+    @apply w-[15px] h-[15px] shrink-0;
+  }
+  .sidebar-icon {
+    @apply w-[18px] h-[18px] shrink-0;
+  }
+  .sidebar-icon svg {
+    @apply w-full h-full;
   }
   .shell-main {
     @apply min-w-0 min-h-[calc(100vh-56px)] py-8 px-9;
@@ -573,8 +587,8 @@
     .shell-sidebar-nav {
       @apply flex-row gap-1;
     }
-    .shell-sidebar-bottom {
-      @apply hidden;
+    .shell-back-btn {
+      @apply whitespace-nowrap text-[0.78rem] py-[7px] px-3 mb-0;
     }
     .sidebar-link {
       @apply whitespace-nowrap text-[0.78rem] py-[7px] px-3;
