@@ -756,13 +756,13 @@
 
   /* ── Leaderboard rows (admin/index + admin/leaderboard) ──────────────── */
   .lb-row {
-    @apply flex items-center gap-3 py-[10px] px-0;
+    @apply flex items-center gap-4 py-[14px] px-1;
   }
   .lb-row + .lb-row {
     @apply border-t border-line;
   }
   .lb-row-padded {
-    @apply flex items-center gap-3.5 py-[13px] px-5;
+    @apply flex items-center gap-4 py-[16px] px-5;
   }
   .lb-row-padded + .lb-row-padded {
     @apply border-t border-line;
@@ -818,7 +818,7 @@
 
   /* ── Stats grid (admin/index) ────────────────────────────────────────── */
   .stats-grid {
-    @apply grid gap-4 mb-8;
+    @apply grid gap-5 mb-8;
     grid-template-columns: repeat(3, 1fr);
   }
   @media (max-width: 900px) {
