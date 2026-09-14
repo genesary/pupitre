@@ -22,6 +22,11 @@ import (
 // as distinct from the generic multi-provider OAuth flow in oauth.go.
 const oidcProviderKey = "oidc"
 
+// oidcInvalidStateMsg is returned for every way an OIDC callback can fail to
+// prove it belongs to a flow this server started, whether that is the state
+// token or the PKCE verifier that backs it.
+const oidcInvalidStateMsg = "Invalid or expired OIDC state"
+
 // oidcSettings holds the platform-configured settings for the dedicated OIDC
 // provider instance, as read from platform_settings by loadOIDCSettings.
 type oidcSettings struct {
@@ -142,7 +147,11 @@ func (s *State) OIDCAuthorize(writer http.ResponseWriter, request *http.Request)
 		return
 	}
 
-	stateToken, err := makeOAuthState(oidcProviderKey, s.oauthStateSecret())
+	// The verifier stays in the browser; only its challenge is committed to
+	// the state token that travels to the provider and back.
+	pkceVerifier := beginPKCE(writer, cfg.RedirectBase)
+
+	stateToken, err := makeOAuthState(oidcProviderKey, oauth2.S256ChallengeFromVerifier(pkceVerifier), s.oauthStateSecret())
 	if err != nil {
 		s.Error(writer, http.StatusInternalServerError, "State token error")
 
@@ -169,7 +178,7 @@ func (s *State) OIDCAuthorize(writer http.ResponseWriter, request *http.Request)
 		Scopes:       cfg.Scopes,
 	}
 
-	authURL := oauth2Cfg.AuthCodeURL(stateToken, oauth2.AccessTypeOnline)
+	authURL := oauth2Cfg.AuthCodeURL(stateToken, oauth2.AccessTypeOnline, oauth2.S256ChallengeOption(pkceVerifier))
 
 	// If oidc_browser_base_url is set, rewrite the internal base URL in authURL
 	// to the browser-accessible one (split-horizon: pod uses internal DNS, browser uses external).
@@ -212,7 +221,7 @@ func oidcGroupsFromClaims(claims map[string]any, groupClaim string) []string {
 //
 //nolint:gocritic // named results here would trip nonamedreturns instead; see doc comment above for the meaning of each value
 func (s *State) exchangeOIDCToken(
-	writer http.ResponseWriter, ctx context.Context, cfg oidcSettings, code string,
+	writer http.ResponseWriter, ctx context.Context, cfg oidcSettings, code, pkceVerifier string,
 ) (map[string]any, string, bool) {
 	providerCtx := oidcContext(ctx, cfg)
 
@@ -233,7 +242,7 @@ func (s *State) exchangeOIDCToken(
 		Scopes:       cfg.Scopes,
 	}
 
-	token, err := oauth2Cfg.Exchange(ctx, code)
+	token, err := oauth2Cfg.Exchange(ctx, code, oauth2.VerifierOption(pkceVerifier))
 	if err != nil {
 		zap.L().Error("OIDC token exchange failed", zap.Error(err))
 		s.Error(writer, http.StatusUnauthorized, "Token exchange failed")
@@ -248,9 +257,9 @@ func (s *State) exchangeOIDCToken(
 		return nil, "", false
 	}
 
-	verifier := oidcProvider.Verifier(&gooidc.Config{ClientID: cfg.ClientID})
+	idTokenVerifier := oidcProvider.Verifier(&gooidc.Config{ClientID: cfg.ClientID})
 
-	idToken, err := verifier.Verify(providerCtx, rawIDToken)
+	idToken, err := idTokenVerifier.Verify(providerCtx, rawIDToken)
 	if err != nil {
 		zap.L().Error("OIDC ID token verification failed", zap.Error(err))
 		s.Error(writer, http.StatusUnauthorized, "Token verification failed")
@@ -294,9 +303,9 @@ func (s *State) OIDCCallback(writer http.ResponseWriter, request *http.Request) 
 		return
 	}
 
-	provider, validState := decodeOAuthState(req.State, s.oauthStateSecret())
+	provider, challenge, validState := decodeOAuthState(req.State, s.oauthStateSecret())
 	if !validState || provider != oidcProviderKey {
-		s.Error(writer, http.StatusUnauthorized, "Invalid or expired OIDC state")
+		s.Error(writer, http.StatusUnauthorized, oidcInvalidStateMsg)
 
 		return
 	}
@@ -311,7 +320,14 @@ func (s *State) OIDCCallback(writer http.ResponseWriter, request *http.Request) 
 		return
 	}
 
-	claims, sub, ok := s.exchangeOIDCToken(writer, ctx, cfg, req.Code)
+	pkceVerifier, hasVerifier := consumePKCEVerifier(writer, request, cfg.RedirectBase, challenge)
+	if !hasVerifier {
+		s.Error(writer, http.StatusUnauthorized, oidcInvalidStateMsg)
+
+		return
+	}
+
+	claims, sub, ok := s.exchangeOIDCToken(writer, ctx, cfg, req.Code, pkceVerifier)
 	if !ok {
 		return
 	}

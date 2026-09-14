@@ -15,6 +15,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
+	"golang.org/x/oauth2"
 
 	apimiddleware "github.com/genesary/pupitre/internal/middleware"
 	"github.com/genesary/pupitre/user-service/fake"
@@ -143,6 +144,40 @@ func htDo(t *testing.T, handler http.Handler, method, path, body, auth string) *
 
 	if body != "" {
 		req.Header.Set("Content-Type", "application/json")
+	}
+
+	rec := httptest.NewRecorder()
+	handler.ServeHTTP(rec, req)
+
+	return rec
+}
+
+// htPKCE mints the pair /authorize hands a browser: a state token bound to
+// a PKCE challenge, and the cookie holding the matching verifier. Callback
+// tests present both, as a real login does.
+func htPKCE(t *testing.T, provider, secret string) (string, *http.Cookie) {
+	t.Helper()
+
+	verifier := oauth2.GenerateVerifier()
+
+	state, err := makeOAuthState(provider, oauth2.S256ChallengeFromVerifier(verifier), secret)
+	if err != nil {
+		t.Fatalf("makeOAuthState: %v", err)
+	}
+
+	return state, &http.Cookie{Name: pkceCookieName, Value: verifier}
+}
+
+// htDoPKCE POSTs body to path with cookies attached, for callback endpoints
+// that require the PKCE cookie issued at the start of the flow.
+func htDoPKCE(t *testing.T, handler http.Handler, path, body string, cookies ...*http.Cookie) *httptest.ResponseRecorder {
+	t.Helper()
+
+	req := httptest.NewRequestWithContext(t.Context(), http.MethodPost, path, bytes.NewReader([]byte(body)))
+	req.Header.Set("Content-Type", "application/json")
+
+	for _, c := range cookies {
+		req.AddCookie(c)
 	}
 
 	rec := httptest.NewRecorder()
@@ -2967,7 +3002,7 @@ func TestDeletePattern_NotFound(t *testing.T) {
 func TestMakeOAuthState(t *testing.T) {
 	t.Parallel()
 
-	tok, err := makeOAuthState("github", htSecret)
+	tok, err := makeOAuthState("github", "challenge", htSecret)
 	if err != nil {
 		t.Fatalf("makeOAuthState: %v", err)
 	}
@@ -2981,18 +3016,22 @@ func TestMakeOAuthState(t *testing.T) {
 func TestDecodeOAuthState_Valid(t *testing.T) {
 	t.Parallel()
 
-	tok, err := makeOAuthState("github", htSecret)
+	tok, err := makeOAuthState("github", "the-challenge", htSecret)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	provider, ok := decodeOAuthState(tok, htSecret)
+	provider, challenge, ok := decodeOAuthState(tok, htSecret)
 	if !ok {
 		t.Error("expected ok=true for valid state token")
 	}
 
 	if provider != "github" {
 		t.Errorf("want provider=github, got %q", provider)
+	}
+
+	if challenge != "the-challenge" {
+		t.Errorf("want the committed PKCE challenge back, got %q", challenge)
 	}
 }
 
@@ -3001,9 +3040,9 @@ func TestDecodeOAuthState_Valid(t *testing.T) {
 func TestDecodeOAuthState_WrongSecret(t *testing.T) {
 	t.Parallel()
 
-	tok, _ := makeOAuthState("github", htSecret)
+	tok, _ := makeOAuthState("github", "challenge", htSecret)
 
-	_, ok := decodeOAuthState(tok, "wrong-secret-key-32-bytes-long!!!")
+	_, _, ok := decodeOAuthState(tok, "wrong-secret-key-32-bytes-long!!!")
 	if ok {
 		t.Error("expected ok=false for wrong secret")
 	}
@@ -3014,7 +3053,7 @@ func TestDecodeOAuthState_WrongSecret(t *testing.T) {
 func TestDecodeOAuthState_Garbage(t *testing.T) {
 	t.Parallel()
 
-	_, ok := decodeOAuthState("not.a.valid.token", htSecret)
+	_, _, ok := decodeOAuthState("not.a.valid.token", htSecret)
 	if ok {
 		t.Error("expected ok=false for garbage token")
 	}
@@ -3024,7 +3063,7 @@ func TestDecodeOAuthState_Garbage(t *testing.T) {
 func TestDecodeOAuthState_Empty(t *testing.T) {
 	t.Parallel()
 
-	_, ok := decodeOAuthState("", htSecret)
+	_, _, ok := decodeOAuthState("", htSecret)
 	if ok {
 		t.Error("expected ok=false for empty token")
 	}
@@ -3724,14 +3763,12 @@ func TestOAuthCallback_GithubProviderFetchFails(t *testing.T) {
 	}
 	r := BuildRouter(s, s.Config, false)
 
-	state, err := makeOAuthState("github", htSecret)
-	if err != nil {
-		t.Fatalf("makeOAuthState: %v", err)
-	}
+	state, pkce := htPKCE(t, "github", htSecret)
 
 	body := fmt.Sprintf(`{"code":"invalid-code","state":%q}`, state)
 	req := httptest.NewRequestWithContext(t.Context(), http.MethodPost, "/api/auth/oauth/callback", strings.NewReader(body))
 	req.Header.Set("Content-Type", "application/json")
+	req.AddCookie(pkce)
 
 	rec := httptest.NewRecorder()
 	r.ServeHTTP(rec, req)
@@ -3756,10 +3793,10 @@ func TestOAuthCallback_ValidStateUnknownProvider(t *testing.T) {
 	r := BuildRouter(s, cfg, false)
 
 	// Create a valid state token for an unknown provider
-	stateToken, _ := makeOAuthState("unknown-provider", htSecret)
+	stateToken, pkce := htPKCE(t, "unknown-provider", htSecret)
 	body := fmt.Sprintf(`{"code":"test-code","state":%q}`, stateToken)
 
-	rec := htDo(t, r, "POST", "/api/auth/oauth/callback", body, "")
+	rec := htDoPKCE(t, r, "/api/auth/oauth/callback", body, pkce)
 	if rec.Code != http.StatusBadRequest {
 		t.Errorf("want 400 (unknown provider), got %d: %s", rec.Code, rec.Body.String())
 	}
@@ -4341,10 +4378,10 @@ func TestOIDCCallback_OIDCDisabled(t *testing.T) {
 	t.Parallel()
 
 	r := newTestRouter()
-	state, _ := makeOAuthState("oidc", htSecret)
+	state, pkce := htPKCE(t, "oidc", htSecret)
 	body := fmt.Sprintf(`{"code":"auth-code","state":%q}`, state)
 
-	rec := htDo(t, r, "POST", "/api/auth/oidc/callback", body, "")
+	rec := htDoPKCE(t, r, "/api/auth/oidc/callback", body, pkce)
 	if rec.Code != http.StatusBadRequest {
 		t.Errorf("want 400 (OIDC disabled), got %d: %s", rec.Code, rec.Body.String())
 	}
@@ -4369,10 +4406,10 @@ func TestOIDCCallback_ProviderUnreachable(t *testing.T) {
 		models.PlatformSetting{Key: "oidc_scopes", Value: "openid email profile"},
 	)
 	r := newTestRouterWithRepos(repos)
-	state, _ := makeOAuthState("oidc", htSecret)
+	state, pkce := htPKCE(t, "oidc", htSecret)
 	body := fmt.Sprintf(`{"code":"code","state":%q}`, state)
 
-	rec := htDo(t, r, "POST", "/api/auth/oidc/callback", body, "")
+	rec := htDoPKCE(t, r, "/api/auth/oidc/callback", body, pkce)
 	if rec.Code != http.StatusInternalServerError {
 		t.Errorf("want 500, got %d: %s", rec.Code, rec.Body.String())
 	}
@@ -4649,7 +4686,7 @@ func TestOIDCAuthorize_ProviderUnreachable(t *testing.T) {
 func TestDecodeOAuthState_Invalid(t *testing.T) {
 	t.Parallel()
 
-	_, ok := decodeOAuthState("not-a-jwt", htSecret)
+	_, _, ok := decodeOAuthState("not-a-jwt", htSecret)
 	if ok {
 		t.Error("expected invalid state to fail")
 	}

@@ -9,7 +9,9 @@ import (
 	"math/big"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"strings"
+	"sync"
 	"testing"
 	"time"
 
@@ -29,6 +31,20 @@ type mockIdP struct {
 	kid            string
 	idTokenClaims  jwt.MapClaims
 	userInfoClaims map[string]any
+
+	// mu guards tokenForm, which the token endpoint fills from the
+	// server's goroutine and PKCE tests read from the test's.
+	mu        sync.Mutex
+	tokenForm url.Values
+}
+
+// lastTokenForm returns the form posted to the token endpoint by the most
+// recent exchange, or nil if none has happened.
+func (m *mockIdP) lastTokenForm() url.Values {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+
+	return m.tokenForm
 }
 
 // newMockIdP starts the provider. The caller sets idTokenClaims (at least
@@ -75,7 +91,13 @@ func newMockIdP(t *testing.T) *mockIdP {
 			},
 		})
 	})
-	mux.HandleFunc("/token", func(w http.ResponseWriter, _ *http.Request) {
+	mux.HandleFunc("/token", func(w http.ResponseWriter, r *http.Request) {
+		_ = r.ParseForm()
+
+		idp.mu.Lock()
+		idp.tokenForm = r.Form
+		idp.mu.Unlock()
+
 		claims := jwt.MapClaims{
 			"iss": idp.server.URL,
 			"aud": "test-client",
@@ -149,13 +171,10 @@ func TestOIDCCallback_FullFlow(t *testing.T) {
 	s := oidcTestState(idp)
 	router := BuildRouter(s, s.Config, false)
 
-	state, err := makeOAuthState(oidcProviderKey, s.oauthStateSecret())
-	if err != nil {
-		t.Fatalf("makeOAuthState: %v", err)
-	}
+	state, pkce := htPKCE(t, oidcProviderKey, s.oauthStateSecret())
 
 	body := `{"code":"any-code","state":"` + state + `"}`
-	rec := htDo(t, router, http.MethodPost, "/api/auth/oidc/callback", body, "")
+	rec := htDoPKCE(t, router, "/api/auth/oidc/callback", body, pkce)
 
 	if rec.Code != http.StatusOK {
 		t.Fatalf("want 200, got %d: %s", rec.Code, rec.Body.String())
@@ -169,7 +188,7 @@ func TestOIDCCallback_FullFlow(t *testing.T) {
 		} `json:"user"`
 	}
 
-	err = json.NewDecoder(rec.Body).Decode(&resp)
+	err := json.NewDecoder(rec.Body).Decode(&resp)
 	if err != nil {
 		t.Fatalf("decode: %v", err)
 	}
@@ -208,13 +227,10 @@ func TestOAuthCallback_GenericOIDCFlow(t *testing.T) {
 	s := &State{Repos: repos, Config: cfg}
 	router := BuildRouter(s, cfg, false)
 
-	state, err := makeOAuthState("keycloak", s.oauthStateSecret())
-	if err != nil {
-		t.Fatalf("makeOAuthState: %v", err)
-	}
+	state, pkce := htPKCE(t, "keycloak", s.oauthStateSecret())
 
-	rec := htDo(t, router, http.MethodPost, "/api/auth/oauth/callback",
-		`{"code":"any","state":"`+state+`"}`, "")
+	rec := htDoPKCE(t, router, "/api/auth/oauth/callback",
+		`{"code":"any","state":"`+state+`"}`, pkce)
 	if rec.Code != http.StatusOK {
 		t.Fatalf("want 200, got %d: %s", rec.Code, rec.Body.String())
 	}
@@ -226,7 +242,7 @@ func TestOAuthCallback_GenericOIDCFlow(t *testing.T) {
 		} `json:"user"`
 	}
 
-	err = json.NewDecoder(rec.Body).Decode(&resp)
+	err := json.NewDecoder(rec.Body).Decode(&resp)
 	if err != nil {
 		t.Fatalf("decode: %v", err)
 	}
@@ -249,9 +265,9 @@ func TestOAuthCallback_UnknownProvider(t *testing.T) {
 	s := &State{Repos: repos, Config: cfg}
 	router := BuildRouter(s, cfg, false)
 
-	state, _ := makeOAuthState("nope", s.oauthStateSecret())
-	rec := htDo(t, router, http.MethodPost, "/api/auth/oauth/callback",
-		`{"code":"x","state":"`+state+`"}`, "")
+	state, pkce := htPKCE(t, "nope", s.oauthStateSecret())
+	rec := htDoPKCE(t, router, "/api/auth/oauth/callback",
+		`{"code":"x","state":"`+state+`"}`, pkce)
 
 	if rec.Code != http.StatusBadRequest {
 		t.Errorf("want 400, got %d", rec.Code)
@@ -283,9 +299,9 @@ func TestOIDCCallback_NoEmailClaim(t *testing.T) {
 	s := oidcTestState(idp)
 	router := BuildRouter(s, s.Config, false)
 
-	state, _ := makeOAuthState(oidcProviderKey, s.oauthStateSecret())
-	rec := htDo(t, router, http.MethodPost, "/api/auth/oidc/callback",
-		`{"code":"x","state":"`+state+`"}`, "")
+	state, pkce := htPKCE(t, oidcProviderKey, s.oauthStateSecret())
+	rec := htDoPKCE(t, router, "/api/auth/oidc/callback",
+		`{"code":"x","state":"`+state+`"}`, pkce)
 
 	if rec.Code != http.StatusUnauthorized {
 		t.Errorf("want 401, got %d: %s", rec.Code, rec.Body.String())
@@ -304,9 +320,9 @@ func TestOIDCCallback_Disabled(t *testing.T) {
 	s := &State{Repos: repos, Config: cfg}
 	router := BuildRouter(s, cfg, false)
 
-	state, _ := makeOAuthState(oidcProviderKey, s.oauthStateSecret())
-	rec := htDo(t, router, http.MethodPost, "/api/auth/oidc/callback",
-		`{"code":"x","state":"`+state+`"}`, "")
+	state, pkce := htPKCE(t, oidcProviderKey, s.oauthStateSecret())
+	rec := htDoPKCE(t, router, "/api/auth/oidc/callback",
+		`{"code":"x","state":"`+state+`"}`, pkce)
 
 	if rec.Code != http.StatusBadRequest {
 		t.Errorf("want 400, got %d", rec.Code)
@@ -370,9 +386,9 @@ func TestOIDCCallback_StringGroupsClaim(t *testing.T) {
 	s := &State{Repos: repos, Config: cfg}
 	router := BuildRouter(s, cfg, false)
 
-	state, _ := makeOAuthState(oidcProviderKey, s.oauthStateSecret())
-	rec := htDo(t, router, http.MethodPost, "/api/auth/oidc/callback",
-		`{"code":"x","state":"`+state+`"}`, "")
+	state, pkce := htPKCE(t, oidcProviderKey, s.oauthStateSecret())
+	rec := htDoPKCE(t, router, "/api/auth/oidc/callback",
+		`{"code":"x","state":"`+state+`"}`, pkce)
 
 	if rec.Code != http.StatusOK {
 		t.Fatalf("want 200, got %d: %s", rec.Code, rec.Body.String())
@@ -445,9 +461,9 @@ func TestOIDCCallback_UserInfoEnrichment(t *testing.T) {
 	s := oidcTestState(idp)
 	router := BuildRouter(s, s.Config, false)
 
-	state, _ := makeOAuthState(oidcProviderKey, s.oauthStateSecret())
-	rec := htDo(t, router, http.MethodPost, "/api/auth/oidc/callback",
-		`{"code":"x","state":"`+state+`"}`, "")
+	state, pkce := htPKCE(t, oidcProviderKey, s.oauthStateSecret())
+	rec := htDoPKCE(t, router, "/api/auth/oidc/callback",
+		`{"code":"x","state":"`+state+`"}`, pkce)
 
 	if rec.Code != http.StatusOK {
 		t.Fatalf("want 200 (email came from UserInfo), got %d: %s", rec.Code, rec.Body.String())
