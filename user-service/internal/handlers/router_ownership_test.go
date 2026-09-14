@@ -70,7 +70,6 @@ func TestRouter_OwnedPrefixesAreDisjoint(t *testing.T) {
 		"/api/users", "/api/badges", "/api/leaderboard", "/api/patterns",
 		"/api/enrollments", "/api/session-bookings",
 		"/internal", "/health", "/metrics",
-		"/uploads/avatars",
 	}
 
 	router := ownershipRouter()

@@ -26,10 +26,6 @@ export default defineConfig({
           target: USER_SERVICE_URL,
           changeOrigin: true,
         },
-        '/uploads': {
-          target: USER_SERVICE_URL,
-          changeOrigin: true,
-        },
       },
     },
   },

@@ -95,8 +95,6 @@ func corsHandler(cfg *config.Config) *cors.Cors {
 func registerPublicRoutes(router chi.Router, state *State, cfg *config.Config) {
 	router.Get("/health", state.Health)
 	router.Get("/metrics", metrics.Handler())
-	router.Get("/uploads/avatars/{filename}", state.ServeAvatar)
-
 	router.Get("/api/settings/public", state.PublicSettings)
 	router.Get("/api/users/{id}", state.PublicUser)
 	router.Get("/api/users/{id}/badges", state.UserBadges)
@@ -121,15 +119,13 @@ func registerPublicRoutes(router chi.Router, state *State, cfg *config.Config) {
 }
 
 // registerAuthenticatedRoutes wires routes that require a valid session.
-func registerAuthenticatedRoutes(router chi.Router, state *State, authMW func(http.Handler) http.Handler) {
+func registerAuthenticatedRoutes(router chi.Router, state *State, authMW func(http.Handler) http.Handler) { //nolint:dupl // authenticated and manager route groups share structural shape but serve different auth layers
 	router.Group(func(group chi.Router) {
 		group.Use(authMW)
 
 		group.Get("/api/auth/me", state.Me)
 		group.Put("/api/auth/profile", state.UpdateProfile)
 		group.Put("/api/auth/password", state.ChangePassword)
-		group.Post("/api/auth/avatar/fetch", state.FetchAvatar)
-		group.Post("/api/auth/avatar/upload", state.UploadAvatar)
 
 		// Enrolling is a user-service concern keyed by course slug, so it is
 		// its own resource rather than a verb hung off the catalog's URL —
@@ -208,7 +204,7 @@ func registerAdminRoutes(router chi.Router, state *State, adminMW func(http.Hand
 }
 
 // registerManagerRoutes wires routes restricted to manager users.
-func registerManagerRoutes(router chi.Router, state *State, managerMW func(http.Handler) http.Handler) {
+func registerManagerRoutes(router chi.Router, state *State, managerMW func(http.Handler) http.Handler) { //nolint:dupl // see registerAuthenticatedRoutes
 	router.Group(func(group chi.Router) {
 		group.Use(managerMW)
 
