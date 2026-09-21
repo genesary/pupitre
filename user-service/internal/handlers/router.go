@@ -95,7 +95,6 @@ func corsHandler(cfg *config.Config) *cors.Cors {
 func registerPublicRoutes(router chi.Router, state *State, cfg *config.Config) {
 	router.Get("/health", state.Health)
 	router.Get("/metrics", metrics.Handler())
-
 	router.Get("/api/settings/public", state.PublicSettings)
 	router.Get("/api/users/{id}", state.PublicUser)
 	router.Get("/api/users/{id}/badges", state.UserBadges)
@@ -120,13 +119,7 @@ func registerPublicRoutes(router chi.Router, state *State, cfg *config.Config) {
 }
 
 // registerAuthenticatedRoutes wires routes that require a valid session.
-//
-// one middleware. Folding two of them together to satisfy the detector would
-// hide which endpoints sit behind which guard, which is the one thing this
-// file exists to make obvious.
-//
-//nolint:dupl // route tables share a shape by nature — a list of paths behind
-func registerAuthenticatedRoutes(router chi.Router, state *State, authMW func(http.Handler) http.Handler) {
+func registerAuthenticatedRoutes(router chi.Router, state *State, authMW func(http.Handler) http.Handler) { //nolint:dupl // authenticated and manager route groups share structural shape but serve different auth layers
 	router.Group(func(group chi.Router) {
 		group.Use(authMW)
 
@@ -211,12 +204,7 @@ func registerAdminRoutes(router chi.Router, state *State, adminMW func(http.Hand
 }
 
 // registerManagerRoutes wires routes restricted to manager users.
-//
-// manager endpoints are the same resources under a narrower scope, and
-// spelling them identically is the point.
-//
-//nolint:dupl // a route table that mirrors the admin one by design: the
-func registerManagerRoutes(router chi.Router, state *State, managerMW func(http.Handler) http.Handler) {
+func registerManagerRoutes(router chi.Router, state *State, managerMW func(http.Handler) http.Handler) { //nolint:dupl // see registerAuthenticatedRoutes
 	router.Group(func(group chi.Router) {
 		group.Use(managerMW)
 
