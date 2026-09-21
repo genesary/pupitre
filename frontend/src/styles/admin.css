@@ -526,7 +526,7 @@
     grid-template-columns: 220px 1fr;
   }
   .shell-sidebar {
-    @apply border-r border-line bg-paper sticky top-14 overflow-y-auto py-5 px-3 h-[calc(100vh-56px)];
+    @apply border-r border-line bg-paper sticky top-14 overflow-y-auto py-5 px-3 h-[calc(100vh-56px)] flex flex-col;
   }
   .shell-sidebar-label {
     @apply font-bold uppercase tracking-[0.08em] text-ink-soft text-[0.7rem] px-[10px] mb-[10px];
@@ -535,7 +535,22 @@
     @apply flex flex-col gap-0.5;
   }
   .shell-sidebar-bottom {
-    @apply border-t border-line mt-4 pt-4;
+    @apply border-t border-line mt-auto pt-3;
+  }
+  .shell-back-btn {
+    @apply flex items-center gap-2 px-[10px] py-[9px] rounded-[var(--radius)] text-[0.82rem] font-medium text-ink-soft no-underline transition-colors duration-150 w-full;
+  }
+  .shell-back-btn:hover {
+    @apply text-ink bg-fill;
+  }
+  .shell-back-icon {
+    @apply w-[15px] h-[15px] shrink-0;
+  }
+  .sidebar-icon {
+    @apply w-[18px] h-[18px] shrink-0;
+  }
+  .sidebar-icon svg {
+    @apply w-full h-full;
   }
   .shell-main {
     @apply min-w-0 min-h-[calc(100vh-56px)] py-8 px-9;
@@ -741,34 +756,34 @@
 
   /* ── Leaderboard rows (admin/index + admin/leaderboard) ──────────────── */
   .lb-row {
-    @apply flex items-center gap-3 py-[10px] px-0;
+    @apply flex items-center gap-5 py-5 px-2;
   }
   .lb-row + .lb-row {
     @apply border-t border-line;
   }
   .lb-row-padded {
-    @apply flex items-center gap-3.5 py-[13px] px-5;
+    @apply flex items-center gap-5 py-5 px-6;
   }
   .lb-row-padded + .lb-row-padded {
     @apply border-t border-line;
   }
   .lb-rank {
-    @apply text-center font-bold text-ink-soft shrink-0 w-6 text-[0.9rem];
+    @apply text-center font-bold text-ink-soft shrink-0 w-7 text-[1rem];
   }
   .lb-rank.top {
     @apply text-orange;
   }
   .lb-rank-lg {
-    @apply text-center font-bold text-ink-soft shrink-0 w-7 text-[0.9rem];
+    @apply text-center font-bold text-ink-soft shrink-0 w-8 text-[1rem];
   }
   .lb-rank-lg.top {
     @apply text-orange;
   }
   .lb-avatar {
-    @apply bg-blue-soft flex items-center justify-center font-bold text-blue shrink-0 rounded-full w-8 h-8 text-[0.82rem];
+    @apply bg-blue-soft flex items-center justify-center font-bold text-blue shrink-0 rounded-full w-10 h-10 text-[0.9rem];
   }
   .lb-avatar-lg {
-    @apply flex items-center justify-center font-bold shrink-0 rounded-full w-9 h-9 text-[0.82rem];
+    @apply flex items-center justify-center font-bold shrink-0 rounded-full w-11 h-11 text-[0.9rem];
   }
   .lb-avatar-user {
     @apply bg-blue-soft text-blue;
@@ -803,7 +818,7 @@
 
   /* ── Stats grid (admin/index) ────────────────────────────────────────── */
   .stats-grid {
-    @apply grid gap-4 mb-8;
+    @apply grid gap-5 mb-8;
     grid-template-columns: repeat(3, 1fr);
   }
   @media (max-width: 900px) {
@@ -931,13 +946,13 @@
     @apply inline-flex items-center gap-1 font-semibold text-[0.78rem] rounded-[20px] bg-[#fee2e2] text-[#991b1b] py-px px-[10px];
   }
   .stat-card {
-    @apply text-center p-5;
+    @apply text-center py-10 px-6;
   }
   .stat-card-value {
-    @apply text-[2rem] font-bold leading-none;
+    @apply text-[2.4rem] font-bold leading-none mb-2;
   }
   .stat-card-label {
-    @apply text-sm text-ink-soft mt-1;
+    @apply text-sm text-ink-soft;
   }
 
   /* ── Monitoring page ─────────────────────────────────────────────────── */
