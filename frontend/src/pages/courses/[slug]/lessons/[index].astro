@@ -189,10 +189,79 @@ import App from '../../../../layouts/App.astro';
 
     async function renderMarkdown(md: string): Promise<string> {
       const { marked } = await import('marked');
+
+      // Pre-process: convert Docusaurus admonitions to HTML blocks
+      let processed = md;
+      processed = processDocusaurusAdmonitions(processed);
+
+      // Apply patterns
       const patterns = await loadPatterns();
       injectPatternCSS(patterns);
-      const processed = await applyPatterns(md, patterns, marked);
-      return marked.parse(processed) as string;
+      processed = await applyPatterns(processed, patterns, marked);
+
+      // Convert mermaid code blocks to div format for Mermaid rendering
+      processed = processMermaidBlocks(processed);
+
+      // Render markdown
+      let html = marked.parse(processed) as string;
+
+      // Schedule Mermaid initialization after the DOM is updated
+      setTimeout(() => {
+        try {
+          (async () => {
+            const { default: mermaid } = await import('mermaid');
+            mermaid.contentLoaded();
+          })();
+        } catch (e) {
+          console.warn('Mermaid rendering failed:', e);
+        }
+      }, 0);
+
+      return html;
+    }
+
+    function processDocusaurusAdmonitions(md: string): string {
+      const admonitionTypes = ['note', 'warning', 'info', 'danger', 'tip', 'success', 'caution'];
+      const icons: Record<string, string> = {
+        'note': '📝',
+        'warning': '⚠️',
+        'info': 'ℹ️',
+        'danger': '🚨',
+        'tip': '💡',
+        'success': '✅',
+        'caution': '⚡'
+      };
+
+      for (const type of admonitionTypes) {
+        // Match :::type ... ::: blocks
+        const pattern = new RegExp(`^:::${type}\\s*$([\\s\\S]*?)^:::$`, 'gm');
+        md = md.replace(pattern, (match, content) => {
+          const trimmedContent = content.trim();
+          const typeLabel = type.charAt(0).toUpperCase() + type.slice(1);
+          // Return as an HTML block so marked won't process it further
+          return `<div class="admonition admonition-${type}">
+<div class="admonition-heading">
+<span class="admonition-icon">${icons[type]}</span>
+<strong>${typeLabel}</strong>
+</div>
+<div class="admonition-content">
+
+${trimmedContent}
+
+</div>
+</div>`;
+        });
+      }
+      return md;
+    }
+
+    function processMermaidBlocks(md: string): string {
+      // Convert ``` mermaid ... ``` to <pre class="mermaid">...</pre>
+      const pattern = /```mermaid\n([\s\S]*?)```/g;
+      return md.replace(pattern, (match, content) => {
+        const cleanContent = content.trim();
+        return `<pre class="mermaid">\n${cleanContent}\n</pre>`;
+      });
     }
 
     function addCopyButtons(container: HTMLElement) {

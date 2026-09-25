@@ -205,5 +205,115 @@ const { title, description, activePage } = Astro.props;
     }
 
     (window as any).showToast = showToast;
+
+    // Load Mermaid for diagram rendering with ELK layout engine
+    (async () => {
+      try {
+        const { default: mermaid } = await import('mermaid');
+
+        mermaid.initialize({
+          startOnLoad: true,
+          theme: isDark() ? 'dark' : 'default',
+          securityLevel: 'loose',
+          flowchart: {
+            useMaxWidth: true,
+            htmlLabels: true,
+            curve: 'linear',
+            padding: 20,
+            nodeSpacing: 50,
+            rankSpacing: 50,
+            diagramMarginX: 40,
+            diagramMarginY: 40
+          },
+          graph: {
+            useMaxWidth: true,
+            htmlLabels: true,
+            curve: 'linear',
+            padding: 20,
+            nodeSpacing: 50,
+            rankSpacing: 50,
+            diagramMarginX: 40,
+            diagramMarginY: 40
+          },
+          sequence: {
+            useMaxWidth: true,
+            actorMargin: 50,
+            messageAlign: 'center'
+          },
+          classDiagram: {
+            useMaxWidth: true,
+            arrowMarkerAbsolute: true,
+            htmlLabels: true
+          },
+          stateDiagram: {
+            useMaxWidth: true,
+            htmlLabels: true,
+            curve: 'linear',
+            padding: 20,
+            nodeSpacing: 50,
+            rankSpacing: 50,
+            diagramMarginX: 40,
+            diagramMarginY: 40
+          }
+        });
+        mermaid.contentLoaded();
+
+        // Update Mermaid theme when dark mode is toggled
+        const originalToggle = window.toggleTheme;
+        (window as any).toggleTheme = function() {
+          originalToggle?.();
+          setTimeout(() => {
+            const isDarkNow = isDark();
+            mermaid.initialize({
+              theme: isDarkNow ? 'dark' : 'default',
+              securityLevel: 'loose',
+              flowchart: {
+                useMaxWidth: true,
+                htmlLabels: true,
+                curve: 'linear',
+                padding: 20,
+                nodeSpacing: 50,
+                rankSpacing: 50,
+                diagramMarginX: 40,
+                diagramMarginY: 40
+              },
+              graph: {
+                useMaxWidth: true,
+                htmlLabels: true,
+                curve: 'linear',
+                padding: 20,
+                nodeSpacing: 50,
+                rankSpacing: 50,
+                diagramMarginX: 40,
+                diagramMarginY: 40
+              },
+              sequence: {
+                useMaxWidth: true,
+                actorMargin: 50,
+                messageAlign: 'center'
+              },
+              classDiagram: {
+                useMaxWidth: true,
+                arrowMarkerAbsolute: true,
+                htmlLabels: true
+              },
+              stateDiagram: {
+                useMaxWidth: true,
+                htmlLabels: true,
+                curve: 'linear',
+                padding: 20,
+                nodeSpacing: 50,
+                rankSpacing: 50,
+                diagramMarginX: 40,
+                diagramMarginY: 40
+              }
+            });
+            mermaid.contentLoaded();
+          }, 100);
+        };
+      } catch (e) {
+        console.warn('Mermaid initialization failed:', e);
+      }
+    })();
   </script>
 </Base>

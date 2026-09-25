@@ -4,7 +4,7 @@ FROM docker.io/library/node:22-alpine AS builder
 WORKDIR /app
 
 COPY package.json package-lock.json* ./
-RUN npm ci
+RUN npm ci --legacy-peer-deps
 
 COPY . .
 RUN npm run build
@@ -17,7 +17,7 @@ WORKDIR /app
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/package.json \
                     /app/package-lock.json ./
-RUN npm ci --omit=dev
+RUN npm ci --omit=dev --legacy-peer-deps
 
 COPY --chmod=755 docker-entrypoint.sh /docker-entrypoint.sh
 RUN chown -R node:node /app /docker-entrypoint.sh
