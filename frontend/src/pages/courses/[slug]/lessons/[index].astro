@@ -197,27 +197,64 @@ import App from '../../../../layouts/App.astro';
     }
 
     // Docusaurus-style admonitions: `:::type`, `:::type Title` or `:::type[Title]`,
-    // closed by `:::`. Not nestable.
+    // closed by `:::`. Not nestable. Markers inside fenced code blocks (``` / ~~~)
+    // are left alone, so a lesson can show the syntax itself in a code sample.
     const ADMONITION_ICONS: Record<string, string> = {
       note: '📝', tip: '💡', info: 'ℹ️', warning: '⚠️', danger: '🚨', caution: '⚡',
     };
 
     function processAdmonitions(md: string): string {
       const types = Object.keys(ADMONITION_ICONS).join('|');
-      const re = new RegExp(`^:::(${types})(?:\\[([^\\]\\n]*)\\]| +([^\\n]*?))?[ \\t]*\\n([\\s\\S]*?)^:::[ \\t]*$`, 'gm');
-      return md.replace(re, (_, type: string, bracketTitle?: string, spaceTitle?: string, body = '') => {
+      const openRe = new RegExp(`^:::(${types})(?:\\[([^\\]\\n]*)\\]| +(.*?))?[ \\t]*$`);
+      const closeRe = /^:::[ \t]*$/;
+      const fenceRe = /^ {0,3}(`{3,}|~{3,})/;
+
+      // Tracks fenced-code state line by line; returns true while inside a fence.
+      const fenceTracker = () => {
+        let fence = '';
+        return (line: string): boolean => {
+          const m = fenceRe.exec(line);
+          if (!fence) {
+            if (m) { fence = m[1]; return true; }
+            return false;
+          }
+          if (m && m[1][0] === fence[0] && m[1].length >= fence.length && !line.slice(m[0].length).trim()) fence = '';
+          return true;
+        };
+      };
+
+      const lines = md.split('\n');
+      const out: string[] = [];
+      const inOuterFence = fenceTracker();
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i];
+        const open = inOuterFence(line) ? null : openRe.exec(line);
+        if (!open) { out.push(line); continue; }
+
+        // Find the closing `:::`, ignoring any inside a fence in the body.
+        const inBodyFence = fenceTracker();
+        let end = -1;
+        for (let j = i + 1; j < lines.length; j++) {
+          if (!inBodyFence(lines[j]) && closeRe.test(lines[j])) { end = j; break; }
+        }
+        if (end < 0) { out.push(line); continue; }
+
+        const [, type, bracketTitle, spaceTitle] = open;
         const title = (bracketTitle ?? spaceTitle)?.trim() || type.charAt(0).toUpperCase() + type.slice(1);
         const safeTitle = title.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        const body = lines.slice(i + 1, end).join('\n').trim();
         // Blank lines around the body let marked parse it as markdown inside the HTML block.
-        return `<div class="admonition admonition-${type}">
+        out.push(`<div class="admonition admonition-${type}">
 <div class="admonition-heading"><span class="admonition-icon">${ADMONITION_ICONS[type]}</span><strong>${safeTitle}</strong></div>
 <div class="admonition-content">
 
-${body.trim()}
+${body}
 
 </div>
-</div>`;
-      });
+</div>`);
+        i = end;
+      }
+      return out.join('\n');
     }
 
     // ── Mermaid ────────────────────────────────────────────────────────────────
