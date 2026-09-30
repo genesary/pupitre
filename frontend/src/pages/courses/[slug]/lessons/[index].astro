@@ -191,8 +191,111 @@ import App from '../../../../layouts/App.astro';
       const { marked } = await import('marked');
       const patterns = await loadPatterns();
       injectPatternCSS(patterns);
-      const processed = await applyPatterns(md, patterns, marked);
+      const normalized = md.replace(/\r\n?/g, '\n');
+      const processed = await applyPatterns(processAdmonitions(normalized), patterns, marked);
       return marked.parse(processed) as string;
+    }
+
+    // Docusaurus-style admonitions: `:::type`, `:::type Title` or `:::type[Title]`,
+    // closed by `:::`. Not nestable. Markers inside fenced code blocks (``` / ~~~)
+    // are left alone, so a lesson can show the syntax itself in a code sample.
+    const ADMONITION_ICONS: Record<string, string> = {
+      note: '📝', tip: '💡', info: 'ℹ️', warning: '⚠️', danger: '🚨', caution: '⚡',
+    };
+
+    function processAdmonitions(md: string): string {
+      const types = Object.keys(ADMONITION_ICONS).join('|');
+      const openRe = new RegExp(`^:::(${types})(?:\\[([^\\]\\n]*)\\]| +(.*?))?[ \\t]*$`);
+      const closeRe = /^:::[ \t]*$/;
+      const fenceRe = /^ {0,3}(`{3,}|~{3,})/;
+
+      // Tracks fenced-code state line by line; returns true while inside a fence.
+      const fenceTracker = () => {
+        let fence = '';
+        return (line: string): boolean => {
+          const m = fenceRe.exec(line);
+          if (!fence) {
+            if (m) { fence = m[1]; return true; }
+            return false;
+          }
+          if (m && m[1][0] === fence[0] && m[1].length >= fence.length && !line.slice(m[0].length).trim()) fence = '';
+          return true;
+        };
+      };
+
+      const lines = md.split('\n');
+      const out: string[] = [];
+      const inOuterFence = fenceTracker();
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i];
+        const open = inOuterFence(line) ? null : openRe.exec(line);
+        if (!open) { out.push(line); continue; }
+
+        // Find the closing `:::`, ignoring any inside a fence in the body.
+        const inBodyFence = fenceTracker();
+        let end = -1;
+        for (let j = i + 1; j < lines.length; j++) {
+          if (!inBodyFence(lines[j]) && closeRe.test(lines[j])) { end = j; break; }
+        }
+        if (end < 0) { out.push(line); continue; }
+
+        const [, type, bracketTitle, spaceTitle] = open;
+        const title = (bracketTitle ?? spaceTitle)?.trim() || type.charAt(0).toUpperCase() + type.slice(1);
+        const safeTitle = title.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        const body = lines.slice(i + 1, end).join('\n').trim();
+        // Blank lines around the body let marked parse it as markdown inside the HTML block.
+        out.push(`<div class="admonition admonition-${type}">
+<div class="admonition-heading"><span class="admonition-icon">${ADMONITION_ICONS[type]}</span><strong>${safeTitle}</strong></div>
+<div class="admonition-content">
+
+${body}
+
+</div>
+</div>`);
+        i = end;
+      }
+      return out.join('\n');
+    }
+
+    // ── Mermaid ────────────────────────────────────────────────────────────────
+    // marked renders ```mermaid fences as <pre><code class="language-mermaid">,
+    // with the source HTML-escaped. Swap each for a <div class="mermaid"> holding
+    // the decoded source (a <div>, so addCopyButtons leaves it alone), then let
+    // Mermaid render them. The source is kept in data-src to re-render on theme change.
+    async function renderMermaid(container: HTMLElement) {
+      const blocks = container.querySelectorAll<HTMLElement>('pre > code.language-mermaid');
+      if (!blocks.length) return;
+      blocks.forEach(code => {
+        const div = document.createElement('div');
+        div.className = 'mermaid';
+        div.dataset.src = code.textContent ?? '';
+        div.textContent = div.dataset.src;
+        code.parentElement!.replaceWith(div);
+      });
+      await runMermaid();
+    }
+
+    let _mermaidThemeWatched = false;
+
+    async function runMermaid() {
+      const nodes = document.querySelectorAll<HTMLElement>('.mermaid[data-src]');
+      if (!nodes.length) return;
+      const { default: mermaid } = await import('mermaid');
+      const dark = document.documentElement.classList.contains('dark');
+      mermaid.initialize({ startOnLoad: false, theme: dark ? 'dark' : 'default' });
+      nodes.forEach(n => { n.removeAttribute('data-processed'); n.textContent = n.dataset.src ?? ''; });
+      await mermaid.run({ nodes, suppressErrors: true });
+
+      if (!_mermaidThemeWatched) {
+        _mermaidThemeWatched = true;
+        let wasDark = dark;
+        new MutationObserver(() => {
+          const isDark = document.documentElement.classList.contains('dark');
+          if (isDark === wasDark) return;
+          wasDark = isDark;
+          runMermaid().catch(e => console.warn('Mermaid rendering failed:', e));
+        }).observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+      }
     }
 
     function addCopyButtons(container: HTMLElement) {
@@ -405,6 +508,7 @@ import App from '../../../../layouts/App.astro';
 
         contentBody.innerHTML = mdHtml + successBanner + checkBar;
         contentBody.querySelector('h1, h2')?.remove();
+        renderMermaid(contentBody).catch(e => console.warn('Mermaid rendering failed:', e));
         addCopyButtons(contentBody);
 
         const showResult = (resultDiv: HTMLElement, result: {allow: boolean; violations?: string[]}) => {
@@ -500,6 +604,7 @@ import App from '../../../../layouts/App.astro';
         try {
           contentBody.innerHTML = await renderMarkdown(mod.content);
           contentBody.querySelector('h1, h2')?.remove();
+          renderMermaid(contentBody).catch(e => console.warn('Mermaid rendering failed:', e));
           addCopyButtons(contentBody);
         } catch {
           contentBody.textContent = mod.content;

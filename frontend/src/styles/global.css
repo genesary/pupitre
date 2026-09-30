@@ -3,6 +3,7 @@
 @import "./tokens.css";
 @import "./base.css";
 @import "./components.css";
+@import "./admonitions.css";
 @import "./gamification.css";
 @import "./learning.css";
 @import "./admin.css";
