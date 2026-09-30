@@ -189,79 +189,76 @@ import App from '../../../../layouts/App.astro';
 
     async function renderMarkdown(md: string): Promise<string> {
       const { marked } = await import('marked');
-
-      // Pre-process: convert Docusaurus admonitions to HTML blocks
-      let processed = md;
-      processed = processDocusaurusAdmonitions(processed);
-
-      // Apply patterns
       const patterns = await loadPatterns();
       injectPatternCSS(patterns);
-      processed = await applyPatterns(processed, patterns, marked);
-
-      // Convert mermaid code blocks to div format for Mermaid rendering
-      processed = processMermaidBlocks(processed);
-
-      // Render markdown
-      let html = marked.parse(processed) as string;
-
-      // Schedule Mermaid initialization after the DOM is updated
-      setTimeout(() => {
-        try {
-          (async () => {
-            const { default: mermaid } = await import('mermaid');
-            mermaid.contentLoaded();
-          })();
-        } catch (e) {
-          console.warn('Mermaid rendering failed:', e);
-        }
-      }, 0);
-
-      return html;
+      const normalized = md.replace(/\r\n?/g, '\n');
+      const processed = await applyPatterns(processAdmonitions(normalized), patterns, marked);
+      return marked.parse(processed) as string;
     }
 
-    function processDocusaurusAdmonitions(md: string): string {
-      const admonitionTypes = ['note', 'warning', 'info', 'danger', 'tip', 'success', 'caution'];
-      const icons: Record<string, string> = {
-        'note': '📝',
-        'warning': '⚠️',
-        'info': 'ℹ️',
-        'danger': '🚨',
-        'tip': '💡',
-        'success': '✅',
-        'caution': '⚡'
-      };
+    // Docusaurus-style admonitions: `:::type`, `:::type Title` or `:::type[Title]`,
+    // closed by `:::`. Not nestable.
+    const ADMONITION_ICONS: Record<string, string> = {
+      note: '📝', tip: '💡', info: 'ℹ️', warning: '⚠️', danger: '🚨', caution: '⚡',
+    };
 
-      for (const type of admonitionTypes) {
-        // Match :::type ... ::: blocks
-        const pattern = new RegExp(`^:::${type}\\s*$([\\s\\S]*?)^:::$`, 'gm');
-        md = md.replace(pattern, (match, content) => {
-          const trimmedContent = content.trim();
-          const typeLabel = type.charAt(0).toUpperCase() + type.slice(1);
-          // Return as an HTML block so marked won't process it further
-          return `<div class="admonition admonition-${type}">
-<div class="admonition-heading">
-<span class="admonition-icon">${icons[type]}</span>
-<strong>${typeLabel}</strong>
-</div>
+    function processAdmonitions(md: string): string {
+      const types = Object.keys(ADMONITION_ICONS).join('|');
+      const re = new RegExp(`^:::(${types})(?:\\[([^\\]\\n]*)\\]| +([^\\n]*?))?[ \\t]*\\n([\\s\\S]*?)^:::[ \\t]*$`, 'gm');
+      return md.replace(re, (_, type: string, bracketTitle?: string, spaceTitle?: string, body = '') => {
+        const title = (bracketTitle ?? spaceTitle)?.trim() || type.charAt(0).toUpperCase() + type.slice(1);
+        const safeTitle = title.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        // Blank lines around the body let marked parse it as markdown inside the HTML block.
+        return `<div class="admonition admonition-${type}">
+<div class="admonition-heading"><span class="admonition-icon">${ADMONITION_ICONS[type]}</span><strong>${safeTitle}</strong></div>
 <div class="admonition-content">
 
-${trimmedContent}
+${body.trim()}
 
 </div>
 </div>`;
-        });
-      }
-      return md;
+      });
     }
 
-    function processMermaidBlocks(md: string): string {
-      // Convert ``` mermaid ... ``` to <pre class="mermaid">...</pre>
-      const pattern = /```mermaid\n([\s\S]*?)```/g;
-      return md.replace(pattern, (match, content) => {
-        const cleanContent = content.trim();
-        return `<pre class="mermaid">\n${cleanContent}\n</pre>`;
+    // ── Mermaid ────────────────────────────────────────────────────────────────
+    // marked renders ```mermaid fences as <pre><code class="language-mermaid">,
+    // with the source HTML-escaped. Swap each for a <div class="mermaid"> holding
+    // the decoded source (a <div>, so addCopyButtons leaves it alone), then let
+    // Mermaid render them. The source is kept in data-src to re-render on theme change.
+    async function renderMermaid(container: HTMLElement) {
+      const blocks = container.querySelectorAll<HTMLElement>('pre > code.language-mermaid');
+      if (!blocks.length) return;
+      blocks.forEach(code => {
+        const div = document.createElement('div');
+        div.className = 'mermaid';
+        div.dataset.src = code.textContent ?? '';
+        div.textContent = div.dataset.src;
+        code.parentElement!.replaceWith(div);
       });
+      await runMermaid();
+    }
+
+    let _mermaidThemeWatched = false;
+
+    async function runMermaid() {
+      const nodes = document.querySelectorAll<HTMLElement>('.mermaid[data-src]');
+      if (!nodes.length) return;
+      const { default: mermaid } = await import('mermaid');
+      const dark = document.documentElement.classList.contains('dark');
+      mermaid.initialize({ startOnLoad: false, theme: dark ? 'dark' : 'default' });
+      nodes.forEach(n => { n.removeAttribute('data-processed'); n.textContent = n.dataset.src ?? ''; });
+      await mermaid.run({ nodes, suppressErrors: true });
+
+      if (!_mermaidThemeWatched) {
+        _mermaidThemeWatched = true;
+        let wasDark = dark;
+        new MutationObserver(() => {
+          const isDark = document.documentElement.classList.contains('dark');
+          if (isDark === wasDark) return;
+          wasDark = isDark;
+          runMermaid().catch(e => console.warn('Mermaid rendering failed:', e));
+        }).observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+      }
     }
 
     function addCopyButtons(container: HTMLElement) {
@@ -474,6 +471,7 @@ ${trimmedContent}
 
         contentBody.innerHTML = mdHtml + successBanner + checkBar;
         contentBody.querySelector('h1, h2')?.remove();
+        renderMermaid(contentBody).catch(e => console.warn('Mermaid rendering failed:', e));
         addCopyButtons(contentBody);
 
         const showResult = (resultDiv: HTMLElement, result: {allow: boolean; violations?: string[]}) => {
@@ -569,6 +567,7 @@ ${trimmedContent}
         try {
           contentBody.innerHTML = await renderMarkdown(mod.content);
           contentBody.querySelector('h1, h2')?.remove();
+          renderMermaid(contentBody).catch(e => console.warn('Mermaid rendering failed:', e));
           addCopyButtons(contentBody);
         } catch {
           contentBody.textContent = mod.content;

@@ -72,7 +72,7 @@
 }
 
 /* Light theme */
-:root:not([data-theme="dark"]) {
+:root {
   --adm-note-bg: #f0f7ff;
   --adm-note-border: #0e7fe8;
   --adm-note-text: #0e5a8a;
@@ -98,11 +98,6 @@
   --adm-tip-text: #2d7a3a;
   --adm-tip-text-content: #1b4d24;
 
-  --adm-success-bg: #e8f5e9;
-  --adm-success-border: #43a047;
-  --adm-success-text: #2d7a3a;
-  --adm-success-text-content: #1b4d24;
-
   --adm-caution-bg: #fff3e0;
   --adm-caution-border: #ff9800;
   --adm-caution-text: #e65100;
@@ -113,49 +108,41 @@
   --adm-link-color: #0969da;
 }
 
-/* Dark theme */
-:root[data-theme="dark"],
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --adm-note-bg: #1a2332;
-    --adm-note-border: #4ba3e3;
-    --adm-note-text: #7bb8e6;
-    --adm-note-text-content: #b0cfe6;
+/* Dark theme — the app toggles `.dark` on <html> (see tokens.css) */
+:root.dark {
+  --adm-note-bg: #1a2332;
+  --adm-note-border: #4ba3e3;
+  --adm-note-text: #7bb8e6;
+  --adm-note-text-content: #b0cfe6;
 
-    --adm-warning-bg: #332816;
-    --adm-warning-border: #ffa500;
-    --adm-warning-text: #ffb84d;
-    --adm-warning-text-content: #ffe6cc;
+  --adm-warning-bg: #332816;
+  --adm-warning-border: #ffa500;
+  --adm-warning-text: #ffb84d;
+  --adm-warning-text-content: #ffe6cc;
 
-    --adm-info-bg: #1a2332;
-    --adm-info-border: #4ba3e3;
-    --adm-info-text: #7bb8e6;
-    --adm-info-text-content: #b0cfe6;
+  --adm-info-bg: #1a2332;
+  --adm-info-border: #4ba3e3;
+  --adm-info-text: #7bb8e6;
+  --adm-info-text-content: #b0cfe6;
 
-    --adm-danger-bg: #331a1a;
-    --adm-danger-border: #ff6b6b;
-    --adm-danger-text: #ff9999;
-    --adm-danger-text-content: #ffcccc;
+  --adm-danger-bg: #331a1a;
+  --adm-danger-border: #ff6b6b;
+  --adm-danger-text: #ff9999;
+  --adm-danger-text-content: #ffcccc;
 
-    --adm-tip-bg: #1a331a;
-    --adm-tip-border: #66bb6a;
-    --adm-tip-text: #81c784;
-    --adm-tip-text-content: #a5d6a7;
+  --adm-tip-bg: #1a331a;
+  --adm-tip-border: #66bb6a;
+  --adm-tip-text: #81c784;
+  --adm-tip-text-content: #a5d6a7;
 
-    --adm-success-bg: #1a331a;
-    --adm-success-border: #66bb6a;
-    --adm-success-text: #81c784;
-    --adm-success-text-content: #a5d6a7;
+  --adm-caution-bg: #331f1a;
+  --adm-caution-border: #ffb74d;
+  --adm-caution-text: #ffb74d;
+  --adm-caution-text-content: #ffe0b2;
 
-    --adm-caution-bg: #331f1a;
-    --adm-caution-border: #ffb74d;
-    --adm-caution-text: #ffb74d;
-    --adm-caution-text-content: #ffe0b2;
-
-    --adm-code-bg: rgba(255, 255, 255, 0.12);
-    --adm-code-color: #f97583;
-    --adm-link-color: #58a6ff;
-  }
+  --adm-code-bg: rgba(255, 255, 255, 0.12);
+  --adm-code-color: #f97583;
+  --adm-link-color: #58a6ff;
 }
 
 /* Type-specific admonitions */
@@ -194,13 +181,6 @@
   --adm-text-content: var(--adm-tip-text-content);
 }
 
-.admonition-success {
-  --adm-bg: var(--adm-success-bg);
-  --adm-border: var(--adm-success-border);
-  --adm-text: var(--adm-success-text);
-  --adm-text-content: var(--adm-success-text-content);
-}
-
 .admonition-caution {
   --adm-bg: var(--adm-caution-bg);
   --adm-border: var(--adm-caution-border);
@@ -218,21 +198,5 @@
   & svg {
     max-width: 100%;
     height: auto;
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .mermaid {
-    & text {
-      fill: var(--text-secondary, #ccc);
-    }
-
-    & .node rect,
-    & .node circle,
-    & .node ellipse,
-    & .node polygon {
-      fill: var(--bg-secondary, #333);
-      stroke: var(--border-color, #666);
-    }
   }
 }
