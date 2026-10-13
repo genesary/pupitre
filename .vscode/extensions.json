@@ -1,0 +1,19 @@
+{
+  "recommendations": [
+    "golang.go",
+    "jdx.mise",
+    "ms-kubernetes-tools.vscode-kubernetes-tools",
+    "redhat.vscode-yaml",
+    "ms-azuretools.vscode-containers",
+    "exiasr.hadolint",
+    "astro-build.astro-vscode",
+    "bradlc.vscode-tailwindcss",
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "yzhang.markdown-all-in-one",
+    "davidanson.vscode-markdownlint",
+    "bierner.markdown-mermaid",
+    "tamasfe.even-better-toml",
+    "editorconfig.editorconfig"
+  ]
+}

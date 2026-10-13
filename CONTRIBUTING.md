@@ -2,20 +2,64 @@
 
 ## Prerequisites
 
-Install these tools first:
+You need a container engine, [Docker](https://docs.docker.com/engine/install/) or Podman. The Makefile
+defaults to Podman; to use Docker, set `DOCKER=docker` in a git-ignored `local.mk`.
 
-- [Docker](https://docs.docker.com/engine/install/)
-- [KinD](https://kind.sigs.k8s.io/docs/user/quick-start/#installation) — `kind` CLI
-- [Helm](https://helm.sh/docs/intro/install/) v3 — `helm` CLI
-- [kubectl](https://kubernetes.io/docs/tasks/tools/)
-- [Go](https://go.dev/dl/) 1.26+
-- [Node.js](https://nodejs.org/) 22+
+Every other tool is pinned in [`mise.toml`](mise.toml) and installed by mise.
 
-Check they are installed:
+### Install the toolchain with mise
+
+[mise](https://mise.jdx.dev/) installs the exact tool versions the project uses: Go, Node.js, `kind`,
+`kubectl`, `helm`, `golangci-lint`, `hadolint`, `prek` and a few more.
+
+1. [Install mise](https://mise.jdx.dev/getting-started.html).
+2. Activate it in your shell, for example for zsh (replace `zsh` with `bash` or `fish` as needed):
+
+   ```bash
+   echo 'eval "$(mise activate zsh)"' >> ~/.zshrc
+   ```
+
+3. From the repository root, install the tools:
+
+   ```bash
+   mise trust
+   mise install
+   ```
+
+Without mise, install the tools listed in `mise.toml` manually, at the versions it pins.
+
+### Check your setup
 
 ```bash
+mise ls --current                 # every tool should be installed
 docker --version && kind version && helm version --short && kubectl version --client && go version && node --version
 ```
+
+## Pre-commit hooks
+
+[prek](https://github.com/j178/prek), a fast drop-in replacement for `pre-commit`, runs the checks
+declared in [`.pre-commit-config.yaml`](.pre-commit-config.yaml) before each commit:
+
+- file hygiene (whitespace, end-of-file newline, line endings, valid YAML/JSON/TOML, merge-conflict
+  markers, large files)
+- `hadolint` on Dockerfiles
+- `markdownlint-cli2` on Markdown, configured in [`.markdownlint-cli2.yaml`](.markdownlint-cli2.yaml)
+- `golangci-lint` on Go code, reporting only issues introduced since `HEAD`
+
+`prek` is installed by `mise install`. Enable the git hook once per clone:
+
+```bash
+make precommit-setup    # prek install
+```
+
+Run all hooks on the whole repository at any time, for example before opening a pull request:
+
+```bash
+make precommit-run      # prek run --all-files
+```
+
+If a hook fails, fix the reported issue (some hooks fix files automatically), stage the changes and
+commit again.
 
 ---
 
@@ -107,10 +151,10 @@ make seed-courses      # re-runs the seed in overwrite mode
 
 `SEED_DEV_COURSES` takes two values:
 
-| Value | Behaviour |
-|---|---|
-| `true` | Creates only the courses that do not exist yet — local edits made through the admin UI survive a restart |
-| `overwrite` | Replaces every seed course, discarding local edits to them |
+| Value       | Behaviour                                                                                                |
+| ----------- | -------------------------------------------------------------------------------------------------------- |
+| `true`      | Creates only the courses that do not exist yet — local edits made through the admin UI survive a restart |
+| `overwrite` | Replaces every seed course, discarding local edits to them                                               |
 
 Anything else (including unset) disables seeding entirely, so a production
 deployment cannot pick up demo content by accident.
@@ -178,29 +222,29 @@ This deletes the old cluster, creates a new one, builds images, loads them, runs
 
 ## Access
 
-| Service       | URL                        | Auth                     |
-|---------------|----------------------------|--------------------------|
-| Frontend      | <http://localhost:3000>      | —                        |
-| Course API    | <http://localhost:18082>     | —                        |
-| User API      | <http://localhost:18081>     | —                        |
+| Service    | URL                      | Auth |
+| ---------- | ------------------------ | ---- |
+| Frontend   | <http://localhost:3000>  | —    |
+| Course API | <http://localhost:18082> | —    |
+| User API   | <http://localhost:18081> | —    |
 
 ---
 
 ## Makefile commands
 
-| Command                    | What it does                              |
-|----------------------------|-------------------------------------------|
-| `make kind-create`         | Create KinD cluster (`pupitre`)         |
-| `make kind-delete`         | Delete KinD cluster                       |
-| `make docker-build`        | Build all 3 Docker images                 |
-| `make kind-load`           | Load images into KinD nodes               |
-| `make helm-install`        | Deploy/upgrade Helm chart                 |
-| `make helm-delete`         | Uninstall Helm release                    |
-| `make port-forward`        | Expose services on localhost              |
-| `make port-forward-stop`   | Stop port-forwards                        |
-| `make logs`                | Tail service logs                         |
-| `make status`              | Show pods and services                    |
-| `make clean`               | Delete Helm release + KinD cluster        |
+| Command                  | What it does                       |
+| ------------------------ | ---------------------------------- |
+| `make kind-create`       | Create KinD cluster (`pupitre`)    |
+| `make kind-delete`       | Delete KinD cluster                |
+| `make docker-build`      | Build all 3 Docker images          |
+| `make kind-load`         | Load images into KinD nodes        |
+| `make helm-install`      | Deploy/upgrade Helm chart          |
+| `make helm-delete`       | Uninstall Helm release             |
+| `make port-forward`      | Expose services on localhost       |
+| `make port-forward-stop` | Stop port-forwards                 |
+| `make logs`              | Tail service logs                  |
+| `make status`            | Show pods and services             |
+| `make clean`             | Delete Helm release + KinD cluster |
 
 ---
 

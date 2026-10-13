@@ -246,6 +246,16 @@ go/lint:
 	@echo "=== Linting ==="
 	@golangci-lint run ./...
 
+# ── Pre-commit (prek) ───────────────────────────────────────────────────────
+
+.PHONY: precommit-setup precommit-run
+
+precommit/setup:
+	prek install
+
+precommit/run:
+	prek run --all-files
+
 # ── E2E Tests ───────────────────────────────────────────────────────────────
 #
 # Runs e2e tests against services already port-forwarded to localhost.

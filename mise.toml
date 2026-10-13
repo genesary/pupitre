@@ -1,0 +1,31 @@
+[tools]
+
+# General tooling
+"npm:renovate" = "44"
+git-cliff = "2.14"
+prek = "0.5"
+jq = "1.7.1"
+yq = "4"
+
+
+# Kubernetes tooling
+hadolint = "2.15.1"
+helm = "4"
+helm-docs = "latest"
+kind = "latest"
+kubectl = "1.37"
+
+# Frontend tooling
+node = "24"
+
+# Go dev tooling
+go = "1.26.7"
+golangci-lint = "2"
+"go:golang.org/x/tools/gopls" = "latest"
+"go:golang.org/x/tools/cmd/goimports" = "latest"
+"go:github.com/go-delve/delve/cmd/dlv" = "latest"
+"go:golang.org/x/vuln/cmd/govulncheck" = "latest"
+
+
+# Markdown
+"npm:markdownlint-cli2" = "latest"

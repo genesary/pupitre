@@ -16,13 +16,13 @@ WORKDIR /app
 
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/package.json \
-                    /app/package-lock.json ./
+    /app/package-lock.json ./
 RUN npm ci --omit=dev
 
 COPY --chmod=755 docker-entrypoint.sh /docker-entrypoint.sh
 RUN chown -R node:node /app /docker-entrypoint.sh
 
-USER node
+USER 1000:1000
 
 ENV NODE_ENV=production
 ENV PORT=3000

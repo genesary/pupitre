@@ -1,0 +1,74 @@
+{
+  "files.eol": "\n",
+  "files.insertFinalNewline": true,
+  "files.trimTrailingWhitespace": true,
+  "editor.formatOnSave": true,
+  "go.useLanguageServer": true,
+  "go.lintTool": "golangci-lint",
+  "go.lintFlags": ["--config=${workspaceFolder}/.golangci.yml"],
+  "go.lintOnSave": "workspace",
+  "go.testFlags": ["-race"],
+  "go.toolsManagement.autoUpdate": false,
+  "gopls": {
+    "ui.semanticTokens": true
+  },
+  "[go]": {
+    "editor.defaultFormatter": "golang.go",
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "explicit"
+    }
+  },
+  "mise.configureExtensionsAutomatically": true,
+  "[toml]": {
+    "editor.defaultFormatter": "tamasfe.even-better-toml"
+  },
+  "files.associations": {
+    "**/helm/**/templates/*.yaml": "helm",
+    "**/helm/**/templates/*.yml": "helm",
+    "**/helm/**/templates/*.tpl": "helm",
+    "**/helm/**/templates/NOTES.txt": "helm",
+    "Dockerfile*": "dockerfile"
+  },
+  "[helm]": {
+    "editor.defaultFormatter": null
+  },
+  "[yaml]": {
+    "editor.defaultFormatter": "redhat.vscode-yaml",
+    "editor.tabSize": 2
+  },
+  "js/ts.tsdk.path": "frontend/node_modules/typescript/lib",
+  "js/ts.preferences.importModuleSpecifier": "non-relative",
+  "eslint.workingDirectories": [{ "directory": "frontend" }],
+  "[typescript]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[javascript]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[json]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[jsonc]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[astro]": { "editor.defaultFormatter": "astro-build.astro-vscode" },
+  "[css]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "css.lint.unknownAtRules": "ignore",
+  "tailwindCSS.experimental.configFile": "frontend/src/styles/global.css",
+
+  "[markdown]": {
+    "editor.defaultFormatter": "yzhang.markdown-all-in-one",
+    "editor.wordWrap": "on",
+    "editor.quickSuggestions": {
+      "comments": "off",
+      "strings": "off",
+      "other": "off"
+    }
+  },
+  "search.exclude": {
+    "**/node_modules": true,
+    "coverage.integration.out": true
+  },
+  "go.alternateTools": {
+    "go": "/Users/tdecaux/.local/share/mise/shims/go",
+    "gopls": "/Users/tdecaux/.local/share/mise/shims/gopls",
+    "dlv": "/Users/tdecaux/.local/share/mise/shims/dlv"
+  },
+  "debug.javascript.defaultRuntimeExecutable": {
+    "pwa-node": "/Users/tdecaux/.local/share/mise/shims/node"
+  },
+  "oxc.path.node": "/Users/tdecaux/.local/share/mise/shims/node",
+  "hadolint.hadolintPath": "/Users/tdecaux/.local/share/mise/shims/hadolint"
+}

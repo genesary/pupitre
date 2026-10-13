@@ -1,18 +1,111 @@
 version: "2"
 linters:
-  default: all
-  disable:
-    - depguard
-    - err113
-    - exhaustruct
-    - exhaustruct_v5
-    - gochecknoinits
-    - gomodguard
-    - interfacebloat
-    - lll
-    - revive
-    - testpackage
-    - wsl
+  default: none
+  enable:
+    - arangolint                 # Best practices for the ArangoDB client
+    - asasalint                  # Flags passing []any as any to variadic funcs
+    - asciicheck                 # Non-ASCII symbols in identifiers
+    - bidichk                    # Dangerous unicode bidirectional sequences
+    - bodyclose                  # Unclosed HTTP response bodies
+    - canonicalheader            # Non-canonical net/http header names
+    - clickhouselint             # Mistakes with the ClickHouse native driver
+    - containedctx               # context.Context stored in structs
+    - contextcheck               # Functions not using the inherited context
+    - copyloopvar                # Loop variable copies made unnecessary by Go 1.22+
+    - cyclop                     # Function and package cyclomatic complexity
+    - decorder                   # Order and count of type/const/var/func declarations
+    - dogsled                    # Too many blank identifiers in assignments
+    - dupl                       # Duplicated code fragments
+    - dupword                    # Duplicate words in comments and strings
+    - durationcheck              # Two durations multiplied together
+    - embeddedstructfieldcheck   # Embedded fields placed first and separated by a blank line
+    - errcheck                   # Unchecked errors
+    - errchkjson                 # Unsupported types and unneeded error checks in json encoding
+    - errname                    # Err prefix for sentinels, Error suffix for error types
+    - errorlint                  # Error wrapping problems (Go 1.13+)
+    - exhaustive                 # Non-exhaustive enum switch statements
+    - exptostd                   # golang.org/x/exp funcs replaceable by the std lib
+    - fatcontext                 # Nested contexts in loops and closures
+    - forbidigo                  # Forbidden identifiers
+    - forcetypeassert            # Unchecked type assertions
+    - funcorder                  # Order of constructors, methods and functions
+    - funlen                     # Overly long functions
+    - ginkgolinter               # Ginkgo and Gomega usage standards
+    - gocheckcompilerdirectives  # Invalid //go: compiler directives
+    - gochecknoglobals           # Global variables
+    - gochecksumtype             # Exhaustiveness of sum types
+    - gocognit                   # Cognitive complexity of functions
+    #- goconst                    # Repeated strings that should be constants
+    - gocritic                   # Bugs, performance and style diagnostics
+    - gocyclo                    # Cyclomatic complexity of functions
+    - godoclint                  # Godoc comment practices
+    - godot                      # Comments not ending with a period
+    - godox                      # FIXME/TODO keywords in comments
+    - goheader                   # File header matches the expected pattern
+    - gomoddirectives            # replace, retract and exclude directives in go.mod
+    - gomodguard_v2              # Allow/block list of direct module dependencies
+    - goprintffuncname           # Printf-like funcs must end with f
+    - gosec                      # Security problems
+    - gosmopolitan               # i18n/l10n anti-patterns
+    - govet                      # Suspicious constructs (go vet)
+    - grouper                    # Expression grouping (const/var/type/import)
+    - iface                      # Incorrect use of interfaces
+    - importas                   # Consistent import aliases
+    - inamedparam                # Unnamed parameters in interface methods
+    - ineffassign                # Assignments whose value is never used
+    - intrange                   # Loops that can range over an integer
+    - iotamixing                 # iota mixed with non-iota declarations in const blocks
+    - ireturn                    # Accept interfaces, return concrete types
+    - loggercheck                # Key/value pairs for logger libraries
+    - maintidx                   # Maintainability index of functions
+    - makezero                   # Slices made with non-zero length then appended to
+    - mirror                     # Wrong mirror patterns of bytes/strings usage
+    - misspell                   # Commonly misspelled English words
+    - mnd                        # Magic numbers
+    - modernize                  # Suggests modern language and library features
+    - musttag                    # Field tags on (un)marshaled structs
+    - nakedret                   # Naked returns in long functions
+    - nestif                     # Deeply nested if statements
+    - nilerr                     # Returning nil even though err is non-nil
+    - nilnesserr                 # err != nil check returning a different nil error
+    - nilnil                     # Returning both nil value and nil error
+    - nlreturn                   # Blank line before return and branch statements
+    - noctx                      # HTTP requests sent without a context
+    - noinlineerr                # Inline error handling (if err := ...; err != nil)
+    - nolintlint                 # Ill-formed or unexplained nolint directives
+    - nonamedreturns             # Named return values
+    - nosprintfhostport          # Sprintf used to build host:port
+    - paralleltest               # Missing t.Parallel() in tests
+    - perfsprint                 # fmt.Sprintf replaceable by faster alternatives
+    - prealloc                   # Slices that could be preallocated
+    - predeclared                # Shadowed predeclared identifiers
+    - promlinter                 # Prometheus metric naming
+    - protogetter                # Direct proto field reads instead of getters
+    - reassign                   # Reassigned package variables
+    - recvcheck                  # Consistent receiver types
+    - rowserrcheck               # Unchecked Rows.Err
+    - sloglint                   # Consistent log/slog style
+    - spancheck                  # OpenTelemetry/Census span mistakes
+    - sqlclosecheck              # Unclosed sql.Rows and Stmt
+    - staticcheck                # Staticcheck rule set
+    - tagalign                   # Struct tag alignment
+    - tagliatelle                # Struct tag naming conventions
+    - testableexamples           # Examples without expected output
+    - testifylint                # testify usage
+    - thelper                    # Test helpers missing t.Helper()
+    - tparallel                  # Inappropriate use of t.Parallel()
+    - unconvert                  # Unnecessary type conversions
+    - unparam                    # Unused function parameters
+    - unqueryvet                 # SELECT * in SQL queries
+    - unused                     # Unused constants, variables, functions and types
+    - usestdlibvars              # Std lib constants instead of literals
+    - usetesting                 # Functions replaceable by the testing package
+    - varnamelen                 # Variable name length vs. scope
+    - wastedassign               # Wasted assignments
+    - whitespace                 # Needless blank lines at block start/end
+    - wrapcheck                  # Unwrapped errors from external packages
+    - wsl_v5                     # Blank-line placement (whitespace linter)
+    - zerologlint                # zerolog events never dispatched
   settings:
     copyloopvar:
       check-alias: true
@@ -110,7 +203,6 @@ linters:
           - cyclop
           - dupl
           - errcheck
-          - exportloopref
           - funlen
           - goconst
           - gocyclo

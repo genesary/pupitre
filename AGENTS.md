@@ -42,13 +42,13 @@ importable only from under `course-service/`, so services cannot reach into
 each other. Cross-cutting code lives in the **root** `internal/`, which every
 service may import:
 
-| Package | Role |
-|---|---|
-| `internal/middleware/` | The JWT contract — `Claims`, `CreateToken`, `VerifyToken`, and the `Auth`/`Manager`/`Admin`/`ManagerOrAdmin` guards. user-service mints tokens; every service verifies them with this code. |
-| `internal/internalauth/` | Shared-secret guard for service-to-service routes (`X-Internal-Secret`). Kept separate from `internal/middleware` so checker-service does not link the JWT machinery. |
-| `internal/httperr/` | The JSON error envelope (`httperr.Write`) every service returns. |
-| `internal/httpx/` | Outbound HTTP client with the shared timeouts and connection pool. |
-| `internal/metrics/` | Prometheus collectors and the `/metrics` handler. |
+| Package                  | Role                                                                                                                                                                                        |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `internal/middleware/`   | The JWT contract — `Claims`, `CreateToken`, `VerifyToken`, and the `Auth`/`Manager`/`Admin`/`ManagerOrAdmin` guards. user-service mints tokens; every service verifies them with this code. |
+| `internal/internalauth/` | Shared-secret guard for service-to-service routes (`X-Internal-Secret`). Kept separate from `internal/middleware` so checker-service does not link the JWT machinery.                       |
+| `internal/httperr/`      | The JSON error envelope (`httperr.Write`) every service returns.                                                                                                                            |
+| `internal/httpx/`        | Outbound HTTP client with the shared timeouts and connection pool.                                                                                                                          |
+| `internal/metrics/`      | Prometheus collectors and the `/metrics` handler.                                                                                                                                           |
 
 **Do not copy anything out of the root `internal/` into a service.** These
 packages exist because the per-service copies drifted: the JWT middleware was
@@ -63,22 +63,21 @@ Dockerfile path, because the build needs the root `go.mod` and `internal/`:
 docker build -f user-service/Dockerfile -t pupitre-user-service .
 ```
 
-
 ### Course Service (`course-service/`)
 
 ```sh
 go build -o /dev/null ./course-service
 ```
 
-| Package | Role |
-|---|---|
-| `internal/content/` | Domain types, quiz scoring, git module resolution |
-| `internal/models/` + `internal/repository/` | GORM models and data access (courses, modules, paths, quiz attempts, lab checks) |
-| `internal/db/` | PG connection + AutoMigrate + dev course seed |
-| `internal/definition/` | Wire shape of a course/path definition, shared by the admin API and the seeder |
-| `internal/markdown/` | Course ⇄ single markdown document: frontmatter, heading splitting, module directives |
-| `internal/handlers/` | HTTP handlers (chi router) — courses, modules, lessons |
-| `internal/config/` | Env-based config (port, JWT, DATABASE_URL, UserServiceURL) |
+| Package                                     | Role                                                                                 |
+| ------------------------------------------- | ------------------------------------------------------------------------------------ |
+| `internal/content/`                         | Domain types, quiz scoring, git module resolution                                    |
+| `internal/models/` + `internal/repository/` | GORM models and data access (courses, modules, paths, quiz attempts, lab checks)     |
+| `internal/db/`                              | PG connection + AutoMigrate + dev course seed                                        |
+| `internal/definition/`                      | Wire shape of a course/path definition, shared by the admin API and the seeder       |
+| `internal/markdown/`                        | Course ⇄ single markdown document: frontmatter, heading splitting, module directives |
+| `internal/handlers/`                        | HTTP handlers (chi router) — courses, modules, lessons                               |
+| `internal/config/`                          | Env-based config (port, JWT, DATABASE_URL, UserServiceURL)                           |
 
 **Routes:** Public: `/health`, `/metrics`, `/api/courses`, `/api/courses/{slug}`, `/uploads/{filename}` — Authenticated: `/api/courses/{slug}/modules`, `/api/courses/{slug}/lessons`, `/api/courses/{slug}/lessons/{lesson}/complete`
 
@@ -107,12 +106,12 @@ endpoints off the `/api/{collection}/{slug}` namespace for the same reason.
 go build -o /dev/null ./user-service
 ```
 
-| Package | Role |
-|---|---|
-| `internal/db/` | PG connection + migration runner |
+| Package              | Role                                                                |
+| -------------------- | ------------------------------------------------------------------- |
+| `internal/db/`       | PG connection + migration runner                                    |
 | `internal/handlers/` | HTTP handlers — auth, oauth, settings, admin, enrollments, progress |
-| `internal/config/` | Env-based config (DB, JWT, OAuth) |
-| `migrations/` | SQL migrations (embed) |
+| `internal/config/`   | Env-based config (DB, JWT, OAuth)                                   |
+| `migrations/`        | SQL migrations (embed)                                              |
 
 **Routes:** Public auth + OAuth, Authenticated (enroll, progress, my courses), Admin (users, settings, enrollments), Internal (for Course Service): `/internal/enrollments/check`, `/internal/progress/viewed`, `/internal/progress/complete`
 
