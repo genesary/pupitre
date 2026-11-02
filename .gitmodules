@@ -1,6 +1,0 @@
-[submodule "pupitre-desktop"]
-	path = pupitre-desktop
-	url = https://github.com/genesary/pupitre-desktop
-[submodule "helm"]
-	path = helm
-	url = https://github.com/genesary/pupitre-helm

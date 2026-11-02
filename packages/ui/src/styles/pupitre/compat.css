@@ -1,0 +1,44 @@
+/* Ported unchanged from genesary/pupitre frontend/src/styles/compat.css (commit 3cdf7b2):
+   the pupitre design is kept as is (docs/specs/005-ui-theme-navigation.md). */
+/* ── CSS compat aliases (old var(--blue) → var(--color-blue)) ───────── */
+:root {
+  --blue: var(--color-blue);
+  --blue-deep: var(--color-blue-deep);
+  --blue-soft: var(--color-blue-soft);
+  --orange: var(--color-orange);
+  --orange-soft: var(--color-orange-soft);
+  --good: var(--color-good);
+  --good-soft: var(--color-good-soft);
+  --bad: var(--color-bad);
+  --bad-soft: var(--color-bad-soft);
+  --purple: var(--color-purple);
+  --purple-soft: var(--color-purple-soft);
+  --ink: var(--color-ink);
+  --ink-soft: var(--color-ink-soft);
+  --line: var(--color-line);
+  --fill: var(--color-fill);
+  --paper: var(--color-paper);
+  --page: var(--color-page);
+}
+
+/* ── Animations ─────────────────────────────────────────────────────── */
+@keyframes slideInToast {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* ── Toast container (fixed) ──────────────────────────────────────────*/
+#toast-container {
+  @apply fixed bottom-6 right-6 z-[9999] flex flex-col gap-2 pointer-events-none;
+}
+
+/* ── Manager link always visible once JS activates it (all screen sizes) ── */
+#nav-manager:not(.hidden) {
+  display: inline-flex !important;
+}

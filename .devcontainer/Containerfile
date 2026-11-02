@@ -1,0 +1,67 @@
+FROM mcr.microsoft.com/devcontainers/base:ubuntu-24.04
+
+ARG MISE_VERSION=v2026.10.18
+# SHASUMS256.txt of the mise release, one per architecture
+ARG MISE_SHA256_X64=0d41b60745a6273a80089c86f80d8729042d2f57f87fda70aecc7d1c3ffbd3be
+ARG MISE_SHA256_ARM64=c5a49a47f8184f5649f3d8685b408bd72325a823f41cf618c60f3ffc303090a1
+# Set by the builder: amd64 or arm64
+ARG TARGETARCH
+# Same version as @playwright/test in package.json
+ARG PLAYWRIGHT_VERSION=1.64.0
+# Needed by mise's shell completion
+ARG USAGE_VERSION=7.1.1
+ARG WORKSPACE=/workspaces/pupitre2
+
+USER vscode
+WORKDIR /home/vscode
+
+ENV PATH="/home/vscode/.local/bin:/home/vscode/.local/share/mise/shims:${PATH}" \
+    MISE_TRUSTED_CONFIG_PATHS="${WORKSPACE}"
+
+# The release tarball, checked against its pinned checksum (no remote install script)
+RUN case "${TARGETARCH}" in \
+        amd64) arch=x64; sha256=${MISE_SHA256_X64} ;; \
+        arm64) arch=arm64; sha256=${MISE_SHA256_ARM64} ;; \
+        *) echo "unsupported architecture: ${TARGETARCH}" >&2; exit 1 ;; \
+    esac \
+    && tarball="mise-${MISE_VERSION}-linux-${arch}.tar.gz" \
+    && curl -fsSLo "/tmp/${tarball}" "https://github.com/jdx/mise/releases/download/${MISE_VERSION}/${tarball}" \
+    && echo "${sha256}  /tmp/${tarball}" | sha256sum -c - \
+    && mkdir -p ~/.local/bin \
+    && tar -xzf "/tmp/${tarball}" -C /tmp mise/bin/mise \
+    && mv /tmp/mise/bin/mise ~/.local/bin/mise \
+    && rm -rf "/tmp/${tarball}" /tmp/mise \
+    && mise --version \
+    && echo 'eval "$(mise activate bash)"' >> ~/.bashrc \
+    && echo 'eval "$(mise activate zsh)"' >> ~/.zshrc
+
+# Tools of mise.toml (Node, pnpm, Go, golangci-lint), installed globally so the shims work everywhere
+COPY --chown=vscode:vscode mise.toml /tmp/mise/mise.toml
+RUN cd /tmp/mise \
+    && mise trust \
+    && mise install \
+    && mise use --global node@"$(mise current node)" pnpm@"$(mise current pnpm)" go@"$(mise current go)" golangci-lint@"$(mise current golangci-lint)" usage@${USAGE_VERSION} \
+    && rm -rf /tmp/mise
+
+# Shell completion for mise and pnpm: bash-completion loads the bash scripts on demand,
+# zsh autoloads _mise from fpath and sources the pnpm script once compdef exists
+RUN mkdir -p ~/.local/share/bash-completion/completions ~/.zfunc \
+    && mise completion bash > ~/.local/share/bash-completion/completions/mise \
+    && pnpm completion bash > ~/.local/share/bash-completion/completions/pnpm \
+    && mise completion zsh > ~/.zfunc/_mise \
+    && pnpm completion zsh > ~/.zfunc/pnpm.zsh \
+    && sed -i 's|^source \$ZSH/oh-my-zsh.sh|fpath=(~/.zfunc $fpath)\n&|' ~/.zshrc \
+    && echo 'source ~/.zfunc/pnpm.zsh' >> ~/.zshrc
+
+# Chromium and its system libraries for the e2e tests. sudo gets Node's own directory,
+# not the mise shims: as root, mise would refuse vscode's untrusted global config
+RUN sudo env "PATH=$(dirname "$(mise which node)"):${PATH}" npx -y playwright@${PLAYWRIGHT_VERSION} install-deps chromium \
+    && npx -y playwright@${PLAYWRIGHT_VERSION} install chromium \
+    && sudo rm -rf /var/lib/apt/lists/* \
+    && rm -rf ~/.npm
+
+# Mount point of the node_modules volume. A new volume copies its owner and mode: on Linux,
+# the dev container CLI changes vscode's UID to the host's, so the mode (like /tmp's) lets
+# vscode write whatever its UID
+RUN sudo mkdir -p ${WORKSPACE}/node_modules && sudo chown -R vscode:vscode /workspaces \
+    && sudo chmod 1777 ${WORKSPACE}/node_modules

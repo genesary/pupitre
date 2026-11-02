@@ -1,0 +1,31 @@
+{
+  "name": "pupitre2",
+  "build": {
+    "dockerfile": "Containerfile",
+    "context": ".."
+  },
+  "workspaceFolder": "/workspaces/pupitre2",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/pupitre2,type=bind",
+  "remoteUser": "vscode",
+  "mounts": [
+    // Linux node_modules, kept apart from the host's (native binaries differ)
+    "source=pupitre2-node-modules,target=/workspaces/pupitre2/node_modules,type=volume"
+  ],
+  "forwardPorts": [3000],
+  "portsAttributes": {
+    "3000": { "label": "pupitre (app + /admin)", "onAutoForward": "openBrowser" },
+    "3001": { "label": "admin (reached through 3000)", "onAutoForward": "silent" }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "bradlc.vscode-tailwindcss",
+        "ms-playwright.playwright",
+        "vitest.explorer",
+        "golang.go",
+        "hverlin.mise-vscode"
+      ]
+    }
+  }
+}

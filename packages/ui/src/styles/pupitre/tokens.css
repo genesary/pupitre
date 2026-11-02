@@ -1,0 +1,62 @@
+/* Ported unchanged from genesary/pupitre frontend/src/styles/tokens.css (commit 3cdf7b2):
+   the pupitre design is kept as is (docs/specs/005-ui-theme-navigation.md). */
+/* ── Design tokens ──────────────────────────────────────────────────── */
+@theme {
+  /* Colors */
+  --color-ink: #2b2f36;
+  --color-ink-soft: #6b7280;
+  --color-line: #e2e6ef;
+  --color-fill: #f3f5f9;
+  --color-paper: #ffffff;
+  --color-page: #fefefe;
+
+  --color-blue: #1b86f2;
+  --color-blue-deep: #1466c4;
+  --color-blue-soft: #e2f0fd;
+
+  --color-orange: #ff9d18;
+  --color-orange-soft: #fff3e0;
+
+  --color-good: #3bb273;
+  --color-good-soft: #dcf2e6;
+
+  --color-bad: #e5534b;
+  --color-bad-soft: #fde8e7;
+
+  --color-purple: #7c3aed;
+  --color-purple-soft: #f3e8ff;
+
+  /* Typography */
+  --font-sans: "Hanken Grotesk", system-ui, -apple-system, sans-serif;
+  --font-brand: "Caveat", cursive;
+  --font-mono: "JetBrains Mono", "Fira Code", monospace;
+
+  /* Border radius */
+  --radius: 10px;
+  --radius-lg: 16px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgb(0 0 0 / 0.07), 0 1px 2px rgb(0 0 0 / 0.05);
+  --shadow: 0 4px 12px rgb(0 0 0 / 0.08), 0 1px 3px rgb(0 0 0 / 0.05);
+  --shadow-lg: 0 8px 24px rgb(0 0 0 / 0.1), 0 2px 6px rgb(0 0 0 / 0.06);
+}
+
+/* ── Dark mode token overrides ──────────────────────────────────────── */
+:root.dark {
+  --color-ink: #dde1ea;
+  --color-ink-soft: #8b92a0;
+  --color-line: #252830;
+  --color-fill: #1a1d24;
+  --color-paper: #1e2128;
+  --color-page: #16181f;
+
+  --color-blue-soft: #162336;
+  --color-orange-soft: #271a08;
+  --color-good-soft: #0d2218;
+  --color-bad-soft: #270f0e;
+  --color-purple-soft: #1a0e38;
+
+  --shadow-sm: 0 1px 3px rgb(0 0 0 / 0.4), 0 1px 2px rgb(0 0 0 / 0.3);
+  --shadow: 0 4px 12px rgb(0 0 0 / 0.5), 0 1px 3px rgb(0 0 0 / 0.3);
+  --shadow-lg: 0 8px 24px rgb(0 0 0 / 0.6), 0 2px 6px rgb(0 0 0 / 0.4);
+}

@@ -1,0 +1,329 @@
+@import '@pupitre/ui/globals.css';
+
+/* Classes used by the shared package (top bar, guards, dialogs). */
+@source '../../../packages/core/src';
+
+/* Page background of the learner app, light mode only: the drawing is light and opaque.
+   Taken from ebuildy/pupitre2 (apps/app/src/index.css and
+   apps/app/public/images/pupitre-background.svg, its fonts cut down to the glyphs drawn).
+   Unlike there, it covers the viewport once and stays put: `contain` tiled it down long
+   pages, with an edge between copies. */
+:root:not(.dark) body {
+  background-color: #f7f9fc; /* shown while the image loads */
+  background-image: url('/images/pupitre-background.svg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+/* The page wrappers' gradient would hide it. */
+:root:not(.dark) :is(.cat-outer, .course-outer, .page-outer, .skill-outer, .up-outer, .agenda-wrap) {
+  background: transparent;
+}
+
+/* Catalogue grid (routes/Catalogue.tsx): up to five columns of larger cards than pupitre's
+   `.courses-grid-lg`, which stays untouched in the pupitre CSS. Unlayered, so these rules
+   win over the `@layer components` ones. */
+.cat-grid {
+  gap: 18px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+@media (min-width: 768px) {
+  .cat-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+@media (min-width: 1024px) {
+  .cat-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+@media (min-width: 1280px) {
+  .cat-grid {
+    gap: 20px;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+}
+@media (max-width: 640px) {
+  .cat-grid {
+    gap: 12px;
+  }
+}
+
+.cat-grid .rail-card {
+  border-radius: 16px;
+}
+.cat-grid .rail-card-thumb {
+  height: 140px;
+}
+.cat-grid .rail-card-thumb > span {
+  font-size: 3rem;
+}
+.cat-grid .rail-card-cat {
+  top: 8px;
+  right: 8px;
+  padding: 3px 9px 3px 7px;
+  font-size: 0.7rem;
+}
+.cat-grid .rail-card-body {
+  padding: 14px;
+  gap: 8px;
+}
+.cat-grid .rail-card-title {
+  font-size: 0.95rem;
+}
+@media (max-width: 640px) {
+  .cat-grid .rail-card-thumb {
+    height: 104px;
+  }
+  .cat-grid .rail-card-thumb > span {
+    font-size: 2.3rem;
+  }
+  .cat-grid .rail-card-body {
+    padding: 10px;
+  }
+  .cat-grid .rail-card-title {
+    font-size: 0.85rem;
+  }
+}
+
+/* A filter change remounts the grid: its cards rise and fade in, one after another
+   (--i, capped so a long list does not keep the last cards waiting). */
+@keyframes cat-card-in {
+  from {
+    opacity: 0;
+    /* opacity and transform only: they stay on the compositor, while the cards already blur
+       their backdrop. */
+    transform: translateY(14px) scale(0.96);
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .cat-grid .rail-card {
+    animation: cat-card-in 0.38s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+    animation-delay: calc(min(var(--i, 0), 14) * 35ms);
+  }
+}
+
+/* Difficulty filter of the catalogue: a range slider in a field shaped like `.input`
+   (Débutant to Avancé; the full range shows every course). */
+.cat-diff-range {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 38px;
+  padding: 0 14px;
+  border: 1.5px solid var(--color-line);
+  border-radius: var(--radius);
+  background: var(--color-paper);
+  backdrop-filter: blur(8px);
+  font-size: 0.85rem;
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
+}
+.cat-diff-range:focus-within {
+  border-color: var(--color-blue);
+  box-shadow: 0 0 0 3px rgb(27 134 242 / 0.12);
+}
+.cat-diff-range-name {
+  color: var(--color-ink-soft);
+  white-space: nowrap;
+}
+.cat-diff-range-slider {
+  width: 130px;
+  flex-shrink: 0;
+}
+.cat-diff-range-value {
+  /* Wide enough for « Intermédiaire → Avancé »: the field keeps its width while sliding. */
+  min-width: 11.5em;
+  font-weight: 600;
+  color: var(--color-ink);
+  white-space: nowrap;
+}
+@media (max-width: 640px) {
+  .cat-diff-range {
+    width: 100%;
+  }
+  .cat-diff-range-slider {
+    width: auto;
+    flex: 1;
+  }
+  .cat-diff-range-value {
+    min-width: 0;
+  }
+}
+
+/* The catalogue's content sits on a white panel over the background drawing, which made the
+   cards and filters hard to read. Light mode only: dark mode has no drawing. */
+:root:not(.dark) .cat-panel {
+  padding: 28px 32px 36px;
+  border: 1px solid var(--color-line);
+  border-radius: 20px;
+  background: var(--color-paper);
+  box-shadow: 0 10px 40px rgb(30 41 59 / 0.08);
+}
+@media (max-width: 640px) {
+  :root:not(.dark) .cat-panel {
+    padding: 16px 14px 24px;
+    border-radius: 16px;
+  }
+}
+
+/* The other learner pages get the catalogue's white panel too, in light mode: their content
+   sits on it instead of on the drawing (spec 005). The course page's left column is solid white
+   instead of pupitre's blurred, translucent white. */
+:root:not(.dark) :is(.page-outer, .skill-outer, .up-outer) > .page-inner,
+:root:not(.dark) .page-content {
+  padding: 28px 32px 36px;
+  border: 1px solid var(--color-line);
+  border-radius: 20px;
+  background: var(--color-paper);
+  box-shadow: 0 10px 40px rgb(30 41 59 / 0.08);
+}
+@media (max-width: 640px) {
+  :root:not(.dark) :is(.page-outer, .skill-outer, .up-outer) > .page-inner,
+  :root:not(.dark) .page-content {
+    padding: 16px 14px 24px;
+    border-radius: 16px;
+  }
+}
+/* The profile has no outer wrapper: the panel needs its own room under the top bar. */
+:root:not(.dark) .page-content {
+  margin-block: 32px;
+}
+:root:not(.dark) .course-sidebar {
+  background: var(--color-paper);
+  backdrop-filter: none;
+}
+
+/* Reading pages: the course page's content column, the lesson with its table of contents, and
+   the quiz. As for `.cat-panel`, the text sits on a white panel in light mode and the drawing
+   stays visible around it; on phones the columns are simply white. Dark mode is unchanged. */
+:root:not(.dark) :is(.course-main, .lesson-center, .lesson-right, .quiz-main) {
+  background: var(--color-paper);
+}
+@media (min-width: 641px) {
+  :root:not(.dark) :is(.course-main, .lesson-center, .quiz-main) {
+    width: auto;
+    margin: 20px;
+    border: 1px solid var(--color-line);
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgb(30 41 59 / 0.08);
+  }
+  /* « Lecture focus » centres the lesson column (pupitre's mx-auto, which this margin outranks). */
+  :root:not(.dark) body.focus-mode .lesson-center {
+    margin-inline: auto;
+  }
+  :root:not(.dark) .lesson-right {
+    top: 76px;
+    height: calc(100vh - 56px - 40px);
+    margin: 20px 20px 20px 0;
+    border: 1px solid var(--color-line);
+    border-radius: 16px;
+    box-shadow: 0 10px 40px rgb(30 41 59 / 0.08);
+  }
+}
+
+/* Badges (routes/MyBadges.tsx and the badge card of the course page). An earned badge stands
+   out (solid card, green border and ring, « ✓ Obtenu »); a badge to unlock stays readable: an
+   opaque card with a dashed border, only its icon in grey, and its colours back on hover.
+   `:is(:root, :root.dark)` outranks the dark-mode rules of the pupitre CSS. */
+:is(:root, :root.dark) .mb-card {
+  position: relative;
+  background: var(--color-paper);
+  border: 2px solid color-mix(in srgb, var(--color-good) 60%, transparent);
+  box-shadow: 0 6px 20px rgb(59 178 115 / 0.14);
+}
+:is(:root, :root.dark) .mb-card:hover {
+  border-color: var(--color-good);
+  box-shadow: 0 8px 26px rgb(59 178 115 / 0.25);
+}
+.mb-card-ribbon {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: var(--color-good);
+  color: #fff;
+  font-size: 0.68rem;
+  font-weight: 700;
+}
+:is(:root, :root.dark) .mb-card-icon {
+  border-color: var(--color-good);
+  box-shadow:
+    0 0 0 5px color-mix(in srgb, var(--color-good) 15%, transparent),
+    0 6px 18px rgb(59 178 115 / 0.3);
+}
+
+:is(:root, :root.dark) .mb-card-locked {
+  opacity: 1;
+  filter: none;
+  background: var(--color-paper);
+  border: 1.5px dashed color-mix(in srgb, var(--color-ink-soft) 45%, transparent);
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s,
+    transform 0.15s;
+}
+:is(:root, :root.dark) .mb-card-locked:hover {
+  border-color: var(--color-blue);
+  box-shadow: 0 6px 20px rgb(27 134 242 / 0.12);
+  transform: translateY(-3px);
+}
+.mb-card-locked-icon {
+  filter: grayscale(1);
+  opacity: 0.6;
+  transition:
+    filter 0.2s,
+    opacity 0.2s;
+}
+.mb-card-locked:hover .mb-card-locked-icon {
+  filter: none;
+  opacity: 1;
+}
+.mb-card-locked-name {
+  color: var(--color-ink);
+}
+.mb-lock-label {
+  color: var(--color-ink-soft);
+}
+
+:is(:root, :root.dark) .course-badge-locked {
+  background: var(--color-paper);
+  border-style: dashed;
+  border-color: color-mix(in srgb, var(--color-ink-soft) 45%, transparent);
+}
+
+/* « XP de ce cours » on the course page is a link: pupitre's `.course-xp-card` sets no display,
+   so the card stayed inline and its background, border and bar broke apart (spec 090, A28). */
+.course-xp-card {
+  display: block;
+}
+
+/* Catalogue cards: the thumbnail colour of the category, light in light mode. */
+.rail-card-thumb {
+  background: var(--thumb-bg, var(--color-fill));
+}
+
+/* Catalogue in dark mode. pupitre kept the light pastel thumbnails and dimmed them with a filter,
+   which made them muddy and dulled the icons; the light card borders, the pale yellow
+   « Reprendre » and « +200 XP » pills and the near-white progress track glared. */
+:root.dark .rail-card-thumb {
+  background: color-mix(in srgb, var(--cat-color, var(--color-blue)) 20%, var(--color-paper));
+  filter: none;
+}
+:root.dark .rail-card {
+  border-right-color: var(--color-line);
+  border-bottom-color: var(--color-line);
+  border-left-color: var(--color-line);
+}
+:root.dark :is(.continue-badge, .badge-xp-reward) {
+  background: var(--color-orange-soft);
+  border-color: var(--fix-amber-border);
+  color: var(--fix-amber-ink);
+}
+:root.dark .continue-prog {
+  background: var(--color-line);
+}

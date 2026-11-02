@@ -1,0 +1,68 @@
+# Local development dependencies of pupitre-api (docs/specs/108-backend-operations-and-testing.md):
+# PostgreSQL, and Keycloak with a test realm. The API itself runs on the host
+# with `pnpm api:dev`, so the browser and the API reach Keycloak at the same
+# address (http://localhost:8180).
+#
+#   docker compose -f apps/api/compose.yaml up -d
+#
+# Test accounts of the realm (local development only): alice (student),
+# marc.manager (to be made manager in /admin/users) and admin.kc (admin
+# through the pupitre-admins group). Their passwords are in
+# infra/keycloak/pupitre-realm.json.
+name: pupitre
+
+services:
+  postgres:
+    image: docker.io/library/postgres:18
+    environment:
+      POSTGRES_USER: pupitre
+      POSTGRES_PASSWORD: pupitre
+      POSTGRES_DB: pupitre
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "pupitre"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.4.0
+    command: ["start-dev", "--import-realm"]
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: kcadmin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: kcadmin-local
+      KC_HEALTH_ENABLED: "true"
+    ports:
+      - "8180:8080"
+    volumes:
+      - ./infra/keycloak/pupitre-realm.json:/opt/keycloak/data/import/pupitre-realm.json:ro
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - >-
+          exec 3<>/dev/tcp/127.0.0.1/9000 &&
+          printf 'GET /health/ready HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n' >&3 &&
+          grep -q UP <&3
+      interval: 5s
+      timeout: 5s
+      retries: 40
+
+  keycloak-setup:
+    image: quay.io/keycloak/keycloak:26.4.0
+    depends_on:
+      keycloak:
+        condition: service_healthy
+    entrypoint: ["/bin/bash", "/setup/setup-groups-scope.sh"]
+    environment:
+      KEYCLOAK_URL: http://keycloak:8080
+      KC_BOOTSTRAP_ADMIN_USERNAME: kcadmin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: kcadmin-local
+    volumes:
+      - ./infra/keycloak/setup-groups-scope.sh:/setup/setup-groups-scope.sh:ro
+    restart: "no"
+
+volumes:
+  postgres:

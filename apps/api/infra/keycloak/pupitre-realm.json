@@ -1,0 +1,73 @@
+{
+  "realm": "pupitre",
+  "enabled": true,
+  "sslRequired": "none",
+  "registrationAllowed": false,
+  "loginWithEmailAllowed": true,
+  "groups": [
+    { "name": "pupitre-admins" },
+    { "name": "pupitre-managers" },
+    { "name": "pupitre-students" }
+  ],
+  "clients": [
+    {
+      "clientId": "pupitre",
+      "name": "pupitre (local test)",
+      "enabled": true,
+      "publicClient": false,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "pupitre-local-test-secret",
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": false,
+      "redirectUris": ["http://localhost:3000/*"],
+      "webOrigins": ["http://localhost:3000"],
+      "attributes": { "post.logout.redirect.uris": "http://localhost:3000/*" },
+      "protocolMappers": [
+        {
+          "name": "groups",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-group-membership-mapper",
+          "config": {
+            "claim.name": "groups",
+            "full.path": "false",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true"
+          }
+        }
+      ]
+    }
+  ],
+  "users": [
+    {
+      "username": "alice",
+      "email": "alice@pupitre.local",
+      "firstName": "Alice",
+      "lastName": "Martin",
+      "enabled": true,
+      "emailVerified": true,
+      "groups": ["pupitre-students"],
+      "credentials": [{ "type": "password", "value": "alice-test-pw", "temporary": false }]
+    },
+    {
+      "username": "marc.manager",
+      "email": "marc.manager@pupitre.local",
+      "firstName": "Marc",
+      "lastName": "Manager",
+      "enabled": true,
+      "emailVerified": true,
+      "groups": ["pupitre-managers"],
+      "credentials": [{ "type": "password", "value": "marc-test-pw", "temporary": false }]
+    },
+    {
+      "username": "admin.kc",
+      "email": "admin.kc@pupitre.local",
+      "firstName": "Admin",
+      "lastName": "Pupitre",
+      "enabled": true,
+      "emailVerified": true,
+      "groups": ["pupitre-admins"],
+      "credentials": [{ "type": "password", "value": "admin-test-pw", "temporary": false }]
+    }
+  ]
+}

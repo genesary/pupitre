@@ -1,0 +1,13 @@
+# The image builds from apps/api: keep everything that is not part of the Go
+# build out of the context.
+.git
+e2e
+examples
+infra
+*.md
+Makefile
+compose.yaml
+local.mk
+.env
+.env.*
+coverage*.out

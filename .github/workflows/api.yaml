@@ -1,0 +1,115 @@
+name: API
+
+# pupitre-api (apps/api): lint, unit tests, integration tests against
+# PostgreSQL, and the Go end-to-end suite against the running binary
+# (docs/specs/108-backend-operations-and-testing.md).
+
+on:
+  push:
+    branches: [main]
+    paths: ["apps/api/**", ".github/workflows/api.yaml"]
+  pull_request:
+    paths: ["apps/api/**", ".github/workflows/api.yaml"]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    working-directory: apps/api
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: apps/api/go.mod
+          cache-dependency-path: apps/api/go.sum
+      - uses: golangci/golangci-lint-action@ba0d7d2ec06a0ea1cb5fa41b2e4a3ab91d21278a # v9.3.0
+        with:
+          version: v2.15.0
+          working-directory: apps/api
+          args: --timeout=10m
+
+  vulncheck:
+    name: Vulnerabilities
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: apps/api/go.mod
+          cache-dependency-path: apps/api/go.sum
+      # Known vulnerabilities of the Go modules and standard library that
+      # pupitre-api actually calls.
+      - run: go run golang.org/x/vuln/cmd/govulncheck@v1.9.0 ./...
+
+  test:
+    name: Test and build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: apps/api/go.mod
+          cache-dependency-path: apps/api/go.sum
+      - run: go build ./...
+      - run: go vet ./...
+      - run: go test -race -coverprofile=coverage.out -covermode=atomic ./...
+      - uses: actions/upload-artifact@v7
+        with:
+          name: coverage
+          path: apps/api/coverage.out
+
+  integration:
+    name: Integration and end-to-end
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_USER: pupitre
+          POSTGRES_PASSWORD: pupitre
+          POSTGRES_DB: pupitre
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+        ports:
+          - 5432:5432
+    env:
+      TEST_DATABASE_URL: postgres://pupitre:pupitre@localhost:5432/pupitre?sslmode=disable
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: apps/api/go.mod
+          cache-dependency-path: apps/api/go.sum
+      - name: Integration tests
+        run: go test -race -p 1 -tags integration ./...
+      - name: Start pupitre-api
+        env:
+          DATABASE_URL: postgres://pupitre:pupitre@localhost:5432/pupitre?sslmode=disable
+          JWT_SECRET: ci-jwt-secret-e2e-only-0123456789
+          ADMIN_PASSWORD: admin-e2e-password
+          AUTH_RATE_LIMIT_REQUESTS: "1000"
+          SEED_DEV_COURSES: "true"
+        run: |
+          go build -o bin/pupitre-api ./cmd/pupitre-api
+          nohup ./bin/pupitre-api > api.log 2>&1 &
+      - name: End-to-end tests
+        env:
+          API_URL: http://localhost:8080
+          ADMIN_PASSWORD: admin-e2e-password
+        run: go test -count=1 -tags e2e ./e2e/
+      - name: API log
+        if: failure()
+        run: cat api.log

@@ -1,0 +1,154 @@
+name: Containers
+
+# The two images of pupitre2 (docs/specs/108-backend-operations-and-testing.md):
+# pupitre-api (apps/api/Dockerfile) and pupitre-front (docker/front/Dockerfile).
+# Every run scans the Dockerfiles (KICS) and builds both images; a tag v*
+# also pushes them to GHCR and scans the pushed images (Trivy). Adapted
+# from genesary/pupitre at 3cdf7b2 (.github/workflows/ci-containers.yaml).
+
+on:
+  push:
+    branches: [main]
+    tags:
+      - "v*"
+  pull_request:
+    paths:
+      - "apps/**"
+      - "packages/**"
+      - "docker/**"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - "pnpm-workspace.yaml"
+      - ".dockerignore"
+      - ".github/workflows/containers.yaml"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  kics-dockerfile:
+    name: KICS Dockerfile scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Run KICS
+        uses: checkmarx/kics-github-action@05aa5eb70eede1355220f4ca5238d96b397e30a6 # v2.1.20
+        with:
+          path: "apps/api/Dockerfile,docker/front/Dockerfile"
+          platform_type: Dockerfile
+          output_path: kics-results
+          fail_on: high,medium
+
+  build-push-images:
+    name: Build & push (${{ matrix.image }})
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - image: api
+            context: ./apps/api
+            dockerfile: ./apps/api/Dockerfile
+          - image: front
+            context: .
+            dockerfile: ./docker/front/Dockerfile
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
+
+      - name: Log in to GHCR
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6 # v4.7.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up version variables
+        id: vars
+        run: |
+          OWNER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
+          IMAGE="ghcr.io/${OWNER}/pupitre-${{ matrix.image }}"
+          SHORT_SHA="${GITHUB_SHA::7}"
+          if [[ "${GITHUB_REF}" == refs/tags/v* ]]; then
+            VERSION="${GITHUB_REF#refs/tags/v}"
+            MAJOR=$(echo "$VERSION" | cut -d. -f1)
+            MINOR=$(echo "$VERSION" | cut -d. -f2)
+            TAGS="${IMAGE}:${VERSION}
+          ${IMAGE}:${MAJOR}.${MINOR}
+          ${IMAGE}:${MAJOR}
+          ${IMAGE}:latest
+          ${IMAGE}:${SHORT_SHA}"
+            echo "push=true" >> "$GITHUB_OUTPUT"
+          else
+            TAGS="${IMAGE}:${SHORT_SHA}"
+            echo "push=false" >> "$GITHUB_OUTPUT"
+          fi
+          {
+            echo "tags<<EOF"
+            echo "$TAGS"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Build and push
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
+        with:
+          context: ${{ matrix.context }}
+          file: ${{ matrix.dockerfile }}
+          push: ${{ steps.vars.outputs.push == 'true' }}
+          tags: ${{ steps.vars.outputs.tags }}
+          labels: |
+            org.opencontainers.image.title=pupitre-${{ matrix.image }}
+            org.opencontainers.image.source=${{ github.event.repository.html_url }}
+            org.opencontainers.image.revision=${{ github.sha }}
+            org.opencontainers.image.version=${{ github.ref_name }}
+          cache-from: type=gha,scope=${{ matrix.image }}
+          cache-to: type=gha,scope=${{ matrix.image }},mode=max
+
+  trivy-scan:
+    name: Trivy image scan (${{ matrix.image }})
+    needs: build-push-images
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
+    strategy:
+      fail-fast: false
+      matrix:
+        image: [api, front]
+    steps:
+      - name: Log in to GHCR
+        uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6 # v4.7.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Resolve image reference
+        id: image
+        run: |
+          OWNER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
+          echo "ref=ghcr.io/${OWNER}/pupitre-${{ matrix.image }}:${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+
+      - name: Trivy vulnerability scan
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          image-ref: ${{ steps.image.outputs.ref }}
+          format: table
+          severity: CRITICAL,HIGH
+          ignore-unfixed: true
+          exit-code: "1"
+        env:
+          TRIVY_USERNAME: ${{ github.actor }}
+          TRIVY_PASSWORD: ${{ secrets.GITHUB_TOKEN }}

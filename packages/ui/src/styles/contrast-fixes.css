@@ -1,0 +1,166 @@
+/*
+ * Contrast fixes the pupitre CSS needs (docs/specs/090-gaps-and-defects.md, A26 and A27). Kept
+ * apart from the copies in ./pupitre, which stay unchanged. The values are pupitre's tokens, plus
+ * the dark-mode colours below, which tokens.css does not have. Unlayered, so they win over the
+ * layered rules.
+ */
+
+/* Dark-mode colours missing from tokens.css, named once (also used by apps/app/src/index.css). */
+:root.dark {
+  --fix-blue-ink: #7db8f7;
+  --fix-violet-ink: #a78bfa;
+  --fix-cyan-ink: #67d4ea;
+  --fix-cyan-soft: #0b2a33;
+  --fix-amber-ink: #fbbf24;
+  --fix-amber-border: #92400e;
+  --fix-good-border: #166534;
+  --fix-hover-border: #4f5d9a;
+}
+
+/*
+ * A27, both modes: a locked module stays readable. pupitre dims the whole row to 50 % (55 % in
+ * the lesson sidebar), which leaves its name and badges at about 2:1. The lock icon, the
+ * « Verrouillé » badge and a dashed border now say it is locked; only the icon is faded.
+ */
+:is(:root, :root.dark) .mod-row.locked {
+  opacity: 1;
+  border-style: dashed;
+}
+.mod-row.locked .mod-name {
+  color: var(--color-ink-soft);
+}
+/* pupitre's grey badge is 4.4:1 in light mode: just under AA. */
+.mod-row.locked .badge-gray {
+  color: var(--color-ink);
+}
+:is(.mod-row.locked .mod-icon, .sidebar-link.locked .sidebar-link-icon) {
+  opacity: 0.6;
+}
+:is(:root, :root.dark) .sidebar-link.locked {
+  opacity: 1;
+}
+/* The current page of a sidebar: blue on light blue was 3.2:1 (lesson modules, admin menu). */
+:root:not(.dark) .sidebar-link.active {
+  color: var(--color-blue-deep);
+}
+:root.dark .sidebar-link.active {
+  color: var(--fix-blue-ink);
+}
+
+/*
+ * A26, dark mode: the elements the pupitre CSS leaves light. Their light background stays while
+ * the text switches to the light dark-mode ink, so the text disappears.
+ */
+
+/* Every card is solid, like the module rows of the course page: a plain --color-paper
+   background, without transparency or backdrop blur (a decided change of spec 005). Only the
+   background colour changes, so coloured borders, gradients and the variants below keep theirs. */
+:root.dark
+  :is(
+    .stat-card,
+    .glass-card,
+    .lb-row,
+    .xp-hero,
+    .xp-level-card,
+    .xp-hist-item,
+    .path-list-card,
+    .ms-card,
+    .mg-card,
+    .mg-empty-card,
+    .skill-prog,
+    .sk-card,
+    .up-header,
+    .up-card,
+    .continue-hero,
+    .cat-chip,
+    .rail-card,
+    .course-sidebar,
+    .session-card,
+    .mu-table-wrap
+  ) {
+  background-color: var(--color-paper);
+  backdrop-filter: none;
+}
+:root.dark .sk-card.card-done {
+  background-color: var(--color-good-soft);
+}
+:root.dark .continue-hero {
+  border-color: var(--color-line);
+}
+
+/* Catalogue: the « Tout » chip and the in-person badge. */
+:root.dark .chip-reset {
+  background: var(--color-paper);
+  border-color: var(--color-line);
+}
+:root.dark .chip-reset.has-filter {
+  background: var(--color-blue-soft);
+  border-color: var(--color-blue);
+  color: var(--fix-blue-ink);
+}
+:root.dark .badge-inperson {
+  background: var(--fix-cyan-soft);
+  color: var(--fix-cyan-ink);
+}
+
+/* Course page: the module rows and the in-person session cards. */
+:root.dark .mod-row {
+  background: var(--color-paper);
+  border-color: var(--color-line);
+}
+:root.dark .mod-row:hover {
+  background: var(--color-paper);
+  border-color: var(--fix-hover-border);
+}
+:root.dark .mod-row.current {
+  background: var(--color-blue-soft);
+  border-color: var(--color-blue);
+}
+:root.dark .session-card-default {
+  background: var(--color-paper);
+  border-color: var(--color-line);
+}
+:root.dark .session-card-booked {
+  background: var(--color-good-soft);
+  border-color: var(--fix-good-border);
+}
+
+/* Agenda: the calendar, its top bar and the « Sessions à venir » panel. */
+:root.dark :is(.cal-area, .side-panel) {
+  background: var(--color-paper);
+  border-color: var(--color-line);
+}
+:root.dark :is(.cal-topbar, .side-header) {
+  background: var(--color-paper);
+  border-color: var(--color-line);
+}
+:root.dark :is(.cal-cell, .cal-dow-cell, .cal-dow-row) {
+  border-color: var(--color-line);
+}
+:root.dark .ev-card {
+  background: var(--color-fill);
+  border-color: var(--color-line);
+}
+:root.dark .ev-card:hover {
+  border-color: var(--fix-hover-border);
+}
+
+/* Admin and manager space: the members table, the violet and orange links, the info box. */
+:root.dark .mu-table-wrap {
+  border-color: var(--color-line);
+}
+:root.dark :is(.mu-table thead tr, .mu-table tbody tr) {
+  border-color: var(--color-line);
+}
+:root.dark .link-btn.violet {
+  color: var(--fix-violet-ink);
+}
+:root.dark .link-btn.violet:hover {
+  background: var(--color-purple-soft);
+}
+:root.dark .link-btn.orange:hover {
+  background: var(--color-orange-soft);
+}
+:root.dark .info-box {
+  color: var(--fix-blue-ink);
+}

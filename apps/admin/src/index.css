@@ -1,0 +1,4 @@
+@import '@pupitre/ui/globals.css';
+
+/* Classes used by the shared package (top bar, guards, dialogs). */
+@source '../../../packages/core/src';

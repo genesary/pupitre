@@ -1,21 +1,15 @@
-# The Go images build from the repository root, so keep everything that is not
-# part of a Go build out of the context.
+# Build context of docker/front/Dockerfile (the repository root). apps/api
+# has its own context and .dockerignore.
+**/node_modules
+**/dist
+**/coverage
+**/*.tsbuildinfo
 .git
 .github
-.scannerwork
-.tokensave
+apps/api
 docs
-examples
-infra
-helm
-frontend
-pupitre-desktop
 e2e
-*.md
-lab-checker-design.html
-sonar-project.properties
-cliff.toml
-renovate.json
-Makefile
-local.mk
-coverage*.out
+test-results
+playwright-report*
+**/.env
+**/.env.*

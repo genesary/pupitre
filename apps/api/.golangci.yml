@@ -1,0 +1,168 @@
+version: "2"
+linters:
+  default: all
+  disable:
+    - depguard
+    - err113
+    - exhaustruct
+    - exhaustruct_v5
+    - gochecknoinits
+    - gomodguard
+    - interfacebloat
+    - lll
+    - revive
+    - testpackage
+    - wsl
+  settings:
+    copyloopvar:
+      check-alias: true
+    dupl:
+      threshold: 100
+    dupword:
+      # swag documents a parameter as "<name> <in> <type> …", so the
+      # request body of a JSON endpoint is legitimately "body  body".
+      ignore:
+        - body
+    embeddedstructfieldcheck:
+      forbid-mutex: true
+    errcheck:
+      check-type-assertions: true
+      check-blank: false
+      exclude-functions:
+        - fmt:.*,io/ioutil:^Read.*
+    goconst:
+      min-occurrences: 2
+      match-constant: false
+      find-duplicates: true
+      eval-const-expressions: true
+    gocritic:
+      enable-all: true
+      disabled-checks:
+        - ptrToRefParam
+        - tooManyResultsChecker
+      settings:
+        captLocal:
+          paramsOnly: true
+        rangeValCopy:
+          sizeThreshold: 32
+    gocyclo:
+      min-complexity: 10
+    godoclint:
+      default: all
+      options:
+        require-doc:
+          ignore-unexported: false
+        start-with-name:
+          include-unexported: true
+    govet:
+      enable-all: true
+      disable:
+        - fieldalignment
+    iface:
+      # List of analyzers.
+      # Default: ["identical"]
+      enable:
+        - identical
+        - unused
+        - unexported
+    lll:
+      tab-width: 1
+    modernize:
+      disable:
+        - omitzero
+    nakedret:
+      max-func-lines: 30
+    nilnil:
+      detect-opposite: true
+    nolintlint:
+      require-explanation: true
+      require-specific: true
+    prealloc:
+      simple: true
+      range-loops: true
+      for-loops: false
+    promlinter:
+      strict: true
+    reassign:
+      patterns:
+        - ".*"
+    unconvert:
+      fast-math: true
+    unparam:
+      check-exported: false
+    usestdlibvars:
+      http-method: true
+      http-status-code: true
+      time-date-month: true
+      time-weekday: true
+      time-month: true
+      time-layout: true
+      crypto-hash: true
+      default-rpc-path: true
+      sql-isolation-level: true
+      tls-signature-scheme: true
+      constant-kind: true
+  exclusions:
+    generated: lax
+    rules:
+      - linters:
+          - containedctx
+          - cyclop
+          - dupl
+          - errcheck
+          - exportloopref
+          - funlen
+          - goconst
+          - gocyclo
+          - gosec
+          - unparam
+          - varnamelen
+        path: _test(ing)?\.go
+      - linters:
+          - gocritic
+        path: _test\.go
+        text: (unnamedResult|exitAfterDefer)
+      - linters:
+          - gocritic
+        text: "(hugeParam|rangeValCopy):"
+      - linters:
+          - staticcheck
+        text: "SA3000:"
+      - linters:
+          - godoclint
+        # swag annotations are one line each by grammar — a route or a body
+        # parameter cannot be wrapped to fit the godoc width.
+        text: "godoc line is too long"
+        source: "^// @"
+      - linters:
+          - gosec
+        text: "G101:"
+      - linters:
+          - gosec
+        text: "G104:"
+    paths:
+      - zz_generated\..+\.go$
+      - third_party$
+      - builtin$
+      - examples$
+issues:
+  max-same-issues: 0
+  max-issues-per-linter: 0
+  new: false
+formatters:
+  enable:
+    - gofmt
+    - goimports
+  settings:
+    gofmt:
+      simplify: true
+    goimports:
+      local-prefixes:
+        - github.com/jojo91550/pupitre2/apps/api
+  exclusions:
+    generated: lax
+    paths:
+      - zz_generated\..+\.go$
+      - third_party$
+      - builtin$
+      - examples$

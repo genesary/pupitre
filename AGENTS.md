@@ -1,275 +1,140 @@
-# e-learning platform
+# pupitre2
 
-## MANDATORY — NEVER COMMIT
+React frontend of the pupitre e-learning platform. It replaces the Astro frontend of
+[`genesary/pupitre`](https://github.com/genesary/pupitre) and talks to its Go backend
+(user-service, course-service) **as it is**. Specs: [`docs/specs`](docs/specs/README.md), in
+English; they are the source of truth for behaviour.
 
-You are strictly forbidden from running `git commit`, `git add`, `git push`, or any other git mutation commands. Only the user may commit. If you are asked to commit or you think a commit is needed, refuse and tell the user to do it themselves.
+## Git: commit and push only when asked
 
-## Domain model (source of truth: `docs/`)
+- Work on a Conventional Branch feature branch (`feature/<name>`), never on `main`.
+- Commit **only when the user asks**, on the feature branch, with an English Conventional Commits
+  message. Push that branch only when the user asks.
+- Never commit or push to `main`, never force-push, never rewrite published history. Changes reach
+  `main` through a pull request, squash merged by the user.
+- Before committing, `typecheck`, `lint`, `test` and `build` pass.
+- Git hooks (prek, `.pre-commit-config.yaml`, installed by `mise run setup:prek`) refuse commits
+  on `main`, run lint and build on commit, check the Conventional Commits message, and refuse to
+  push unsigned commits.
+  Never bypass them (`--no-verify`): fix the cause instead.
 
-- **Course** — has a title, description, hidden (boolean publication state), category, difficulty, and a list of modules. Stored in PostgreSQL and managed through the course-service admin API. Modules carry their markdown inline (`content`), or reference external content by type (`video`, `text`, `image`) and a git repo (`src`, `ref`, `path`).
-- **Module** — a course element. Video/image: server-hosted URL. Text: inline markdown stored on the module, or a markdown file from a git repo. Inline is the default authoring path; git is for content that already lives in a repo.
-- **User management** — database-backed (no further detail yet).
+## Constraints
 
-## API shape
+- **The Go backend's API is not changed.** Every request matches a route and a struct of
+  `genesary/pupitre` at commit `3cdf7b2`, the reference of every spec. A
+  backend defect is recorded in [`190`](docs/specs/190-backend-defects.md), never worked around
+  by inventing a route.
+- **The backend moves into `apps/api` as one application** (specs
+  [`100`-`199`](docs/specs/100-backend-scope-and-architecture.md)), batch by batch
+  ([`199`](docs/specs/199-backend-migration-plan.md)). The move keeps every route, table and rule;
+  a defect is fixed only after it, as a separate change.
+- **The pupitre design is kept as is**: colours, fonts, spacing, markup and class names of the
+  Astro pages ([`005`](docs/specs/005-ui-theme-navigation.md), "Visual design").
+  `packages/ui/src/styles/pupitre/*.css` are copies of the original CSS: do not edit them. shadcn
+  components are themed with the pupitre tokens, never the other way round.
+- **Code reused from [`ebuildy/pupitre2`](https://github.com/ebuildy/pupitre2)** follows the rules
+  of [`090`](docs/specs/090-gaps-and-defects.md) ("Reusing the reference frontend"): adapt it to
+  the Go API, restyle it with pupitre's classes, keep its file name, credit it in a comment.
+- Interface text is in French. Code, comments, specs, branches and commits are in English.
+- Authentication is OIDC through Keycloak only ([`001`](docs/specs/001-keycloak-authentication.md)).
 
-- `api/courses/kubernetes-basics/<courseSlug>` — returns module list with slugs, titles, order, and per-user `viewed` status.
-- `api/courses/kubernetes-basics/<courseSlug>/<moduleSlug>` — returns module content with `viewed` boolean.
+## Layout
 
-## Architecture
+pnpm monorepo, same layout as `ebuildy/pupitre2`: two applications on one origin.
 
-Two micro-services (see `docs/ARCHITECTURE.md`):
+| Path | Package | Content |
+| --- | --- | --- |
+| `apps/app` | `@pupitre/app` | The learner app: sign-in, catalogue, lessons, quizzes, learner space, agenda |
+| `apps/admin` | `@pupitre/admin` | The admin app, served under `/admin` and `/manager`: administration, manager space, CSV exports, attendance |
+| `packages/core` | `@pupitre/core` | Shared by both apps: API client and types, session, top bar, guards, markdown, mock mode |
+| `apps/api` | Go module | The Go backend, imported from `genesary/pupitre` at `3cdf7b2`, as one application: `cmd/pupitre-api` on port 8080 ([`100`](docs/specs/100-backend-scope-and-architecture.md)) |
+| `packages/ui` | `@pupitre/ui` | Design system: shadcn components, pupitre CSS, security helpers |
+| `docs/specs` | | Specs, one file per feature area |
+| `e2e` | | Playwright tests |
+| `docker/front` | | The frontend image: both apps behind nginx ([`108`](docs/specs/108-backend-operations-and-testing.md)) |
 
-- **Course Service** (PG, Port 8082) — course catalogue and content, media serving, calls User Service for enrollment/progress
-- **User Service** (PG, Port 8081) — auth, users, enrollments, progress, settings, OAuth, exposes internal API for Course Service
+Inside `apps/app/src` and `apps/admin/src`:
 
-## Codebase
+- `routes/` - one **PascalCase** file per page (`Catalogue.tsx`, `CourseDetail.tsx`), its
+  component named after the file; in the admin app, `admin/` and `manager/` hold each side's pages.
+- `components/` - app components, PascalCase, grouped by domain (`quiz/`, `lab/`, `admin/`).
+- `lib/` - kebab-case modules used by that app only.
 
-### One module, shared packages
+Inside `packages/core/src`:
 
-The repository is a **single Go module** rooted at `github.com/genesary/pupitre`.
-There is one `go.mod`, one `.golangci.yml`, and one test/lint/build invocation
-for the whole tree:
+- `lib/` - `api.ts` (one function per route), `api-client.ts`, `api-types.ts`, `session.ts`,
+  `markdown.ts`, `site.ts` (which app serves a path), shared helpers.
+- `components/` - what both apps show: top bar, side menu, guards, dialogs, page states.
+- `mocks/` - MSW handlers and fixtures, used by both apps.
 
-```sh
-go build ./...
-go test ./... -race
-golangci-lint run ./...
-```
+`packages/ui` and `packages/core` never import from `apps/*`, and `packages/ui` never imports from
+`packages/core`. The apps import them through their exports: `@pupitre/ui/components/<name>`,
+`@pupitre/ui/lib/<name>`, `@pupitre/ui/globals.css`, `@pupitre/core/lib/<name>`,
+`@pupitre/core/components/<Name>`, `@pupitre/core/mocks/<name>`. Inside the packages, imports are
+relative; after `shadcn add`, rewrite the generated `@/` imports.
 
-Each service still owns its own `internal/` tree, and Go's internal-package
-rule still enforces that boundary: `course-service/internal/...` is
-importable only from under `course-service/`, so services cannot reach into
-each other. Cross-cutting code lives in the **root** `internal/`, which every
-service may import:
+Both apps share the origin, so the session (sessionStorage) is shared. A link to a page of the
+other app is a page load: use `SiteLink`, `SiteNavLink`, `SiteNavigate` or `useSiteNavigate` from
+`@pupitre/core`, never a router `Link`.
 
-| Package | Role |
-|---|---|
-| `internal/middleware/` | The JWT contract — `Claims`, `CreateToken`, `VerifyToken`, and the `Auth`/`Manager`/`Admin`/`ManagerOrAdmin` guards. user-service mints tokens; every service verifies them with this code. |
-| `internal/internalauth/` | Shared-secret guard for service-to-service routes (`X-Internal-Secret`). Kept separate from `internal/middleware` so checker-service does not link the JWT machinery. |
-| `internal/httperr/` | The JSON error envelope (`httperr.Write`) every service returns. |
-| `internal/httpx/` | Outbound HTTP client with the shared timeouts and connection pool. |
-| `internal/metrics/` | Prometheus collectors and the `/metrics` handler. |
+## Commands
 
-**Do not copy anything out of the root `internal/` into a service.** These
-packages exist because the per-service copies drifted: the JWT middleware was
-duplicated in two services and only one of them rejected a token with an empty
-`sub`, while the shared-secret guard existed in three places. Authentication
-has exactly one implementation now — change it there.
-
-Container images build from the **repository root** with an explicit
-Dockerfile path, because the build needs the root `go.mod` and `internal/`:
-
-```sh
-docker build -f user-service/Dockerfile -t pupitre-user-service .
-```
-
-
-### Course Service (`course-service/`)
-
-```sh
-go build -o /dev/null ./course-service
-```
-
-| Package | Role |
-|---|---|
-| `internal/content/` | Domain types, quiz scoring, git module resolution |
-| `internal/models/` + `internal/repository/` | GORM models and data access (courses, modules, paths, quiz attempts, lab checks) |
-| `internal/db/` | PG connection + AutoMigrate + dev course seed |
-| `internal/definition/` | Wire shape of a course/path definition, shared by the admin API and the seeder |
-| `internal/markdown/` | Course ⇄ single markdown document: frontmatter, heading splitting, module directives |
-| `internal/handlers/` | HTTP handlers (chi router) — courses, modules, lessons |
-| `internal/config/` | Env-based config (port, JWT, DATABASE_URL, UserServiceURL) |
-
-**Routes:** Public: `/health`, `/metrics`, `/api/courses`, `/api/courses/{slug}`, `/uploads/{filename}` — Authenticated: `/api/courses/{slug}/modules`, `/api/courses/{slug}/lessons`, `/api/courses/{slug}/lessons/{lesson}/complete`
-
-**Batch endpoints.** Anything that resolves a *set* of slugs uses these, never
-one request per slug:
-
-```
-GET /api/batch/courses?slugs=a,b,c   # course metadata, one query
-GET /api/batch/paths?slugs=a,b,c     # path metadata, members included
-GET /api/batch/skills?slugs=a,b      # modules per skill, keyed by skill
-```
-
-Each caps out at 500 slugs and answers in a fixed number of queries. When you
-add a consumer that needs many courses/paths/skills, extend a batch endpoint
-rather than looping over the single-slug one.
-
-They live under `/api/batch/` and **not** as a `batch` segment of the
-collection they read: chi matches a static segment before a wildcard, so
-`/api/courses/batch` made a course legitimately slugged `batch` unreachable
-and answered with a course list in its place. Keep new collection-wide
-endpoints off the `/api/{collection}/{slug}` namespace for the same reason.
-
-### User Service (`user-service/`)
+Node 24 (`.nvmrc`), pnpm through corepack (`corepack enable`). From the repository root:
 
 ```sh
-go build -o /dev/null ./user-service
+pnpm install
+pnpm dev:mock    # http://localhost:3000, no backend (docs/specs/006-mock-mode.md)
+pnpm api:up      # PostgreSQL and Keycloak (apps/api/compose.yaml)
+pnpm api:dev     # pupitre-api on http://localhost:8080 (settings: apps/api/.env)
+pnpm dev         # http://localhost:3000, /api and /uploads proxied to the API (VITE_API_URL)
+                 # both start the two apps: the admin app (port 3001) is reached through
+                 # http://localhost:3000/admin and /manager, never on its own port
+pnpm typecheck
+pnpm lint
+pnpm test
+pnpm build
+pnpm test:e2e    # Playwright, against the mock mode (first time: pnpm exec playwright install chromium)
+pnpm test:e2e:backend  # Playwright against the real backend, after pnpm api:up
 ```
 
-| Package | Role |
-|---|---|
-| `internal/db/` | PG connection + migration runner |
-| `internal/handlers/` | HTTP handlers — auth, oauth, settings, admin, enrollments, progress |
-| `internal/config/` | Env-based config (DB, JWT, OAuth) |
-| `migrations/` | SQL migrations (embed) |
+Run `typecheck`, `lint`, `test` and `build` before handing work back. In Claude Code, `/review`
+(`.claude/skills/review`) reviews the branch with the project's reviewers, as the `AI review`
+workflow does on pull requests. A UI change is also checked
+in the browser with `pnpm dev:mock`, in light and dark mode.
 
-**Routes:** Public auth + OAuth, Authenticated (enroll, progress, my courses), Admin (users, settings, enrollments), Internal (for Course Service): `/internal/enrollments/check`, `/internal/progress/viewed`, `/internal/progress/complete`
+In `apps/api` (Go 1.26): `pnpm api:build`, `pnpm api:lint` and `pnpm api:test` (or the
+`Makefile`) pass before handing work back. Integration tests need PostgreSQL (`pnpm api:up`):
+`make test-integration`. A change that crosses the frontend and the API is also checked with
+`pnpm test:e2e:backend`.
 
-**Routing invariant — no route may sit under a course-service prefix**
-(`/api/courses`, `/api/admin/courses`). The two services share one hostname,
-so whichever segment decides the owner has to come *before* any variable
-segment. Enrolling was once `POST /api/courses/{slug}/enroll`: the owner was
-only known after the slug, which no prefix match can express, so every front
-door needed its own workaround (a Traefik CRD, an nginx regex annotation, an
-implementation-specific Gateway API match). These are keyed by their own
-resource instead:
+Dependencies are pinned to exact versions. pnpm's `minimumReleaseAge` policy rejects versions that
+are too recent: pick an older version, never add an exclusion.
 
-```
-POST|DELETE /api/enrollments/{slug}
-POST|DELETE /api/session-bookings/{slug}/{sessionId}
-GET         /api/session-bookings/{slug}/{sessionId}/count
-GET|POST    /api/admin/enrollments/{slug}          + /groups, /users/{userId}
-GET|PATCH   /api/admin/session-bookings/{slug}/{sessionId}[/{userId}/presence]
-            …and the /api/manager/… equivalents
-```
+## Security rules
 
-`TestRouter_NoCourseServicePrefixOverlap` fails if a route is added back under
-a course-service prefix.
+[`003`](docs/specs/003-security.md) is enforced by lint and tests:
 
-**Internal progress API.** Course-service reads a learner's state through two
-consolidated endpoints rather than one call per fact:
+- No `dangerouslySetInnerHTML`, `innerHTML` or `outerHTML` outside
+  `packages/ui/src/components/safe-html.tsx`, `packages/core/src/lib/markdown.ts` and shadcn's
+  `components/ui/`. API data is rendered as JSX text; markdown goes through `renderMarkdown`
+  (DOMPurify) and `<SafeHtml>`.
+- URLs from the API go through `safeUrl` / `safeExternalUrl`, redirects through `safeRedirect`
+  (`@pupitre/ui/lib/security`).
+- The token lives in `sessionStorage`, behind `packages/core/src/lib/session.ts` only. `localStorage`
+  is reached through `@pupitre/ui/lib/storage` (lint rule).
+- No secret in `VITE_*` variables: they ship to the browser.
+- The dev proxy forwards only the allowed headers (`apps/app/vite.config.ts`).
 
-```
-GET /internal/progress/overview?userId=&courseSlug=
-      # enrolled + viewed lessons + per-module scores + aggregates, 3 queries
-GET /internal/progress/course-summaries?userId=&courseSlugs=a,b,c
-      # prerequisite aggregates for many courses, 2 queries
-```
+## Mock mode
 
-`/internal/progress/viewed`, `/internal/progress/modules` and
-`/internal/progress/course-summary` remain for single-fact callers, but a
-handler that needs more than one of them should use `overview`.
+`pnpm dev:mock` answers `/api/*` with MSW, mirroring the Go handlers. A page that needs a new route
+gets its handler and fixtures in `packages/core/src/mocks/` in the same change. The mock carries no
+business rule beyond what the Go code does. Test accounts: `alice` (student), `marc.manager`,
+`admin`, and an XSS account whose payloads must never run.
 
-## Course source of truth
+## Git conventions
 
-Courses live in **PostgreSQL** and are managed through the admin API. There is no in-memory store, no filesystem loading, and no Kubernetes controller: every request reads what it needs from the database.
-
-```
-POST   /api/admin/courses                      # create  {slug, spec}
-GET    /api/admin/courses/{slug}/definition    # read
-PUT    /api/admin/courses/{slug}/definition    # replace {spec}
-DELETE /api/admin/courses/{slug}/definition    # delete
-
-POST   /api/admin/courses/import               # create/replace/append from markdown
-POST   /api/admin/courses/import/preview       # same, but stores nothing
-GET    /api/admin/courses/{slug}/export/markdown
-```
-
-Learning paths are managed the same way, under `courses/paths` (the admin UI
-for them is the "Parcours" tab of `/admin/paths`):
-
-```
-POST   /api/admin/courses/paths                       # create  {slug, spec}
-GET    /api/admin/courses/paths/{slug}/definition     # read
-PUT    /api/admin/courses/paths/{slug}/definition     # replace {spec}
-DELETE /api/admin/courses/paths/{slug}/definition     # delete
-```
-
-Read a path through the admin endpoint, not the public `GET /api/paths/{slug}`:
-that one replaces a course-kind path's stored `skills` with the aggregate of
-its members' skills, so an editor round-tripping through it would write the
-aggregate back as if an author had typed it.
-
-The `spec` body (shown as YAML for readability; the API takes JSON):
-
-```yaml
-slug: kubernetes-basics
-spec:
-  title: "Kubernetes Basics"
-  description: "..."
-  hidden: false
-  category: "kubernetes"
-  difficulty: "beginner"
-  modules:
-    - name: "What is K8s"
-      type: "text"
-      content: |
-        Kubernetes is a container orchestrator.
-    - name: "From a repo"
-      type: "text"
-      src: "https://github.com/user/repo"
-      ref: "main"
-      path: "lessons/intro.md"
-```
-
-A module's body is `content` (markdown stored on the module) **or** the
-`src`/`ref`/`path` triple (a file in a git repo). Git wins when both are set,
-so writers clear one when they set the other.
-
-## Markdown import/export
-
-A whole course also round-trips through one markdown document — the path the
-admin UI leads with, since it needs no repository:
-
-```markdown
----
-slug: kubernetes-basics
-title: Kubernetes Basics
-category: kubernetes
-split: h2
----
-
-## What is Kubernetes
-
-A container orchestrator.
-
-## Knowledge check
-
-<!--pupitre
-type: quiz
-passingScore: 80
-questions: [...]
--->
-```
-
-- Frontmatter is the course definition, keyed exactly like the admin API's `spec`.
-- Modules are cut at the heading level named by `split` (`none`, `h1`…`h6`); a
-  request may override it.
-- A `<!--pupitre …-->` comment under a heading carries whatever markdown cannot
-  express (type, git source, quiz questions, skills, prerequisites). No renderer
-  shows it, so an exported course stays readable as plain markdown.
-- Export picks a heading level no module body already uses and records it in
-  `split`, so `export → import` is lossless.
-- Admin routes accept 10 MB bodies (`maxAdminRequestBodyBytes`); everything else
-  stays at 1 MB.
-
-## Performance invariants
-
-These are enforced by tests (`internal/handlers/scaling_test.go` in both
-services), which assert call counts stay fixed as the data grows. Breaking
-one of them fails a test, not just a benchmark.
-
-- **No per-item I/O.** A handler rendering N things issues a number of
-  queries and HTTP calls that does not depend on N. When you need data for a
-  set, add a batched repository method or batch endpoint; never loop.
-- **One progress read per request.** Course-service loads the learner's
-  course progress once, via `learnerView`, and passes it down. Do not fetch
-  viewed lessons, module progress or the course summary separately.
-- **Outbound HTTP goes through the shared `internal/httpx`.** It carries the timeouts
-  and the shared connection pool. `http.DefaultClient` has neither: no
-  timeout at all, and two idle connections per host.
-- **Large results stream.** CSV exports write rows as they are read
-  (`ExportRepository.StreamRows`); nothing accumulates the whole result set
-  in memory first.
-- **Caches are bounded.** The user-service catalog cache and the
-  course-service git cache both evict; an unbounded map keyed by user input
-  is a leak.
-
-## Build notes
-
-- Go 1.26
-- Course Service: chi, JWT, Prometheus, GORM/pgx, go-git
-- User Service: chi, pgx, JWT, Prometheus, godotenv, crypto
-- `DATABASE_URL` is required by both services; course-service refuses to start without it
-- `SEED_DEV_COURSES=true` seeds the embedded demo catalogue (`course-service/internal/db/seed/courses/`); `overwrite` replaces it. Unset in production.
+- Branches: [Conventional Branch](https://conventional-branch.github.io/) (`feature/…`,
+  `bugfix/…`, `chore/…`), lowercase, English.
+- Commits: [Conventional Commits](https://www.conventionalcommits.org/), English.
+- Pull requests into `main`, squash merged.

@@ -1,0 +1,48 @@
+{
+  "slug": "docker-intro",
+  "spec": {
+    "title": "Introduction à Docker",
+    "description": "Comprendre les conteneurs et lancer sa première image.",
+    "public": true,
+    "category": "docker",
+    "difficulty": "beginner",
+    "badge": { "name": "Premier conteneur", "icon": "🐳" },
+    "modules": [
+      {
+        "name": "Qu'est-ce qu'un conteneur ?",
+        "type": "text",
+        "skills": ["docker"],
+        "content": "## Un conteneur\n\nUn conteneur isole un processus avec ses dépendances.\n\n```sh\ndocker run --rm hello-world\n```\n"
+      },
+      {
+        "name": "Vérifier ses connaissances",
+        "type": "quiz",
+        "passingScore": 70,
+        "questions": [
+          {
+            "id": "q1",
+            "type": "single",
+            "points": 1,
+            "question": "Quelle commande lance un conteneur ?",
+            "answers": [
+              { "id": "a", "text": "docker run", "correct": true },
+              { "id": "b", "text": "docker build" },
+              { "id": "c", "text": "docker push" }
+            ],
+            "feedback": {
+              "correct": "Oui : `docker run` crée et démarre un conteneur.",
+              "wrong": "`docker build` construit une image, `docker push` la publie."
+            }
+          },
+          {
+            "id": "q2",
+            "type": "boolean",
+            "points": 1,
+            "question": "Un conteneur embarque son propre noyau.",
+            "correctAnswer": false
+          }
+        ]
+      }
+    ]
+  }
+}

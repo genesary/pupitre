@@ -1,0 +1,45 @@
+name: Full stack
+
+# The Playwright suite against the real backend: both apps, pupitre-api,
+# PostgreSQL and Keycloak from apps/api/compose.yaml
+# (docs/specs/108-backend-operations-and-testing.md).
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  e2e-backend:
+    name: Playwright (real backend)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: apps/api/go.mod
+          cache-dependency-path: apps/api/go.sum
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+      - run: corepack enable
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec playwright install --with-deps chromium
+      - name: PostgreSQL and Keycloak
+        run: pnpm api:up
+      - run: pnpm test:e2e:backend
+      - uses: actions/upload-artifact@v7
+        if: failure()
+        with:
+          name: playwright-report-backend
+          path: playwright-report-backend
+      - name: Compose logs
+        if: failure()
+        run: docker compose -f apps/api/compose.yaml logs

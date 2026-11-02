@@ -1,0 +1,1271 @@
+/* Ported unchanged from genesary/pupitre frontend/src/styles/learning.css (commit 3cdf7b2):
+   the pupitre design is kept as is (docs/specs/005-ui-theme-navigation.md). */
+/* ── Learning flow pages ────────────────────────────────────────────── */
+@layer components {
+  /* ── Catalogue page ──────────────────────────────────────────────────── */
+  .cat-outer {
+    @apply min-h-[calc(100vh-64px)] pt-10 px-8 pb-20;
+    background: linear-gradient(160deg, #f0f4ff 0%, #faf5ff 50%, #f0fdf4 100%);
+  }
+  @media (max-width: 768px) {
+    .cat-outer {
+      @apply pt-5 px-[18px] pb-20;
+    }
+  }
+  @media (max-width: 640px) {
+    .cat-outer {
+      @apply pt-3.5 px-3.5 pb-20;
+    }
+  }
+  .cat-page-title {
+    @apply text-[2rem] font-extrabold mb-5 bg-clip-text;
+    background: linear-gradient(135deg, #4361ee, #7c3aed);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .continue-hero {
+    @apply flex items-center gap-5 rounded-2xl p-5 cursor-pointer mb-6 border-[1.5px] border-[#e2e8f0] bg-[#ffffffcc];
+    backdrop-filter: blur(8px);
+    transition:
+      border-color 0.15s,
+      box-shadow 0.15s;
+  }
+  .continue-hero:hover {
+    @apply border-[#a5b4fc];
+    box-shadow: 0 4px 20px rgba(67, 97, 238, 0.1);
+  }
+  .continue-thumb {
+    @apply rounded-xl overflow-hidden flex items-center justify-center shrink-0 text-[2.5rem] w-[200px] h-[118px] border-[1.5px] border-[#c7d2fe];
+    background: linear-gradient(135deg, #e0e7ff, #ede9fe);
+  }
+  .continue-thumb img {
+    @apply w-full h-full object-cover;
+  }
+  .continue-meta {
+    @apply flex-1 min-w-0 flex flex-col gap-2.5 justify-center;
+  }
+  .continue-badge {
+    @apply inline-flex items-center rounded-full font-semibold text-xs h-[26px] px-[11px] bg-[#fef3c7] text-[#a16207] border border-[#fcd34d] w-max;
+  }
+  .continue-title {
+    @apply font-bold text-base whitespace-nowrap overflow-hidden text-ellipsis;
+  }
+  .continue-prog {
+    @apply overflow-hidden h-[6px] rounded-[5px] max-w-[340px] bg-[#e0e7ff];
+  }
+  .continue-prog-fill {
+    @apply h-full rounded-[5px];
+    background: linear-gradient(90deg, #4361ee, #7c3aed);
+  }
+  .continue-sub {
+    @apply text-[0.8rem] text-ink-soft;
+  }
+  .continue-btn {
+    @apply self-center shrink-0 rounded-[10px] text-white font-semibold cursor-pointer whitespace-nowrap h-10 py-0 px-5 text-sm border-0;
+    background: linear-gradient(135deg, #4361ee, #7c3aed);
+    transition: opacity 0.12s;
+  }
+  .continue-btn:hover {
+    @apply opacity-[0.88];
+  }
+  .cat-count-label {
+    @apply text-[0.8rem] text-ink-soft ml-auto whitespace-nowrap;
+  }
+  .skill-filter-banner {
+    @apply flex items-center gap-2 mb-[10px] font-semibold text-[0.8rem] py-[7px] px-3 rounded-[10px] bg-[#ede9fe] border-[1.5px] border-purple text-[#5b21b6];
+  }
+  .skill-filter-banner button {
+    @apply ml-auto bg-none border-0 cursor-pointer font-bold text-[0.85rem] py-0 px-1 text-purple;
+  }
+  .skill-filter-banner button:hover {
+    @apply text-[#5b21b6];
+  }
+  .cat-chips {
+    @apply flex flex-wrap gap-[7px] mb-[22px] items-center;
+  }
+  .cat-chip {
+    @apply inline-flex items-center gap-[5px] rounded-full font-semibold text-[0.78rem] cursor-pointer select-none whitespace-nowrap text-ink-soft h-[30px] px-3 border-[1.5px] border-[#e2e8f0] bg-[#ffffffcc];
+    backdrop-filter: blur(4px);
+    transition: all 0.15s;
+  }
+  .cat-chip:hover {
+    @apply border-[#a5b4fc] text-ink;
+  }
+  .cat-chip .chip-dot {
+    @apply rounded-full shrink-0 w-[7px] h-[7px];
+  }
+  .cat-chip .chip-count {
+    @apply font-bold text-[0.7rem] opacity-[0.55];
+  }
+  .cat-chip.active {
+    @apply text-white border-transparent;
+  }
+  .cat-chip.active .chip-count {
+    @apply opacity-80;
+  }
+  .chip-reset {
+    @apply inline-flex items-center rounded-full font-semibold text-[0.78rem] cursor-pointer select-none text-ink-soft h-[30px] px-3 border-[1.5px] border-[#e2e8f0] bg-[#ffffffcc];
+    backdrop-filter: blur(4px);
+    transition: all 0.15s;
+  }
+  .chip-reset.has-filter {
+    @apply border-[#4361ee] text-[#4361ee] bg-[#eff6ff];
+  }
+  .chip-reset.has-filter:hover {
+    @apply bg-[#4361ee] text-white;
+  }
+  .courses-grid-lg {
+    @apply grid gap-3;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  }
+  @media (max-width: 768px) {
+    .continue-hero {
+      @apply flex-col items-stretch gap-3.5;
+    }
+    .continue-thumb {
+      @apply w-full h-[140px];
+    }
+    .continue-prog {
+      @apply max-w-full;
+    }
+    .continue-btn {
+      @apply self-stretch w-full;
+    }
+  }
+  @media (max-width: 640px) {
+    .courses-grid-lg {
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    }
+  }
+  @media (min-width: 1200px) {
+    .courses-grid-lg {
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    }
+  }
+  .rail-card {
+    @apply overflow-hidden cursor-pointer flex flex-col rounded-[14px] border-[1.5px] border-[#e2e8f0] bg-[#ffffffcc];
+    border-top: 3px solid var(--cat-color, #e2e8f0);
+    backdrop-filter: blur(8px);
+    transition:
+      box-shadow 0.15s,
+      transform 0.12s,
+      border-color 0.15s;
+  }
+  .rail-card:hover {
+    @apply border-[#a5b4fc];
+    box-shadow: 0 6px 24px rgba(67, 97, 238, 0.12);
+    transform: translateY(-3px);
+  }
+  .rail-card-thumb-wrap {
+    @apply relative shrink-0;
+  }
+  .rail-card-thumb {
+    @apply w-full overflow-hidden flex items-center justify-center text-[1.8rem] h-[88px];
+  }
+  .rail-card-thumb img {
+    @apply w-full h-full object-cover;
+  }
+  .rail-card-cat {
+    @apply absolute inline-flex items-center gap-[3px] font-bold text-white whitespace-nowrap top-[6px] right-[6px] py-[2px] pr-[7px] pl-[5px] rounded-full text-[0.62rem] tracking-[0.01em];
+    background: var(--cat-color, #888);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
+  }
+  .rail-card-body {
+    @apply p-[10px] flex flex-col gap-[5px] flex-1;
+  }
+  .rail-card-title {
+    @apply text-[0.8rem] font-semibold text-ink leading-[1.3] overflow-hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+  .rail-card-footer {
+    @apply flex items-center gap-1 flex-wrap mt-auto pt-1;
+  }
+  .rail-card-prog {
+    @apply bg-fill overflow-hidden mt-1 h-[4px] rounded-[3px];
+  }
+  .rail-card-prog-fill {
+    @apply h-full bg-blue rounded-[3px];
+  }
+
+  /* ── Course detail page ──────────────────────────────────────────────── */
+  .course-outer {
+    @apply min-h-[calc(100vh-64px)];
+    background: linear-gradient(160deg, #f0f4ff 0%, #faf5ff 50%, #f0fdf4 100%);
+  }
+  .course-page {
+    @apply grid items-start gap-0;
+    grid-template-columns: 330px 1fr;
+  }
+  .course-sidebar {
+    @apply sticky top-16 h-[calc(100vh-64px)] overflow-y-auto flex flex-col gap-4 p-6 border-r border-[#e2e8f0];
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(12px);
+  }
+  .course-thumb {
+    @apply w-full rounded-[10px] flex items-center justify-center text-[3rem] overflow-hidden shrink-0 h-[160px];
+    background: linear-gradient(135deg, var(--blue-soft), #c8e4fd);
+  }
+  .course-thumb img {
+    @apply w-full h-full object-cover;
+  }
+  .course-tags {
+    @apply flex flex-wrap gap-1.5;
+  }
+  .course-main {
+    @apply py-6 px-7;
+  }
+  .course-main-header {
+    @apply flex items-center justify-between mb-5;
+  }
+  .mod-row {
+    @apply flex items-center gap-3.5 rounded-xl no-underline mb-2 py-3.5 px-[18px] text-inherit border-[1.5px] border-[#e2e8f0] bg-[#ffffffcc];
+    backdrop-filter: blur(8px);
+    transition:
+      border-color 0.15s,
+      background 0.15s,
+      box-shadow 0.15s;
+  }
+  .mod-row:hover {
+    @apply border-[#a5b4fc] bg-[#ffffffee];
+    box-shadow: 0 4px 16px rgba(67, 97, 238, 0.1);
+  }
+  .mod-row.current {
+    @apply border-blue bg-blue-soft;
+  }
+  .mod-row.locked {
+    @apply opacity-50 pointer-events-none;
+  }
+  .mod-icon {
+    @apply rounded-full bg-fill flex items-center justify-center text-base shrink-0 w-9 h-9;
+  }
+  .mod-icon.quiz {
+    @apply bg-orange-soft;
+  }
+  .mod-icon.lab {
+    @apply bg-blue-soft;
+  }
+  .mod-icon.done {
+    @apply bg-good-soft;
+  }
+  .mod-badges {
+    @apply flex gap-[5px] flex-wrap;
+  }
+  @media (max-width: 900px) {
+    .course-page {
+      grid-template-columns: 260px 1fr;
+    }
+  }
+  @media (max-width: 768px) {
+    .course-page {
+      grid-template-columns: 220px 1fr;
+    }
+    .course-sidebar {
+      @apply py-[18px] px-3.5;
+    }
+    .course-main {
+      @apply py-[18px] px-4;
+    }
+  }
+  @media (max-width: 640px) {
+    .course-page {
+      grid-template-columns: 1fr;
+    }
+    .course-sidebar {
+      @apply static h-auto gap-3 overflow-y-visible pt-5 px-4 pb-5 border-r-0 border-b border-[#e2e8f0];
+    }
+    .course-thumb {
+      @apply h-[180px];
+    }
+    .course-main {
+      @apply pt-5 px-4 pb-5;
+    }
+  }
+
+  /* ── Lesson 3-column layout ──────────────────────────────────────────── */
+  .lesson-layout {
+    @apply grid min-h-[calc(100vh-56px)] gap-0;
+    grid-template-columns: 230px 1fr 210px;
+  }
+  .lesson-left {
+    @apply bg-paper sticky top-14 h-[calc(100vh-56px)] overflow-y-auto py-5 border-r border-line;
+  }
+  .lesson-center {
+    @apply w-full py-[34px] px-12;
+  }
+  .lesson-right {
+    @apply sticky top-14 h-[calc(100vh-56px)] overflow-y-auto py-6 px-[18px] border-l border-line;
+  }
+  body.focus-mode .lesson-layout {
+    grid-template-columns: 1fr;
+  }
+  body.focus-mode .lesson-left {
+    @apply hidden;
+  }
+  body.focus-mode .lesson-center {
+    @apply max-w-[760px] mx-auto pt-10 px-12 pb-10;
+  }
+  body.focus-mode .lesson-right {
+    @apply hidden;
+  }
+  body.focus-mode .lesson-mobile-open {
+    display: none !important;
+  }
+  .floating-mode-btn {
+    @apply fixed z-[60] inline-flex items-center gap-[7px] font-semibold text-[0.78rem] text-ink-soft bg-paper cursor-pointer whitespace-nowrap select-none left-6 bottom-6 h-[34px] py-0 px-3.5 rounded-full border-[1.5px] border-line;
+    box-shadow: 0 4px 16px rgba(30, 60, 120, 0.1);
+    transition:
+      border-color 0.14s,
+      color 0.14s,
+      box-shadow 0.14s,
+      transform 0.12s;
+  }
+  .floating-mode-btn:hover {
+    @apply border-blue text-blue-deep;
+    box-shadow: 0 6px 20px rgba(30, 60, 120, 0.18);
+    transform: translateY(-1px);
+  }
+  body.focus-mode .floating-mode-btn {
+    @apply bg-blue-soft border-blue text-blue-deep;
+  }
+  .floating-progress {
+    @apply hidden fixed z-50 bg-paper rounded-full items-center gap-2.5 text-[0.8rem] text-ink-soft right-6 bottom-6 py-2 px-3.5 border-[1.5px] border-line;
+    box-shadow: 0 8px 24px rgba(30, 60, 120, 0.18);
+  }
+  body.focus-mode .floating-progress {
+    @apply flex;
+  }
+  .floating-prog-bar {
+    @apply bg-fill overflow-hidden w-[80px] h-[6px] rounded-[3px];
+  }
+  .floating-prog-fill {
+    @apply h-full bg-blue rounded-[3px];
+  }
+  .mini-quiz-block {
+    @apply bg-blue-soft rounded-[14px] p-6 mt-8 border-[1.5px] border-blue;
+  }
+  .mini-quiz-header {
+    @apply flex items-center gap-3 mb-5;
+  }
+  .mini-quiz-header img {
+    @apply w-9 h-9 object-contain;
+  }
+  .mini-quiz-title {
+    @apply font-bold text-blue-deep text-[0.9rem];
+  }
+  .mini-quiz-subtitle {
+    @apply text-[0.8rem] text-ink-soft;
+  }
+  .nav-overlay {
+    @apply hidden fixed inset-0 top-14 z-[190] bg-black/[0.38];
+  }
+  .nav-overlay.active {
+    @apply block;
+  }
+  .lesson-mobile-open {
+    @apply hidden items-center gap-1.5 rounded-lg bg-fill font-semibold text-[0.82rem] text-ink-soft cursor-pointer mb-4 whitespace-nowrap h-8 py-0 px-3 border-[1.5px] border-line;
+  }
+  .lesson-mobile-open:hover {
+    @apply border-blue text-blue-deep;
+  }
+  @media (max-width: 900px) {
+    .lesson-layout {
+      grid-template-columns: 230px 1fr;
+    }
+    .lesson-right {
+      @apply hidden;
+    }
+    .lesson-center {
+      @apply max-w-full;
+    }
+  }
+  @media (max-width: 768px) {
+    .lesson-layout {
+      grid-template-columns: 200px 1fr;
+    }
+    .lesson-center {
+      @apply p-6;
+    }
+  }
+  @media (max-width: 640px) {
+    .floating-mode-btn {
+      @apply hidden;
+    }
+    .lesson-layout {
+      grid-template-columns: 1fr;
+    }
+    .lesson-left {
+      @apply fixed bg-paper z-[200] pt-4 pb-4 w-[264px] h-[calc(100vh-56px)] top-14 -left-[264px] border-r border-line;
+      box-shadow: none;
+      transition:
+        left 0.22s ease,
+        box-shadow 0.22s;
+    }
+    .lesson-left.nav-open {
+      @apply left-0;
+      box-shadow: 8px 0 32px rgba(0, 0, 0, 0.2);
+    }
+    .lesson-center {
+      @apply max-w-full pt-5 px-4 pb-5;
+    }
+    body.focus-mode .lesson-center {
+      @apply w-full max-w-full pt-5 px-4 pb-5;
+    }
+    .lesson-mobile-open {
+      display: flex !important;
+    }
+  }
+
+  /* ── Shared quiz/lesson components ──────────────────────────────────── */
+  .quiz-options {
+    @apply flex flex-col gap-2;
+  }
+  .quiz-option {
+    @apply flex items-center gap-3 rounded-[9px] cursor-pointer text-sm bg-paper text-left w-full py-[11px] px-3.5 border-[1.5px] border-line;
+    transition: 0.12s;
+  }
+  .quiz-option:hover {
+    @apply border-blue bg-blue-soft;
+  }
+  .quiz-option.selected {
+    @apply border-blue bg-blue-soft;
+  }
+  .quiz-option.selected .radio-circle {
+    @apply border-blue;
+  }
+  .quiz-option.selected .radio-circle::after {
+    @apply bg-blue;
+  }
+  .quiz-option:disabled {
+    @apply opacity-50 cursor-not-allowed;
+  }
+  .radio-circle {
+    @apply rounded-full shrink-0 relative w-[18px] h-[18px] border-2 border-line;
+  }
+  .radio-circle::after {
+    content: "";
+    @apply absolute inset-[3px] rounded-full bg-transparent;
+  }
+  .cooldown-banner {
+    @apply bg-orange-soft border-orange rounded-[10px] text-[0.82rem] mb-2 py-2 px-3 border text-[#b86800];
+  }
+  .order-item {
+    @apply flex items-center gap-2.5 rounded-[9px] bg-paper cursor-grab select-none py-[10px] px-3.5 border-[1.5px] border-line;
+    transition:
+      opacity 0.15s,
+      border-color 0.12s,
+      background 0.12s,
+      box-shadow 0.12s;
+    touch-action: none;
+  }
+  .order-item:active {
+    @apply cursor-grabbing;
+  }
+  .order-item.dragging {
+    @apply opacity-[0.35];
+  }
+  .order-item.drag-over {
+    @apply border-blue bg-blue-soft;
+    box-shadow: 0 2px 12px rgba(27, 134, 242, 0.18);
+  }
+  .drag-handle {
+    @apply text-ink-soft text-[1.1rem] leading-none shrink-0 cursor-grab;
+  }
+  .order-move-btn {
+    @apply text-ink-soft bg-none border-0 cursor-pointer text-[0.85rem] leading-none py-0.5 px-[5px] rounded;
+    transition:
+      background 0.1s,
+      color 0.1s;
+  }
+  .order-move-btn:hover:not(:disabled) {
+    @apply bg-fill text-ink;
+  }
+  .order-move-btn:disabled {
+    @apply opacity-25 cursor-default;
+  }
+
+  /* ── Quiz standalone page ────────────────────────────────────────────── */
+  .quiz-page-layout {
+    @apply grid min-h-[calc(100vh-56px)] items-start gap-0;
+    grid-template-columns: 1fr 230px;
+  }
+  .quiz-main {
+    @apply max-w-[760px] py-7 px-[34px] border-r border-line;
+  }
+  .quiz-palette {
+    @apply sticky top-14 h-[calc(100vh-56px)] overflow-y-auto flex flex-col gap-3.5 py-[26px] px-[22px];
+  }
+  .palette-label {
+    @apply text-[0.7rem] font-bold uppercase tracking-[0.08em] text-ink-soft;
+  }
+  .palette-chips {
+    @apply flex flex-wrap gap-1.5;
+  }
+  .palette-chip {
+    @apply rounded-full font-bold flex items-center justify-center border-[1.5px] border-line bg-paper text-ink-soft cursor-pointer w-[34px] h-[26px] text-xs;
+    transition: 0.12s;
+  }
+  .palette-chip:hover {
+    @apply border-blue text-blue-deep;
+  }
+  .palette-chip.answered {
+    @apply bg-good-soft border-good text-[#1f6e47];
+  }
+  .palette-chip.current {
+    @apply bg-blue-soft border-blue text-blue-deep;
+  }
+  .palette-progress-wrap {
+    @apply bg-fill rounded-[10px] flex flex-col gap-2 p-3;
+  }
+  .palette-progress-row {
+    @apply flex justify-between text-[0.8rem] text-ink-soft;
+  }
+  .palette-progress-row span:last-child {
+    @apply text-blue-deep font-semibold;
+  }
+  .quiz-q-card {
+    @apply rounded-[14px] bg-paper mb-5 py-[22px] px-6 border-[1.5px] border-line scroll-mt-20;
+  }
+  .quiz-q-card.has-answer {
+    @apply border-good;
+  }
+  .quiz-q-header {
+    @apply flex items-start gap-3 mb-4;
+  }
+  .qnum-chip {
+    @apply shrink-0 rounded-full font-bold bg-blue text-white flex items-center h-6 px-[9px] text-xs mt-0.5;
+  }
+  .quiz-q-text {
+    @apply font-semibold text-[0.95rem] leading-[1.5];
+  }
+  .quiz-q-points {
+    @apply text-[0.8rem] text-ink-soft whitespace-nowrap ml-auto shrink-0;
+  }
+  .result-screen {
+    @apply max-w-[740px] mx-auto pt-8 px-7 pb-20;
+  }
+  .result-hero {
+    @apply flex items-center gap-6 rounded-2xl bg-good-soft border-good mb-6 py-[26px] px-[30px] border-[1.5px];
+  }
+  .result-hero.fail {
+    @apply bg-bad-soft border-bad;
+  }
+  .score-circle {
+    @apply rounded-full bg-paper flex flex-col items-center justify-center shrink-0 w-[90px] h-[90px] border-[8px] border-good;
+  }
+  .score-circle.fail {
+    @apply border-bad;
+  }
+  .score-num {
+    @apply text-[1.3rem] font-bold text-good leading-none;
+  }
+  .score-circle.fail .score-num {
+    @apply text-bad;
+  }
+  .score-den {
+    @apply text-[0.7rem] text-ink-soft;
+  }
+  .result-review {
+    @apply flex flex-col gap-2.5;
+  }
+  @media (max-width: 768px) {
+    .quiz-page-layout {
+      @apply flex flex-col;
+    }
+    .quiz-palette {
+      @apply sticky top-14 h-auto flex-row flex-wrap items-center gap-2 bg-paper z-10 py-3 px-4 order-[-1] border-l-0 border-b border-line;
+    }
+    .palette-chips {
+      @apply max-w-none gap-1;
+    }
+    .palette-progress-wrap {
+      @apply flex-1 py-2 px-[10px] min-w-[140px];
+    }
+    #submit-btn {
+      @apply h-9 text-[0.85rem] min-w-[120px];
+    }
+    .quiz-main {
+      @apply max-w-full p-4 border-r-0;
+    }
+    .result-screen {
+      @apply pt-4 px-4 pb-[60px];
+    }
+    .result-hero {
+      @apply flex-wrap gap-4 p-5;
+    }
+    .result-hero img {
+      @apply hidden;
+    }
+  }
+  @media (max-width: 640px) {
+    .quiz-main {
+      @apply p-3.5;
+    }
+  }
+
+  /* ── Agenda / Calendar ───────────────────────────────────────────────── */
+  .agenda-wrap {
+    @apply flex h-[calc(100vh-64px)] gap-[18px] overflow-hidden box-border py-5 px-6;
+    background: linear-gradient(160deg, #f0f4ff 0%, #faf5ff 50%, #f0fdf4 100%);
+  }
+  .cal-area {
+    @apply flex-1 flex flex-col min-w-0 rounded-2xl overflow-hidden border-[1.5px] border-[#e2e8f0] bg-[#ffffffee];
+    backdrop-filter: blur(12px);
+    box-shadow: 0 4px 24px rgba(67, 97, 238, 0.08);
+  }
+  .cal-topbar {
+    @apply flex items-center gap-4 shrink-0 rounded-t-2xl rounded-b-none py-3.5 px-5 border-b border-[#e2e8f0] bg-white;
+  }
+  .cal-topbar-title {
+    @apply text-[1.15rem] font-extrabold bg-clip-text;
+    background: linear-gradient(135deg, #4361ee, #7c3aed);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .cal-nav-group {
+    @apply flex items-center gap-1.5;
+  }
+  .cal-nav-btn {
+    @apply bg-none rounded-lg cursor-pointer text-base text-ink flex items-center justify-center w-8 h-8 border-[1.5px] border-line;
+  }
+  .cal-nav-btn:hover {
+    @apply bg-fill;
+  }
+  .cal-month-lbl {
+    @apply text-base font-semibold text-center uppercase min-w-[140px];
+  }
+  .cal-today-btn {
+    @apply bg-none rounded-lg text-[0.82rem] font-semibold cursor-pointer text-ink py-1 px-3.5 border-[1.5px] border-line;
+  }
+  .cal-today-btn:hover {
+    @apply bg-fill;
+  }
+  .cal-month-btn {
+    @apply bg-none border-0 text-base font-semibold text-center cursor-pointer text-ink rounded-lg min-w-[140px] py-1 px-2;
+  }
+  .cal-month-btn:hover {
+    @apply bg-fill;
+  }
+  .mp-wrap {
+    @apply relative;
+  }
+  .mp-popup {
+    @apply hidden absolute bg-paper rounded-[14px] z-[100] select-none p-3.5 w-[260px] border-[1.5px] border-line top-[calc(100%+8px)] left-1/2;
+    transform: translateX(-50%);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  }
+  .mp-popup.open {
+    @apply block;
+  }
+  .mp-year-row {
+    @apply flex items-center justify-between mb-[10px];
+  }
+  .mp-year-btn {
+    @apply bg-none rounded-lg cursor-pointer text-base text-ink flex items-center justify-center w-[30px] h-[30px] border-[1.5px] border-line;
+  }
+  .mp-year-btn:hover {
+    @apply bg-fill;
+  }
+  .mp-year-lbl {
+    @apply font-bold text-base;
+  }
+  .mp-months {
+    @apply grid gap-1.5;
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .mp-month-btn {
+    @apply bg-none rounded-lg font-medium cursor-pointer text-ink text-center uppercase py-[7px] px-1 text-[0.82rem] border-[1.5px] border-transparent;
+  }
+  .mp-month-btn:hover {
+    @apply bg-fill border-line;
+  }
+  .mp-month-btn.active {
+    @apply bg-blue text-white border-blue;
+  }
+  .cal-dow-row {
+    @apply grid shrink-0 border-b border-[#e8edf5] bg-[#f8faff];
+    grid-template-columns: repeat(7, 1fr);
+  }
+  .cal-dow-cell {
+    @apply text-center font-bold text-ink-soft uppercase tracking-[0.06em] text-[0.72rem] py-[9px] px-0 border-r border-[#e8edf5];
+  }
+  .cal-dow-cell:last-child {
+    @apply border-r-0;
+  }
+  .cal-body {
+    @apply flex-1 grid min-h-0 overflow-hidden;
+    grid-template-columns: repeat(7, 1fr);
+    grid-auto-rows: 1fr;
+  }
+  .cal-cell {
+    @apply flex flex-col gap-[3px] min-h-0 overflow-hidden cursor-default py-[6px] px-2 border-r border-b border-[#e8edf5];
+  }
+  .cal-cell:nth-child(7n) {
+    @apply border-r-0;
+  }
+  .cal-cell.other-month {
+    @apply bg-[#f8fafc];
+  }
+  .cal-cell.other-month .cal-day-num {
+    @apply opacity-30;
+  }
+  .cal-cell.has-event {
+    @apply cursor-pointer select-none;
+  }
+  .cal-cell.has-event * {
+    @apply cursor-pointer select-none;
+  }
+  .cal-cell.has-event:hover {
+    background: #f0f7ff;
+  }
+  .cal-cell.selected {
+    background: #e8f0fe !important;
+  }
+  .cal-day-num {
+    @apply text-[0.8rem] font-medium text-ink-soft flex items-center justify-center rounded-full shrink-0 w-6 h-6;
+  }
+  .cal-cell.today .cal-day-num {
+    @apply bg-blue text-white font-bold;
+  }
+  .cal-event-pill {
+    @apply text-white font-semibold whitespace-nowrap overflow-hidden text-ellipsis shrink-0 cursor-pointer rounded-[5px] text-[0.72rem] py-[2px] px-[7px] bg-blue;
+  }
+  .cal-event-pill:hover {
+    @apply bg-blue-deep;
+  }
+  .cal-event-pill.booked {
+    @apply bg-[#16a34a];
+  }
+  .side-panel {
+    @apply shrink-0 rounded-2xl flex flex-col overflow-hidden w-[300px] border-[1.5px] border-[#e2e8f0] bg-[#ffffffee];
+    backdrop-filter: blur(12px);
+    box-shadow: 0 4px 24px rgba(67, 97, 238, 0.08);
+  }
+  .side-header {
+    @apply text-[0.78rem] font-bold text-ink-soft uppercase tracking-[0.06em] shrink-0 rounded-t-2xl rounded-b-none py-3.5 px-[18px] border-b border-[#e2e8f0] bg-white;
+  }
+  .side-body {
+    @apply flex-1 overflow-y-auto py-3.5 px-4;
+  }
+  .ev-card {
+    @apply rounded-[14px] mb-[10px] py-3.5 px-4 border-[1.5px] border-[#e2e8f0] bg-[#ffffffcc];
+    backdrop-filter: blur(8px);
+    transition:
+      border-color 0.15s,
+      box-shadow 0.15s;
+  }
+  .ev-card:hover {
+    @apply border-[#a5b4fc];
+    box-shadow: 0 4px 16px rgba(67, 97, 238, 0.1);
+  }
+  .ev-card.booked {
+    @apply border-[#86efac] bg-[#f0fdf4cc];
+  }
+  .ev-card.booked:hover {
+    @apply border-[#22c55e];
+    box-shadow: 0 4px 16px rgba(34, 197, 94, 0.12);
+  }
+  .ev-course {
+    @apply font-bold text-sm mb-[2px];
+  }
+  .ev-title {
+    @apply text-[0.82rem] text-ink-soft mb-2;
+  }
+  .ev-meta {
+    @apply text-[0.78rem] text-ink-soft leading-[1.8] mb-[10px];
+  }
+  .ev-booked-badge {
+    @apply text-[0.78rem] font-semibold mb-2 text-[#16a34a];
+  }
+  .ev-trainer-actions {
+    @apply flex gap-1.5 mt-1.5;
+  }
+  .no-sel {
+    @apply text-center text-ink-soft text-sm pt-10 px-4 pb-10;
+  }
+  .agenda-modal-overlay {
+    @apply hidden fixed inset-0 z-[200] items-center justify-center bg-black/45;
+  }
+  .agenda-modal-overlay.open {
+    @apply flex;
+  }
+  .agenda-modal-box {
+    @apply bg-paper rounded-2xl pt-7 px-7 pb-6 w-[420px] max-w-[calc(100vw-32px)];
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.18);
+  }
+  .modal-title {
+    @apply text-[1.05rem] font-bold mb-[18px];
+  }
+  .form-group {
+    @apply mb-3.5;
+  }
+  .form-label {
+    @apply text-[0.78rem] font-semibold text-ink-soft block mb-1 uppercase tracking-[0.04em];
+  }
+  .form-input {
+    @apply w-full rounded-lg text-sm bg-paper text-ink box-border py-2 px-[10px] border-[1.5px] border-line;
+  }
+  .form-input:focus {
+    @apply outline-none border-blue;
+  }
+  .modal-actions {
+    @apply flex gap-2.5 mt-5 justify-end;
+  }
+  .btn-new-session {
+    @apply ml-auto bg-blue text-white border-0 rounded-lg text-[0.82rem] font-semibold cursor-pointer hidden py-[6px] px-3.5;
+  }
+  .btn-new-session:hover {
+    @apply bg-blue-deep;
+  }
+  @media (max-width: 900px) {
+    .side-panel {
+      @apply w-[240px];
+    }
+  }
+  @media (max-width: 768px) {
+    .agenda-wrap {
+      @apply flex-col h-auto overflow-y-auto gap-3 py-3 px-3.5;
+    }
+    .cal-area {
+      @apply flex-none;
+    }
+    .cal-body {
+      @apply overflow-y-auto;
+      grid-auto-rows: 72px;
+    }
+    .side-panel {
+      @apply w-full shrink;
+    }
+    .cal-topbar {
+      @apply flex-wrap gap-2 py-[10px] px-3;
+    }
+    .cal-topbar-title {
+      @apply hidden;
+    }
+    .cal-month-btn {
+      @apply min-w-[110px];
+    }
+  }
+  @media (max-width: 640px) {
+    .agenda-wrap {
+      @apply py-[10px] px-3;
+    }
+    .cal-body {
+      grid-auto-rows: 64px;
+    }
+  }
+
+  /* ── Lesson sidebar ──────────────────────────────────────────────────── */
+  .lesson-back-link {
+    @apply text-xs text-ink-soft flex items-center gap-1 no-underline mb-[10px] py-0 px-4;
+  }
+  .lesson-back-link:hover {
+    @apply text-ink;
+  }
+  .lesson-sidebar-inner {
+    @apply mb-3 py-0 px-4;
+  }
+  .lesson-sidebar-label {
+    @apply text-[0.7rem] font-bold uppercase tracking-[0.08em] text-ink-soft mb-2;
+  }
+  .lesson-progress-text {
+    @apply text-[0.72rem] text-ink-soft;
+  }
+  .lesson-breadcrumb {
+    @apply flex items-center gap-1.5 text-[0.8rem] text-ink-soft mb-5 flex-wrap;
+  }
+  .lesson-breadcrumb a {
+    @apply text-blue no-underline;
+  }
+  .lesson-breadcrumb a:hover {
+    @apply underline;
+  }
+  .lesson-nav {
+    @apply flex items-center justify-between mt-10 pt-6 border-t border-line;
+  }
+  .lesson-nav-hint {
+    @apply flex-1 text-[0.78rem] text-ink-soft text-center py-0 px-4;
+  }
+  .lesson-title {
+    @apply mb-5 text-2xl;
+  }
+  .lesson-fmb-icon {
+    @apply flex items-center shrink-0;
+  }
+  .lesson-git-links {
+    @apply gap-1.5 mt-2;
+  }
+  .sidebar-link-icon {
+    @apply shrink-0;
+  }
+  .sidebar-link-text {
+    @apply overflow-hidden text-ellipsis whitespace-nowrap text-[0.82rem];
+  }
+  .sidebar-done-check {
+    @apply ml-auto text-good shrink-0 text-[0.8rem];
+  }
+
+  /* ── Quiz page structures ────────────────────────────────────────────── */
+  .quiz-breadcrumb {
+    @apply text-[0.8rem] text-ink-soft flex items-center gap-1.5 flex-wrap pt-3 px-[34px] pb-0;
+  }
+  .quiz-breadcrumb a {
+    @apply text-blue no-underline;
+  }
+  .quiz-breadcrumb a:hover {
+    @apply underline;
+  }
+  .result-actions {
+    @apply flex gap-2.5 flex-wrap mb-6;
+  }
+  .result-badges {
+    @apply flex gap-2 flex-wrap;
+  }
+  .result-subtitle {
+    @apply mb-3;
+  }
+  .quiz-title-head {
+    @apply text-xl mb-1.5;
+  }
+  .quiz-subtitle-text {
+    @apply mb-6;
+  }
+  .quiz-review-heading {
+    @apply text-base mb-3;
+  }
+
+  /* ── Review items (quiz correction) ─────────────────────────────────── */
+  .review-item {
+    @apply rounded-[10px] py-3.5 px-4 border-[1.5px];
+  }
+  .review-item.correct {
+    @apply border-good;
+  }
+  .review-item.wrong {
+    @apply border-bad;
+  }
+  .review-item-inner {
+    @apply flex items-start gap-2.5;
+  }
+  .review-status-icon {
+    @apply shrink-0 text-base;
+  }
+  .review-status-icon.correct {
+    @apply text-good;
+  }
+  .review-status-icon.wrong {
+    @apply text-bad;
+  }
+  .review-item-body {
+    @apply flex-1;
+  }
+  .review-q-text {
+    @apply font-semibold text-sm mb-1;
+  }
+  .review-q-score {
+    @apply text-[0.8rem] text-ink-soft;
+  }
+  .review-q-feedback {
+    @apply text-[0.8rem] mt-1 text-ink-soft;
+  }
+
+  /* ── Mini-quiz result ────────────────────────────────────────────────── */
+  .mini-result {
+    @apply rounded-xl flex items-center gap-5 flex-wrap mb-3 p-5 border-[1.5px];
+  }
+  .mini-result.pass {
+    @apply bg-good-soft border-good;
+  }
+  .mini-result.fail {
+    @apply bg-bad-soft border-bad;
+  }
+  .mini-score-circle {
+    @apply rounded-full bg-paper flex flex-col items-center justify-center shrink-0 w-[70px] h-[70px] border-[6px];
+  }
+  .mini-score-circle.pass {
+    @apply border-good;
+  }
+  .mini-score-circle.fail {
+    @apply border-bad;
+  }
+  .mini-score-pct {
+    @apply text-[1.2rem] font-bold;
+  }
+  .mini-score-pct.pass {
+    @apply text-good;
+  }
+  .mini-score-pct.fail {
+    @apply text-bad;
+  }
+  .mini-score-fraction {
+    @apply text-[0.65rem] text-ink-soft;
+  }
+  .mini-result-body {
+    @apply flex-1 min-w-[160px];
+  }
+  .mini-result-title {
+    @apply text-[0.95rem] font-bold mb-1;
+  }
+  .mini-result-title.pass {
+    @apply text-good;
+  }
+  .mini-result-title.fail {
+    @apply text-bad;
+  }
+  .mini-result-sub {
+    @apply text-[0.8rem] text-ink-soft;
+  }
+  .mini-submit-row {
+    @apply flex items-center gap-3 flex-wrap;
+  }
+  .mini-answered {
+    @apply text-[0.8rem] text-ink-soft;
+  }
+  .mini-q-text {
+    @apply font-semibold text-sm mb-2;
+  }
+
+  /* ── Lab step check ──────────────────────────────────────────────────── */
+  .step-block {
+    @apply bg-blue-soft rounded-lg my-4 py-3.5 px-[18px];
+  }
+  .step-block-header {
+    @apply flex items-center justify-between gap-3;
+  }
+  .step-block-title {
+    @apply font-medium text-ink text-[0.95rem];
+  }
+  .step-result {
+    @apply mt-2;
+  }
+  .lab-success-banner {
+    @apply hidden mt-6 font-semibold items-center gap-2 rounded-lg py-4 px-5 bg-[#f0fdf4] border border-[#86efac] text-[#16a34a];
+  }
+  .check-bar {
+    @apply mt-8 bg-blue-soft rounded-[10px] flex items-center justify-between gap-4 flex-wrap py-5 px-6;
+  }
+  .check-bar-hint {
+    @apply text-ink-soft text-[0.95rem];
+  }
+  .check-result {
+    @apply mt-3;
+  }
+  .check-ok {
+    @apply font-semibold rounded-md py-2 px-3 text-[0.88rem] bg-[#f0fdf4] border border-[#86efac] text-[#16a34a];
+  }
+  .check-fail {
+    @apply rounded-md py-2 px-3 bg-[#fef2f2] border border-[#fca5a5];
+  }
+  .check-fail-title {
+    @apply font-semibold mb-1 text-[0.88rem] text-[#dc2626];
+  }
+  .check-fail-items {
+    @apply m-0 pl-4 text-[0.83rem] text-[#7f1d1d];
+  }
+  .check-local {
+    @apply rounded-lg flex items-center gap-2.5 text-[0.9rem] py-[10px] px-3.5 bg-[#eff6ff] border border-[#93c5fd] text-[#1d4ed8];
+  }
+  .check-local-link {
+    @apply font-semibold whitespace-nowrap text-[#1d4ed8];
+  }
+  .check-err {
+    @apply rounded-md text-[0.88rem] py-2 px-3 bg-[#fef2f2] text-[#dc2626];
+  }
+
+  /* ── Course page — inline JS patterns ───────────────────────────────── */
+  .not-found-state {
+    @apply text-center pt-20 px-6 pb-20;
+  }
+  .not-found-icon {
+    @apply text-[3rem] mb-4;
+  }
+  .course-title-head {
+    @apply text-[1.1rem] font-bold leading-[1.35];
+  }
+  .course-desc-text {
+    @apply leading-[1.6] text-[0.85rem];
+  }
+  .course-meta-divider {
+    @apply gap-2 pt-3.5 mt-1 border-t border-line;
+  }
+  .course-restricted {
+    @apply bg-fill text-ink-soft text-sm text-center rounded-[10px] p-3.5 border border-line;
+  }
+  .course-enroll-progress {
+    @apply mb-[10px];
+  }
+  .course-enroll-progress-header {
+    @apply flex justify-between text-[0.8rem] text-ink-soft mb-1.5;
+  }
+  .course-enroll-pct {
+    @apply font-semibold text-blue;
+  }
+  .course-xp-card {
+    @apply mb-3 rounded-[10px] py-[10px] px-3 bg-[#fefce8] border-[1.5px] border-[#fcd34d66];
+  }
+  .course-xp-row {
+    @apply flex justify-between items-center text-xs text-[#a16207];
+  }
+  .course-xp-amount {
+    @apply font-extrabold;
+  }
+  .course-xp-bar {
+    @apply overflow-hidden h-[4px] rounded mt-[5px] bg-[#fef3c7];
+  }
+  .course-xp-bar-fill {
+    @apply h-full rounded;
+    background: linear-gradient(90deg, #fbbf24, #f59e0b);
+    transition: width 0.4s;
+  }
+  .course-badge-card {
+    @apply flex items-center gap-2.5 rounded-[10px] mt-2 no-underline text-inherit py-[10px] px-3;
+  }
+  .course-badge-earned {
+    @apply border-[1.5px] border-[#22c55e] bg-[#f0fdf4];
+  }
+  .course-badge-locked {
+    @apply bg-fill border-[1.5px] border-line;
+  }
+  .course-badge-label {
+    @apply text-[0.72rem] font-semibold;
+  }
+  .course-badge-label-earned {
+    @apply text-[#16a34a];
+  }
+  .course-badge-label-locked {
+    @apply text-ink-soft;
+  }
+  .course-badge-name {
+    @apply font-semibold text-[0.8rem];
+  }
+  .modules-empty {
+    @apply text-center text-ink-soft py-12 px-6;
+  }
+  .prereq-blocked {
+    @apply bg-orange-soft rounded-[14px] text-center p-8 border-[1.5px] border-orange;
+  }
+  .sessions-section-header {
+    @apply flex items-center gap-2.5 mb-4;
+  }
+  .session-card {
+    @apply rounded-xl mb-[10px] py-4 px-5;
+    backdrop-filter: blur(8px);
+  }
+  .session-card-inner {
+    @apply flex items-start justify-between gap-3 flex-wrap;
+  }
+  .session-title {
+    @apply font-semibold mb-1;
+  }
+  .session-meta-text {
+    @apply text-[0.85rem] text-ink-soft;
+  }
+  .session-capacity {
+    @apply text-[0.8rem] text-ink-soft mt-[2px];
+  }
+
+  /* ── Catalogue empty state ───────────────────────────────────────────── */
+  .cat-empty {
+    @apply text-center py-16 px-6;
+  }
+  .cat-empty-icon {
+    @apply text-[3rem] mb-4;
+  }
+  .cat-empty-title {
+    @apply mb-1.5;
+  }
+  .cat-diff-filter {
+    @apply w-auto shrink-0 text-[0.85rem] py-2 px-3.5;
+  }
+}
+
+/* ── Dark mode overrides ────────────────────────────────────────────── */
+:root.dark {
+  .cat-outer {
+    background: var(--color-page);
+  }
+  .continue-hero {
+    background: var(--color-paper);
+  }
+  .continue-thumb {
+    background: linear-gradient(135deg, #1a1f3a, #1e1535);
+    border-color: var(--color-line);
+  }
+  .rail-card {
+    background: var(--color-paper);
+  }
+  .rail-card-thumb {
+    filter: brightness(0.55) saturate(0.7);
+  }
+  .course-outer,
+  .lesson-outer,
+  .quiz-outer {
+    background: var(--color-page);
+  }
+  .course-sidebar {
+    background: var(--color-paper);
+  }
+  .skill-filter-banner {
+    background: var(--color-paper);
+    border-color: var(--color-line);
+  }
+  .cat-chip {
+    background: var(--color-paper);
+  }
+  .cat-chip.active {
+    background: var(--color-blue-soft);
+  }
+  .agenda-wrap {
+    background: var(--color-page);
+  }
+  .cal-dow-row {
+    background: var(--color-fill);
+  }
+  .cal-cell.other-month {
+    background: color-mix(in srgb, var(--color-fill) 60%, transparent);
+  }
+  .cal-cell.has-event:hover {
+    background: var(--color-blue-soft);
+  }
+  .cal-cell.selected {
+    background: var(--color-blue-soft) !important;
+  }
+  .ev-card.booked {
+    background: color-mix(in srgb, var(--color-good-soft) 80%, transparent);
+    border-color: #166534;
+  }
+  .lab-success-banner {
+    background: var(--color-good-soft);
+    border-color: #166534;
+    color: #4ade80;
+  }
+  .check-ok {
+    background: var(--color-good-soft);
+    border-color: #166534;
+    color: #4ade80;
+  }
+  .check-fail {
+    background: var(--color-bad-soft);
+    border-color: #7f1d1d;
+  }
+  .check-fail-title { color: #f87171; }
+  .check-fail-items { color: #fca5a5; }
+  .check-local {
+    background: var(--color-blue-soft);
+    border-color: #1d4ed8;
+    color: #93c5fd;
+  }
+  .check-local-link { color: #60a5fa; }
+  .course-badge-earned {
+    background: var(--color-good-soft);
+    border-color: #166534;
+  }
+  .course-badge-label-earned { color: #4ade80; }
+  .course-xp-card {
+    background: var(--color-orange-soft);
+    border-color: #92400e66;
+  }
+  .course-xp-row { color: #fbbf24; }
+  .course-xp-bar { background: #3a2800; }
+}

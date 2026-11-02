@@ -1,0 +1,44 @@
+# Values of the pupitre2-helm chart for a local kind cluster
+# (docs/specs/108-backend-operations-and-testing.md, "Deployment").
+# The API runs in the cluster on http://localhost:8080; the frontend runs on
+# the host with `pnpm dev`, which proxies /api and /uploads to it.
+
+# Local test value, never deployed.
+jwtSecret: "test-jwt-secret-for-kind-cluster-min-32-chars!!"
+
+api:
+  image:
+    repository: pupitre-api
+    tag: local
+    pullPolicy: Never
+  service:
+    type: NodePort
+    port: 8080
+    nodePort: 30080
+  env:
+    LOG_FORMAT: "text"
+    GITLAB_BASE_URL: "http://gitlab.local:8880"
+  extraEnv:
+    # Seeds the demo catalogue on startup so a fresh cluster is browsable.
+    # "true" only creates the courses that are missing; use "overwrite" to
+    # replace them after editing internal/courses/db/seed/courses/.
+    - name: SEED_DEV_COURSES
+      value: "true"
+  uploads:
+    persistence:
+      size: 1Gi
+
+# The frontend runs on the host (`pnpm dev`).
+frontend:
+  replicaCount: 0
+
+sso:
+  redirectBase: "http://localhost:3000"
+
+ingress:
+  enabled: false
+
+postgresql:
+  enabled: true
+  persistence:
+    enabled: false

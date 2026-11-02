@@ -1,0 +1,59 @@
+name: AI review
+
+# Claude reviews every pull request with the project's reviewers
+# (.claude/skills/review, .claude/agents) and comments on it. Needs one of
+# two secrets: CLAUDE_CODE_OAUTH_TOKEN, a Claude subscription token made with
+# `claude setup-token`, or ANTHROPIC_API_KEY, an API key billed by usage.
+# Without either, or on a pull request from a fork (no secrets), the job is
+# skipped. Not run on main: the code reaching main was reviewed in its pull
+# request. The model is Opus, the most thorough at review. Agent is not
+# allowed: a subagent still running when the headless turn ends never reports,
+# so the skill runs every pass itself.
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  review:
+    name: Claude review
+    if: ${{ !github.event.pull_request.draft && github.event.pull_request.head.repo.full_name == github.repository }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+      id-token: write
+    env:
+      HAS_CREDENTIALS: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN != '' || secrets.ANTHROPIC_API_KEY != '' }}
+    steps:
+      - name: Check the credentials
+        if: ${{ env.HAS_CREDENTIALS != 'true' }}
+        run: echo "::notice::Neither CLAUDE_CODE_OAUTH_TOKEN nor ANTHROPIC_API_KEY is set, AI review skipped."
+      - uses: actions/checkout@v7
+        if: ${{ env.HAS_CREDENTIALS == 'true' }}
+        with:
+          fetch-depth: 0
+      - uses: anthropics/claude-code-action@925afb53776cf1a2b738c6bdbed37b4d4000ef13 # v1.0.262
+        if: ${{ env.HAS_CREDENTIALS == 'true' }}
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          track_progress: true
+          prompt: |
+            REPO: ${{ github.repository }}
+            PR NUMBER: ${{ github.event.pull_request.number }}
+            BASE: origin/${{ github.event.pull_request.base.ref }}
+
+            Review this pull request by following .claude/skills/review/SKILL.md with
+            `--pr ${{ github.event.pull_request.number }}`. The pull request branch is
+            checked out. Only post GitHub comments.
+          claude_args: |
+            --model claude-opus-5-5
+            --allowedTools "Read,Grep,Glob,Skill,Bash(git diff:*),Bash(git log:*),Bash(git fetch:*),Bash(git show:*),Bash(gh pr view:*),Bash(gh pr diff:*),Bash(gh pr comment:*),mcp__github_inline_comment__create_inline_comment"

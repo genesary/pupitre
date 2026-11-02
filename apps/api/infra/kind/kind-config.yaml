@@ -1,0 +1,22 @@
+apiVersion: kind.x-k8s.io/v1alpha4
+kind: Cluster
+nodes:
+- role: control-plane
+  extraPortMappings:
+  # ── Platform ───────────────────────────────────────────────
+  # pupitre-api's NodePort (infra/kind/kind-values.yaml): the frontend's
+  # `pnpm dev` proxies /api and /uploads to http://localhost:8080.
+  - containerPort: 30080
+    hostPort: 8080
+    protocol: TCP
+  # ── GitLab CE ──────────────────────────────────────────────
+  - containerPort: 30880
+    hostPort: 8880    # GitLab HTTP  → http://gitlab.local:8880
+    protocol: TCP
+  - containerPort: 30022
+    hostPort: 2222    # GitLab SSH   → ssh://git@localhost:2222
+    protocol: TCP
+  # ── Keycloak ───────────────────────────────────────────────
+  - containerPort: 30884
+    hostPort: 8884    # Keycloak HTTP → http://keycloak.local:8884
+    protocol: TCP

@@ -1,0 +1,1043 @@
+/* Ported unchanged from genesary/pupitre frontend/src/styles/admin.css (commit 3cdf7b2):
+   the pupitre design is kept as is (docs/specs/005-ui-theme-navigation.md). */
+/* ── Admin & manager pages ──────────────────────────────────────────── */
+@layer components {
+  /* ── Manager users page ────────────────────────────────────────────── */
+  .mu-title {
+    @apply text-[2rem] font-extrabold bg-clip-text;
+    background: linear-gradient(135deg, #4361ee, #7c3aed);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .mu-subtitle {
+    @apply text-sm text-ink-soft;
+  }
+  .mu-table-wrap {
+    @apply rounded-2xl overflow-x-auto border-[1.5px] border-[#e2e8f0] bg-[#ffffffcc];
+    backdrop-filter: blur(8px);
+  }
+  .mu-table {
+    @apply w-full text-sm border-collapse;
+  }
+  .mu-table thead tr {
+    @apply border-b-[1.5px] border-[#e2e8f0] bg-[#f8faff];
+  }
+  .mu-table th {
+    @apply py-3 px-4 text-left font-bold text-ink-soft text-xs uppercase tracking-[0.06em];
+  }
+  .mu-table th:last-child {
+    @apply text-right;
+  }
+  .mu-table tbody tr {
+    @apply border-b border-[#f1f5f9];
+    transition: background 0.12s;
+  }
+  .mu-table tbody tr:last-child {
+    @apply border-b-0;
+  }
+  .mu-table tbody tr:hover {
+    @apply bg-[#f0f4ff66];
+  }
+  .mu-avatar {
+    @apply flex items-center justify-center font-bold shrink-0 rounded-full w-9 h-9 text-[0.85rem] text-[#4361ee] border-[1.5px] border-[#c7d2fe];
+    background: linear-gradient(135deg, #e0e7ff, #ede9fe);
+  }
+
+  /* ── Admin settings page ────────────────────────────────────────────── */
+  .toggle {
+    @apply relative shrink-0 cursor-pointer border-0 rounded-xl w-11 h-6 bg-[#d1d5db];
+    transition: background 0.2s;
+  }
+  .toggle.on {
+    @apply bg-[#22c55e];
+  }
+  .toggle-thumb {
+    @apply absolute pointer-events-none rounded-full top-[3px] left-[3px] w-[18px] h-[18px] bg-white;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+    transition: transform 0.2s;
+  }
+  .toggle.on .toggle-thumb {
+    transform: translateX(20px);
+  }
+  .setting-row {
+    @apply flex items-center justify-between gap-4;
+  }
+  .setting-label p {
+    @apply text-sm font-medium text-ink mb-0.5;
+  }
+  .setting-label small {
+    @apply text-xs text-ink-soft;
+  }
+  .grid2 {
+    @apply grid gap-3.5;
+    grid-template-columns: 1fr 1fr;
+  }
+  @media (max-width: 768px) {
+    .grid2 {
+      grid-template-columns: 1fr;
+    }
+  }
+  .warn-box {
+    @apply rounded-[10px] text-[0.8rem] p-3 bg-[#fffbeb] border border-[#fbbf24] text-[#92400e];
+  }
+  .info-box {
+    @apply bg-blue-soft border border-blue rounded-[10px] text-[0.8rem] text-blue-deep p-3;
+  }
+  .pwd-preview {
+    @apply bg-fill border border-line rounded-[10px] p-3;
+  }
+  .pwd-preview p {
+    @apply text-xs font-semibold text-ink-soft mb-1.5;
+  }
+  .pwd-preview ul {
+    @apply flex flex-col gap-[3px] list-none;
+  }
+  .pwd-preview li {
+    @apply flex items-center text-ink-soft text-[0.78rem] gap-1.5;
+  }
+  .pwd-preview li::before {
+    content: "✓";
+    color: #22c55e;
+    font-weight: 700;
+  }
+  .domain-chips {
+    @apply flex flex-wrap gap-1 mt-1.5;
+  }
+  .domain-chip {
+    @apply rounded-full text-[0.72rem] py-[2px] px-2 bg-[#dcfce7] text-[#166534];
+    font-family: monospace;
+  }
+
+  /* ── Shared admin components (patterns + courses) ───────────────────── */
+  .link-btn {
+    @apply bg-none border-0 cursor-pointer font-semibold whitespace-nowrap text-[0.78rem] py-1 px-2 rounded-md;
+  }
+  .link-btn.violet {
+    @apply text-purple;
+  }
+  .link-btn.violet:hover {
+    @apply bg-[#ede9fe];
+  }
+  .link-btn.gray {
+    @apply text-ink-soft;
+  }
+  .link-btn.gray:hover {
+    @apply bg-fill;
+  }
+  .link-btn.red {
+    @apply text-bad;
+  }
+  .link-btn.red:hover {
+    @apply bg-bad-soft;
+  }
+  .link-btn.orange {
+    @apply bg-orange-soft text-[#92400e];
+  }
+  .link-btn.orange:hover {
+    @apply bg-[#fde68a];
+  }
+  .modal-overlay {
+    @apply hidden fixed inset-0 items-center justify-center z-[300] p-6 bg-black/45;
+  }
+  .modal-overlay.open {
+    @apply flex items-center justify-center;
+  }
+  .modal-box {
+    @apply bg-paper w-full flex flex-col rounded-[16px] overflow-hidden max-w-[680px] max-h-[85vh];
+    box-shadow: var(--shadow-lg);
+  }
+  .modal-head {
+    @apply flex items-center justify-between border-b border-line py-5 px-6;
+  }
+  .modal-body {
+    @apply overflow-y-auto flex-1 py-5 px-6;
+  }
+  .modal-foot {
+    @apply border-t border-line flex justify-end gap-2 py-4 px-6;
+  }
+  pre.yaml {
+    @apply text-xs rounded-[10px] overflow-x-auto p-[18px] leading-[1.6] bg-[#1a1a2e] text-[#7ee787];
+    font-family: monospace;
+  }
+
+  /* ── Admin patterns page ────────────────────────────────────────────── */
+  /* Register form — password rules */
+  .pw-rules {
+    @apply hidden flex-col gap-1 mt-1.5;
+  }
+  .pw-rules.open {
+    @apply flex;
+  }
+  /* Admin table rows */
+  .admin-row {
+    @apply flex items-center gap-3 py-[10px] px-0;
+  }
+  .admin-row + .admin-row {
+    @apply border-t border-line;
+  }
+  .admin-avatar {
+    @apply flex items-center justify-center font-bold shrink-0 rounded-full w-8 h-8 text-[0.82rem];
+  }
+  .admin-avatar.blue {
+    @apply bg-blue-soft text-blue;
+  }
+  .admin-avatar.red {
+    @apply bg-bad-soft text-bad;
+  }
+
+  .pat-grid {
+    @apply grid gap-6 items-start mb-6;
+    grid-template-columns: 1fr 1fr;
+  }
+  @media (max-width: 900px) {
+    .pat-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  .pat-item {
+    @apply bg-paper border border-line rounded-[10px] overflow-hidden;
+    box-shadow: var(--shadow-sm);
+    transition: border-color 0.15s;
+  }
+  .pat-item.open {
+    @apply border-blue;
+  }
+  .pat-row {
+    @apply flex items-center gap-3.5 py-3.5 px-[18px];
+  }
+  .pat-info {
+    @apply flex-1 min-w-0;
+  }
+  .pat-name {
+    @apply font-semibold text-ink text-[0.9rem];
+    font-family: monospace;
+  }
+  .pat-html {
+    @apply whitespace-nowrap overflow-hidden text-ellipsis text-ink-soft text-[0.72rem] mt-0.5;
+    font-family: monospace;
+  }
+  .pat-actions {
+    @apply flex items-center shrink-0 gap-1.5;
+  }
+  .pat-inline-form {
+    @apply border-t border-line bg-fill flex flex-col gap-[10px] py-[18px] px-5;
+  }
+  .pat-inline-grid {
+    @apply grid gap-[10px];
+    grid-template-columns: 1fr 1fr;
+  }
+  @media (max-width: 768px) {
+    .pat-inline-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  .form-card {
+    @apply bg-paper border border-line rounded-[16px] p-6;
+    box-shadow: var(--shadow-sm);
+  }
+  .form-stack {
+    @apply flex flex-col gap-3.5;
+  }
+  .form-grid2 {
+    @apply grid gap-3;
+    grid-template-columns: 1fr 1fr;
+  }
+  @media (max-width: 640px) {
+    .form-grid2 {
+      grid-template-columns: 1fr;
+    }
+  }
+  .label-hint {
+    @apply text-ink-soft text-[0.72rem] mb-1 -mt-0.5;
+  }
+
+  /* ── Admin courses management ────────────────────────────────────────── */
+  .course-item {
+    @apply bg-paper border border-line rounded-[16px] overflow-hidden mb-2;
+    box-shadow: var(--shadow-sm);
+  }
+  .course-header {
+    @apply flex items-center gap-3 cursor-pointer select-none py-3.5 px-[18px];
+    transition: background 0.12s;
+  }
+  .course-header:hover {
+    @apply bg-fill;
+  }
+  .course-item.editing > .course-header {
+    @apply bg-blue-soft;
+  }
+  .course-info {
+    @apply flex-1 min-w-0;
+  }
+  .course-title {
+    @apply font-semibold text-ink text-[0.9rem];
+  }
+  .course-meta {
+    @apply flex items-center flex-wrap gap-1.5 mt-[3px];
+  }
+  .course-slug {
+    @apply text-ink-soft bg-fill text-[0.72rem] py-[1px] px-[6px] rounded;
+    font-family: monospace;
+  }
+  .course-actions {
+    @apply flex items-center shrink-0 gap-1;
+  }
+  .course-inline-form {
+    @apply bg-blue-soft border-t border-blue py-5 px-6;
+  }
+  .chevron {
+    @apply text-ink-soft shrink-0 w-[18px] h-[18px];
+    transition: transform 0.2s;
+  }
+  .chevron.open {
+    transform: rotate(180deg);
+  }
+  .panel {
+    @apply border-t border-line;
+  }
+  .tab-bar {
+    @apply flex border-b border-line bg-paper px-[18px] py-0;
+  }
+  .tab-btn {
+    @apply font-semibold border-0 cursor-pointer bg-none text-ink-soft text-[0.83rem] py-[10px] px-4 -mb-px border-b-2 border-b-transparent;
+    transition:
+      color 0.15s,
+      border-color 0.15s;
+  }
+  .tab-btn.active {
+    @apply text-blue border-b-blue;
+  }
+  .tab-count {
+    @apply bg-fill text-[0.72rem] rounded-full ml-1 py-px px-1.5;
+  }
+  .tab-btn.active .tab-count {
+    @apply bg-blue-soft text-blue;
+  }
+  .tab-content {
+    @apply bg-fill p-5;
+  }
+  .mod-item {
+    @apply bg-paper border border-line rounded-[10px] flex items-start gap-[10px] py-[10px] px-3.5;
+    transition: border-color 0.12s;
+  }
+  .mod-item.editing {
+    @apply border-blue rounded-bl-none rounded-br-none border-b-0;
+  }
+  .mod-item.dragging {
+    @apply opacity-[0.35];
+  }
+  .mod-item.drag-over {
+    @apply border-blue;
+    box-shadow: 0 0 0 2px var(--blue-soft);
+  }
+  .mod-drag-handle {
+    @apply text-ink-soft shrink-0 select-none cursor-grab text-[1.1rem] opacity-[0.35] leading-none py-0 px-0.5;
+  }
+  .mod-drag-handle:hover {
+    @apply opacity-100;
+  }
+  .mod-item.dragging .mod-drag-handle {
+    @apply cursor-grabbing;
+  }
+  .mod-idx {
+    @apply text-xs text-ink-soft text-right shrink-0 w-6 mt-0.5;
+    font-family: monospace;
+  }
+  .mod-info {
+    @apply flex-1 min-w-0;
+  }
+  .mod-name {
+    @apply font-medium text-sm;
+  }
+  .mod-actions {
+    @apply flex items-center shrink-0 gap-1;
+  }
+  .mod-inline-form {
+    @apply bg-blue-soft border border-blue rounded-b-[10px] py-3.5 px-4 mb-0 border-t-0;
+  }
+  .mod-form {
+    @apply bg-paper border border-blue rounded-[10px] p-4 mb-3;
+  }
+  .mod-form-grid {
+    @apply grid gap-[10px] mb-[10px];
+    grid-template-columns: 1fr 1fr;
+  }
+  @media (max-width: 768px) {
+    .mod-form-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  .enroll-row {
+    @apply flex items-center justify-between bg-fill border border-line rounded-[10px] py-2 px-3;
+  }
+  .section-label {
+    @apply text-ink-soft font-bold uppercase tracking-[0.07em] text-[0.72rem] mb-2;
+  }
+  /* ── Markdown import ─────────────────────────────────────────────────── */
+  .modal-box-wide {
+    @apply max-w-[900px];
+  }
+  .import-grid {
+    @apply grid gap-3 mb-3.5;
+    grid-template-columns: repeat(3, 1fr);
+  }
+  @media (max-width: 720px) {
+    .import-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  .import-editor {
+    @apply overflow-x-auto text-[0.78rem] leading-[1.55] min-h-[260px] resize-y whitespace-pre break-normal;
+    font-family: monospace;
+  }
+  .import-editor.dragging {
+    @apply border-blue bg-fill;
+  }
+  .import-preview {
+    @apply border border-line rounded-[10px] bg-fill py-3.5 px-4;
+  }
+  .import-mod {
+    @apply flex items-center border-b border-dashed border-line gap-2 text-[0.82rem] py-1.5 px-0;
+  }
+  .import-mod:last-child {
+    @apply border-b-0;
+  }
+  .import-mod.existing {
+    @apply opacity-[0.55];
+  }
+  .import-mod .import-mod-idx {
+    @apply text-ink-soft text-[0.72rem] min-w-[1.6rem];
+    font-family: monospace;
+  }
+  .import-mod .import-mod-name {
+    @apply font-semibold flex-1 min-w-0 overflow-hidden text-ellipsis whitespace-nowrap;
+  }
+  .import-warn {
+    @apply rounded-[10px] text-[0.76rem] mt-[10px] py-2 px-[10px] text-[#92400e] bg-[#fef3c7];
+  }
+  .mod-git-source {
+    @apply border border-line rounded-[10px] mb-[10px] py-2 px-[10px];
+  }
+  .mod-git-source > summary {
+    @apply cursor-pointer text-ink-soft text-[0.78rem];
+    list-style: revert;
+  }
+  .mod-git-source[open] > summary {
+    @apply mb-[10px];
+  }
+
+  .draft-panel {
+    @apply bg-paper border border-line rounded-[16px] p-6 mb-5;
+    box-shadow: var(--shadow-sm);
+  }
+  .draft-grid {
+    @apply grid gap-3.5 mb-3.5;
+    grid-template-columns: 1fr 1fr;
+  }
+  @media (max-width: 768px) {
+    .draft-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  .stack-sm {
+    @apply flex flex-col gap-1.5;
+  }
+  .flex-row {
+    @apply flex items-center gap-2;
+  }
+  .slug-warn {
+    @apply text-bad text-[0.73rem] mt-[3px];
+  }
+
+  /* ── Sessions presence page ─────────────────────────────────────────── */
+  .presence-outer {
+    @apply min-h-[calc(100vh-64px)] pt-10 px-8 pb-20;
+    background: linear-gradient(160deg, #f0f4ff 0%, #faf5ff 50%, #f0fdf4 100%);
+  }
+  @media (max-width: 768px) {
+    .presence-outer {
+      @apply pt-6 px-5 pb-20;
+    }
+  }
+  @media (max-width: 640px) {
+    .presence-outer {
+      @apply pt-5 px-3.5 pb-20;
+    }
+  }
+  .presence-back {
+    @apply text-ink-soft no-underline inline-flex items-center text-[0.85rem] gap-1.5 mb-5;
+  }
+  .presence-back:hover {
+    @apply text-ink;
+  }
+  .presence-title {
+    @apply font-bold text-[1.4rem] mb-1;
+  }
+  .presence-sub {
+    @apply text-sm text-ink-soft mb-6;
+  }
+  .presence-stats {
+    @apply flex flex-wrap gap-4 mb-6;
+  }
+  .stat-chip {
+    @apply bg-fill border-line rounded-[10px] font-semibold text-[0.82rem] py-[10px] px-[18px] border-[1.5px];
+  }
+  .stat-chip span {
+    @apply font-extrabold block text-[1.3rem];
+  }
+  .stat-chip.green {
+    @apply bg-[#f0fdf4] border-[#86efac] text-[#16a34a];
+  }
+  .presence-table {
+    @apply w-full text-sm border-collapse;
+  }
+  .presence-table th {
+    @apply text-left text-ink-soft font-bold uppercase tracking-[0.06em] text-[0.72rem] py-[10px] px-3.5 border-b-2 border-line;
+  }
+  .presence-table td {
+    @apply border-b border-line align-middle py-3 px-3.5;
+  }
+  .presence-table tr:last-child td {
+    @apply border-b-0;
+  }
+  .presence-table tr:hover td {
+    @apply bg-fill;
+  }
+  .presence-cb {
+    @apply cursor-pointer w-5 h-5 accent-blue;
+  }
+  .no-participants {
+    @apply text-center text-ink-soft py-[60px] px-5;
+  }
+
+  /* ── Admin/Manager shell layout ──────────────────────────────────────── */
+  .shell-hidden {
+    @apply hidden;
+  }
+  .shell-forbidden {
+    @apply hidden items-center justify-center min-h-[calc(100vh-56px)];
+  }
+  .shell-forbidden-inner {
+    @apply text-center p-12;
+  }
+  .shell-forbidden-icon {
+    @apply text-[3rem] mb-4;
+  }
+  .shell-layout {
+    @apply grid min-h-[calc(100vh-56px)];
+    grid-template-columns: 220px 1fr;
+  }
+  .shell-sidebar {
+    @apply border-r border-line bg-paper sticky top-14 overflow-y-auto py-5 px-3 h-[calc(100vh-56px)] flex flex-col;
+  }
+  .shell-sidebar-label {
+    @apply font-bold uppercase tracking-[0.08em] text-ink-soft text-[0.7rem] px-[10px] mb-[10px];
+  }
+  .shell-sidebar-nav {
+    @apply flex flex-col gap-0.5;
+  }
+  .shell-sidebar-bottom {
+    @apply border-t border-line mt-auto pt-3;
+  }
+  .shell-back-btn {
+    @apply flex items-center gap-2 px-[10px] py-[9px] rounded-[var(--radius)] text-[0.82rem] font-medium text-ink-soft no-underline transition-colors duration-150 w-full;
+  }
+  .shell-back-btn:hover {
+    @apply text-ink bg-fill;
+  }
+  .shell-back-icon {
+    @apply w-[15px] h-[15px] shrink-0;
+  }
+  .sidebar-icon {
+    @apply w-[18px] h-[18px] shrink-0;
+  }
+  .sidebar-icon svg {
+    @apply w-full h-full;
+  }
+  .shell-main {
+    @apply min-w-0 min-h-[calc(100vh-56px)] py-8 px-9;
+    background: linear-gradient(160deg, #f0f4ff 0%, #faf5ff 50%, #f0fdf4 100%);
+  }
+  @media (max-width: 1024px) {
+    .shell-layout {
+      grid-template-columns: 180px 1fr;
+    }
+    .shell-main {
+      @apply py-6 px-5;
+    }
+  }
+  @media (max-width: 768px) {
+    .shell-layout {
+      grid-template-columns: 160px 1fr;
+    }
+    .shell-sidebar {
+      @apply py-4 px-2;
+    }
+    .shell-main {
+      @apply py-[18px] px-3.5;
+    }
+  }
+  @media (max-width: 640px) {
+    .shell-layout {
+      grid-template-columns: 1fr;
+    }
+    .shell-sidebar {
+      @apply static h-auto flex flex-row items-center overflow-x-auto gap-1 py-2 px-[10px] border-r-0 border-b border-line;
+    }
+    .shell-sidebar-label {
+      @apply hidden;
+    }
+    .shell-sidebar-nav {
+      @apply flex-row gap-1;
+    }
+    .shell-sidebar-bottom {
+      @apply hidden;
+    }
+    .sidebar-link {
+      @apply whitespace-nowrap text-[0.78rem] py-[7px] px-3;
+    }
+    .shell-main {
+      @apply py-4 px-3.5;
+    }
+  }
+
+  /* ── Manager/Users modal ─────────────────────────────────────────────── */
+  .mu-modal-overlay {
+    @apply hidden fixed inset-0 items-center justify-center z-[200] bg-black/40;
+  }
+  .mu-modal-box {
+    @apply overflow-y-auto w-[520px] max-w-[95vw] p-7 max-h-[90vh];
+  }
+  .mu-modal-header {
+    @apply flex items-center justify-between mb-5;
+  }
+  .mu-modal-close {
+    @apply bg-none border-0 cursor-pointer text-ink-soft text-[1.25rem];
+  }
+  .mu-section {
+    @apply mb-5;
+  }
+  .mu-section-title {
+    @apply font-semibold uppercase tracking-[0.05em] text-ink-soft text-[0.85rem] mb-[10px];
+  }
+  .mu-section-divider {
+    @apply border-t border-line mb-5 pt-5;
+  }
+  .mu-select-row {
+    @apply flex gap-2;
+  }
+  .mu-select-input {
+    @apply flex-1 h-auto py-[9px] px-3.5;
+  }
+  .mu-td-member {
+    @apply py-3 px-4;
+  }
+  .mu-member-info {
+    @apply flex items-center gap-[10px];
+  }
+  .mu-member-name {
+    @apply font-semibold;
+  }
+  .mu-member-email {
+    @apply text-ink-soft text-[0.78rem];
+  }
+  .mu-td-count {
+    @apply text-ink-soft py-3 px-4;
+  }
+  .mu-td-action {
+    @apply text-right py-3 px-4;
+  }
+  .mu-enroll-item {
+    @apply flex items-center border-b border-line gap-[10px] py-2;
+  }
+  .mu-enroll-name {
+    @apply flex-1 text-sm font-medium;
+  }
+  .btn-remove {
+    @apply bg-bad-soft text-bad shrink-0;
+  }
+  .btn-remove:hover:not(:disabled) {
+    @apply bg-[#f0c2c1];
+  }
+  .mu-empty-td {
+    @apply text-center p-8;
+  }
+  .mu-error-td {
+    @apply text-center text-bad p-6;
+  }
+  .mu-group-filter-btn {
+    @apply cursor-pointer border-0 text-xs;
+  }
+  .mu-group-filter-btn.active {
+    @apply outline outline-2 outline-orange outline-offset-1;
+  }
+  .mu-group-filter-btn:not(.active) {
+    @apply opacity-[0.7];
+  }
+
+  /* ── Admin pages ─────────────────────────────────────────────────────── */
+  .admin-page-header {
+    @apply flex items-center justify-between flex-wrap gap-3 mb-5;
+  }
+  .admin-page-title {
+    @apply text-2xl font-bold;
+  }
+  .admin-page-actions {
+    @apply flex gap-2;
+  }
+  .settings-footer {
+    @apply flex justify-end pb-8;
+  }
+  .settings-help {
+    @apply block mb-1.5;
+  }
+  .form-actions {
+    @apply flex gap-2 pt-1;
+  }
+  .mod-skill-badges {
+    @apply inline-flex flex-wrap gap-1 ml-2 align-middle;
+  }
+  .media-wrap {
+    @apply flex justify-center my-6;
+  }
+  .order-num {
+    @apply font-semibold text-ink-soft shrink-0 text-[0.8rem] w-5;
+  }
+  .order-text {
+    @apply flex-1 text-sm;
+  }
+  .order-btns {
+    @apply flex gap-0.5;
+  }
+  .quiz-cb {
+    @apply border-2 border-line flex items-center justify-center w-[18px] h-[18px] rounded bg-transparent shrink-0 grow-0;
+    transition:
+      background 0.12s,
+      border-color 0.12s;
+  }
+  .quiz-cb.checked {
+    @apply border-blue bg-blue;
+  }
+  .quiz-cb-check {
+    @apply text-white font-bold text-[0.7rem];
+  }
+  .user-suggest-dropdown {
+    @apply hidden absolute bg-paper border border-line rounded-lg overflow-y-auto z-[100] max-h-[200px] mt-1 top-full left-0 right-0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  }
+  .user-suggest-row {
+    @apply cursor-pointer flex items-center gap-2 rounded-md py-2 px-3 m-0.5;
+  }
+  .user-suggest-row:hover {
+    @apply bg-fill;
+  }
+  .badge-inperson {
+    @apply bg-[#e0f7fa] text-[#0891b2];
+  }
+  .badge-xp-reward {
+    @apply bg-[#fefce8] text-[#a16207] border-[#fcd34d];
+  }
+  .badge-violet {
+    @apply bg-[#ede9fe] text-[#5b21b6];
+  }
+  .badge-amber {
+    @apply bg-[#fef9c3] text-[#854d0e];
+  }
+  .session-card-booked {
+    @apply border-[1.5px] border-[#22c55e] bg-[#f0fdf4cc];
+  }
+  .session-card-default {
+    @apply border-[1.5px] border-[#e2e8f0] bg-[#ffffffcc];
+  }
+  .preview-area {
+    @apply border border-line rounded-[10px] bg-fill p-4 min-h-[80px] mt-3;
+  }
+  .code-snippet {
+    @apply bg-fill text-xs rounded py-px px-2;
+  }
+
+  /* ── Leaderboard rows (admin/index + admin/leaderboard) ──────────────── */
+  .lb-row {
+    @apply flex items-center gap-5 py-5 px-2;
+  }
+  .lb-row + .lb-row {
+    @apply border-t border-line;
+  }
+  .lb-row-padded {
+    @apply flex items-center gap-5 py-5 px-6;
+  }
+  .lb-row-padded + .lb-row-padded {
+    @apply border-t border-line;
+  }
+  .lb-rank {
+    @apply text-center font-bold text-ink-soft shrink-0 w-7 text-[1rem];
+  }
+  .lb-rank.top {
+    @apply text-orange;
+  }
+  .lb-rank-lg {
+    @apply text-center font-bold text-ink-soft shrink-0 w-8 text-[1rem];
+  }
+  .lb-rank-lg.top {
+    @apply text-orange;
+  }
+  .lb-avatar {
+    @apply bg-blue-soft flex items-center justify-center font-bold text-blue shrink-0 rounded-full w-10 h-10 text-[0.9rem];
+  }
+  .lb-avatar-lg {
+    @apply flex items-center justify-center font-bold shrink-0 rounded-full w-11 h-11 text-[0.9rem];
+  }
+  .lb-avatar-user {
+    @apply bg-blue-soft text-blue;
+  }
+  .lb-avatar-admin {
+    @apply bg-bad-soft text-bad;
+  }
+  .lb-info {
+    @apply flex-1 min-w-0;
+  }
+  .lb-name {
+    @apply font-medium text-sm whitespace-nowrap overflow-hidden text-ellipsis;
+  }
+  .lb-sub {
+    @apply text-xs text-ink-soft mt-px;
+  }
+  .lb-stats {
+    @apply text-ink-soft text-[0.72rem] mt-px;
+  }
+  .lb-score {
+    @apply font-bold text-blue shrink-0;
+  }
+  .lb-score-col {
+    @apply text-right shrink-0;
+  }
+  .lb-score-main {
+    @apply font-bold text-blue text-[0.95rem];
+  }
+  .lb-score-rate {
+    @apply text-ink-soft text-[0.72rem];
+  }
+
+  /* ── Stats grid (admin/index) ────────────────────────────────────────── */
+  .stats-grid {
+    @apply grid gap-5 mb-8;
+    grid-template-columns: repeat(3, 1fr);
+  }
+  @media (max-width: 900px) {
+    .stats-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (max-width: 500px) {
+    .stats-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  .stat-value {
+    @apply text-[2rem] font-bold;
+  }
+  .stat-label {
+    @apply text-sm text-ink-soft mt-1;
+  }
+
+  /* ── Password rules (register) ───────────────────────────────────────── */
+  .pw-rule {
+    @apply flex items-center text-ink-soft gap-1.5 text-[0.8rem];
+  }
+  .pw-rule.ok {
+    @apply text-good;
+  }
+
+  /* ── Profile page ────────────────────────────────────────────────────── */
+  .profile-avatar-wrapper {
+    @apply relative cursor-pointer w-20 h-20 mx-auto mb-3;
+  }
+  .profile-avatar-overlay {
+    @apply absolute inset-0 rounded-full hidden items-center justify-center text-white text-center font-semibold text-[0.7rem] bg-black/35 leading-[1.2];
+  }
+  .profile-field-row {
+    @apply grid items-start gap-2;
+    grid-template-columns: 120px 1fr;
+  }
+  @media (max-width: 480px) {
+    .profile-field-row {
+      grid-template-columns: 1fr;
+    }
+  }
+  .sso-notice {
+    @apply text-blue bg-blue-soft border border-blue rounded-[10px] text-[0.8rem] py-[10px] px-3.5;
+  }
+  .avatar-pick-btn {
+    @apply rounded-full border-2 border-line bg-fill flex items-center justify-center cursor-pointer w-9 h-9 text-[1.3rem] p-0;
+    transition: border-color 0.15s;
+  }
+  .avatar-pick-btn:hover {
+    @apply border-blue;
+  }
+  .profile-section-header {
+    @apply flex items-center justify-between mb-5;
+  }
+
+  /* ── Register page ───────────────────────────────────────────────────── */
+  .register-page {
+    @apply flex items-center justify-center min-h-screen p-6 bg-page;
+  }
+  .register-wrapper {
+    @apply w-full max-w-[440px];
+  }
+  .register-header {
+    @apply text-center mb-7;
+  }
+  .register-logo {
+    @apply inline-flex items-center no-underline gap-[10px] mb-2;
+  }
+  .register-logo-img {
+    @apply w-10 h-10 object-contain;
+  }
+  .register-logo-text {
+    @apply font-bold text-ink text-[1.6rem];
+    font-family: "Caveat", cursive;
+  }
+  .register-closed {
+    @apply text-center py-6;
+  }
+  .register-closed-icon {
+    @apply text-[2.5rem] mb-3;
+  }
+  .register-footer {
+    @apply text-center text-sm text-ink-soft mt-5;
+  }
+  .pw-error {
+    @apply text-bad text-[0.8rem] mt-1;
+  }
+
+  /* ── Admin table patterns ────────────────────────────────────────────── */
+  .admin-table {
+    @apply w-full text-sm border-collapse;
+  }
+  .admin-th {
+    @apply text-left font-semibold text-ink-soft uppercase tracking-[0.05em] text-[0.78rem] py-3 px-4;
+  }
+  .admin-td {
+    @apply py-3 px-4;
+  }
+  .preview-td {
+    @apply overflow-hidden text-ellipsis whitespace-nowrap max-w-[220px];
+  }
+  .admin-tr {
+    @apply border-b border-line;
+  }
+  .admin-tr-head {
+    @apply border-b border-line bg-fill;
+  }
+  .admin-table-wrap {
+    @apply overflow-x-auto p-0;
+    -webkit-overflow-scrolling: touch;
+  }
+  @media (max-width: 900px) {
+    .admin-table {
+      @apply min-w-[520px];
+    }
+  }
+
+  /* ── Labs page ───────────────────────────────────────────────────────── */
+  .labs-status-ok {
+    @apply inline-flex items-center gap-1 font-semibold text-[0.78rem] rounded-[20px] bg-[#d1fae5] text-[#065f46] py-px px-[10px];
+  }
+  .labs-status-fail {
+    @apply inline-flex items-center gap-1 font-semibold text-[0.78rem] rounded-[20px] bg-[#fee2e2] text-[#991b1b] py-px px-[10px];
+  }
+  .stat-card {
+    @apply text-center py-10 px-6;
+  }
+  .stat-card-value {
+    @apply text-[2.4rem] font-bold leading-none mb-2;
+  }
+  .stat-card-label {
+    @apply text-sm text-ink-soft;
+  }
+
+  /* ── Monitoring page ─────────────────────────────────────────────────── */
+  .monitor-card-header {
+    @apply flex items-center justify-between border-b border-line py-4 px-5;
+  }
+  .monitor-row {
+    @apply flex items-center justify-between py-[10px] px-5;
+  }
+  .monitor-row + .monitor-row {
+    @apply border-t border-line;
+  }
+  .monitor-key {
+    @apply font-medium text-[0.82rem];
+  }
+  .monitor-val {
+    @apply text-ink-soft text-[0.82rem];
+    font-family: monospace;
+  }
+  .monitor-section-title {
+    @apply font-bold uppercase tracking-[0.05em] text-ink-soft border-b border-line text-[0.82rem] pt-3 px-5 pb-1.5;
+  }
+
+  /* ── Exports CSV page ────────────────────────────────────────────────── */
+  .export-grid {
+    @apply grid items-start gap-6;
+    grid-template-columns: 280px 1fr;
+  }
+  @media (max-width: 900px) {
+    .export-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  .export-config-panel {
+    @apply p-6;
+  }
+  .export-preview-panel {
+    @apply min-w-0 overflow-hidden p-6 min-h-[300px];
+  }
+  .export-cat-btn {
+    @apply text-left bg-fill rounded-[10px] font-medium cursor-pointer text-ink text-sm py-[10px] px-3.5 border-[1.5px] border-line;
+    transition: border-color .15s, background .15s;
+  }
+  .export-cat-btn:hover {
+    @apply border-blue bg-blue-soft;
+  }
+  .export-cat-btn.active {
+    @apply border-blue bg-blue-soft text-blue font-semibold;
+  }
+  .export-field-row {
+    @apply flex items-center cursor-pointer select-none gap-[10px] rounded-md py-1.5 px-0;
+  }
+  .export-field-row:hover {
+    @apply text-blue;
+  }
+}
+
+/* ── Dark mode overrides ────────────────────────────────────────────── */
+:root.dark {
+  .mu-table thead tr {
+    background: var(--color-fill);
+  }
+  .mu-table tbody tr {
+    border-bottom-color: var(--color-line);
+  }
+  .mu-table tbody tr:hover {
+    background: var(--color-fill);
+  }
+  .mu-table tbody tr:hover td:first-child {
+    background: var(--color-fill);
+  }
+  .presence-outer {
+    background: linear-gradient(160deg, #0f1520 0%, #130f20 50%, #0f1a15 100%);
+  }
+  .shell-main {
+    background: linear-gradient(160deg, #0f1520 0%, #130f20 50%, #0f1a15 100%);
+  }
+  .info-box {
+    background: color-mix(in srgb, var(--color-blue) 10%, var(--color-paper));
+    border-color: color-mix(in srgb, var(--color-blue) 30%, transparent);
+  }
+  .warn-box {
+    background: color-mix(in srgb, var(--color-orange) 10%, var(--color-paper));
+    border-color: color-mix(in srgb, var(--color-orange) 30%, transparent);
+  }
+}

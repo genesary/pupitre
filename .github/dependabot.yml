@@ -1,0 +1,38 @@
+# Dependabot version updates: one grouped pull request per ecosystem and per
+# month. A version is proposed only once it is 7 days old, in the spirit of
+# pnpm's minimumReleaseAge policy (AGENTS.md). Security updates for known
+# vulnerabilities are turned on in the repository settings and are not delayed.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: monthly
+    cooldown:
+      default-days: 7
+    versioning-strategy: increase
+    groups:
+      npm:
+        patterns: ['*']
+        update-types: [minor, patch]
+
+  - package-ecosystem: gomod
+    directory: /apps/api
+    schedule:
+      interval: monthly
+    cooldown:
+      default-days: 7
+    groups:
+      go:
+        patterns: ['*']
+        update-types: [minor, patch]
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    cooldown:
+      default-days: 7
+    groups:
+      actions:
+        patterns: ['*']

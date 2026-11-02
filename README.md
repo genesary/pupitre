@@ -1,209 +1,105 @@
-# E-Learning Platform
+# pupitre2
 
-Micro-services e-learning platform with database-backed course definitions and automated lab validation.
+The pupitre e-learning platform: a React frontend (two apps) and its Go backend, `pupitre-api`.
+They replace the Astro frontend and the three Go services of
+[`genesary/pupitre`](https://github.com/genesary/pupitre), with the same API.
 
-## Architecture
+- Stack: React 19, TypeScript, Vite, React Router, Tailwind CSS v4, shadcn/ui, TanStack Query,
+  pnpm.
+- Authentication: OIDC through Keycloak only.
+- Specs: [`docs/specs`](docs/specs/README.md).
+- Calling the admin API to add courses (PowerShell and Linux): [`docs/guides/admin-api-courses.md`](docs/guides/admin-api-courses.md).
+- Agent rules: [`AGENTS.md`](AGENTS.md).
 
-```mermaid
-graph LR
-    subgraph Clients["Clients"]
-        Browser(["Browser"])
-        Pupitre(["Pupitre\n(Tauri desktop)"])
-    end
+## Requirements
 
-    subgraph Platform["Platform — Kubernetes"]
-        Frontend["Frontend\nAstro SSR · :3000"]
+- Node.js 24 LTS (`.nvmrc`).
+- pnpm, enabled with `corepack enable`.
+- For `pnpm dev` only: the backend. Go 1.26 and Docker (`pnpm api:up` starts PostgreSQL and
+  Keycloak, `pnpm api:dev` the API on port 8080). `pnpm dev:mock` needs no backend.
 
-        subgraph Services["Backend Services"]
-            UserService["User Service :8081\nAuth · Enrollments · Progress"]
-            CourseService["Course Service :8082\nCourses · Labs · Quiz"]
-            CheckerService["Checker Service :8083\nOPA/Rego · GitLab fetch"]
-        end
+## Getting started
 
-        subgraph Data["Data"]
-            PostgreSQL[("PostgreSQL")]
-            GitRepos[["Git repos\nLab content"]]
-        end
-    end
+### With mise
 
-    subgraph External["External"]
-        GitLab["GitLab\nStudent projects"]
-        OAuth["OAuth2 / OIDC\nKeycloak · GitHub…"]
-        Podman["Podman\nLocal machine"]
-    end
+[mise](https://mise.jdx.dev/) installs Node.js, pnpm and Go from `mise.toml` and runs the tasks. Each
+task installs the dependencies first when needed.
 
-    Browser -->|HTTP| Frontend
-    Pupitre -->|WebView| Frontend
-    Pupitre -->|"local_check\n(Rust command)"| Podman
-
-    Frontend --> UserService
-    Frontend --> CourseService
-
-    CourseService -->|Internal API| UserService
-    CourseService -->|"POST /evaluate\n(GitLab labs)"| CheckerService
-
-    UserService --> PostgreSQL
-    CourseService --> PostgreSQL
-    CourseService --> GitRepos
-    CheckerService --> GitRepos
-    CheckerService --> GitLab
-    UserService -.->|OIDC| OAuth
+```sh
+mise install          # Node.js 24, pnpm, prek, Go and golangci-lint, versions from mise.toml
+mise run setup:prek        # Git hooks, see "Contributing"
+mise run dev:mock     # http://localhost:3000, no backend needed (docs/specs/006-mock-mode.md)
+mise run dev          # http://localhost:3000, against the Go services
+# Both start the two apps; the admin app is opened through http://localhost:3000/admin
+mise run check        # typecheck, lint, test and build
+mise run api:dev      # pupitre-api on http://localhost:8080 (after mise run api:up)
+mise tasks            # every task: build, lint, typecheck, test, test:e2e, api:test…
 ```
 
-| Service | Role | Tech |
-|---------|------|------|
-| **Course Service** | Course catalogue and content, media, quiz, inline lab rendering, checker proxy, lab_checks persistence | Go + chi + GORM |
-| **User Service** | Auth (local · OAuth2/OIDC), enrollments, progress, admin | Go + chi + GORM |
-| **Checker Service** | Fetch live GitLab state, evaluate OPA/Rego policy, return violations | Go + chi + go-gitlab + OPA |
-| **Frontend** | Astro SSR, API proxy, markdown lab rendering, admin Labs page | Astro |
+### In a dev container
 
-## Source of truth
+`.devcontainer/` builds an image with mise, Node.js, pnpm, Go, golangci-lint and Playwright's Chromium already
+installed. Open the folder in VS Code, run "Dev Containers: Reopen in Container", then
+`mise run dev:mock`. `node_modules` lives in a Docker volume, apart from the host's.
 
-Courses live in **PostgreSQL** and are created and edited through the course-service admin API (`/api/admin/courses`) or the admin UI. Nothing is cached in memory: each request reads what it needs from the database, so any replica serves the same catalogue and a restart loses nothing. See [`docs/Course.md`](docs/Course.md) for the full spec.
+With Podman, set `"dev.containers.dockerPath": "podman"` in the VS Code user settings: through the
+Docker CLI, VS Code can stay stuck after "Container started".
 
-## Interactive Labs — Lab Checker
+### With pnpm only
 
-Lab modules (`type: lab`) display the assignment inline (markdown) and let students validate their GitLab work via the **"Vérifier mon travail"** button.
+```sh
+corepack enable
+pnpm install
+pnpm dev:mock   # http://localhost:3000, no backend needed (docs/specs/006-mock-mode.md)
 
-Each lab requires two files co-located with `content.md` in the git repo:
-
-```
-modules/lab1/
-  ├── content.md    # Assignment (markdown)
-  ├── check.yaml    # Checker config: provider, project template, files to verify
-  └── check.rego    # OPA/Rego policy: validation rules
+pnpm api:up     # PostgreSQL and Keycloak (apps/api/compose.yaml)
+pnpm api:dev    # pupitre-api on http://localhost:8080 (settings: apps/api/.env)
+pnpm dev        # http://localhost:3000, against the API
+# Both start the two apps; the admin app is opened through http://localhost:3000/admin
 ```
 
-Validation flow:
+| Command | Effect |
+| --- | --- |
+| `pnpm build` | Type check, then production build in `apps/app/dist/` and `apps/admin/dist/` |
+| `pnpm test:e2e` | End-to-end tests (Playwright) against the mock mode |
+| `pnpm test:e2e:backend` | End-to-end tests against the real backend (after `pnpm api:up`) |
+| `pnpm api:test`, `pnpm api:lint`, `pnpm api:build` | Go tests, lint and build of `apps/api` |
+| `pnpm test` | Unit and component tests (Vitest), every package |
+| `pnpm lint` | ESLint, including the security rules of `docs/specs/003-security.md` |
+| `pnpm typecheck` | TypeScript only, every package |
 
-```
-Student clicks "Vérifier"
-  → course-service reads check.yaml + check.rego from git
-  → POST checker-service /evaluate
-  → checker fetches live GitLab state (MRs, commits, pipeline, files)
-  → evaluates Rego → {allow, violations}
-  → stored in DB (lab_checks)
-  → result displayed to student
-```
+The dev proxy target can be changed with `VITE_API_URL`. Keycloak test accounts (local only):
+`alice`, `marc.manager` and `admin.kc`, see `apps/api/compose.yaml`.
 
-Instructors can review all attempts at `/admin/labs`.
+## Layout
 
-See [`docs/interactive-labs.md`](docs/interactive-labs.md) for full documentation.
+| Path | Package | Content |
+| --- | --- | --- |
+| `apps/app` | `@pupitre/app` | The learner app: sign-in, catalogue, lessons, learner space, agenda |
+| `apps/admin` | `@pupitre/admin` | The admin app, under `/admin` and `/manager`: administration and manager space |
+| `packages/core` | `@pupitre/core` | Shared by both apps: API client, session, top bar, guards, markdown, mocks |
+| `packages/ui` | `@pupitre/ui` | Design system: shadcn components, pupitre CSS, security helpers |
+| `apps/api` | Go module | The backend, `pupitre-api`: one application on port 8080 |
+| `docs/specs` | | Functional and technical specs |
 
-## Pupitre — Desktop App (Local Labs)
+Details: [`docs/specs/000-scope-and-stack.md`](docs/specs/000-scope-and-stack.md).
 
-Some labs require verifying work done locally on the student's machine (e.g. `podman pull`, `podman run`). For these, the platform runs as a **Tauri v2 desktop app** called **Pupitre**, developed in a separate repository: [`pupitre-desktop`](https://github.com/genesary/pupitre-desktop).
+## Contributing
 
-When running inside Pupitre, the "Vérifier mon travail" button calls a local Rust command instead of the remote checker-service:
+- Branches: [Conventional Branch](https://conventional-branch.github.io/) (`feature/…`,
+  `bugfix/…`, `chore/…`).
+- Commits: [Conventional Commits](https://www.conventionalcommits.org/) (`feat:`, `fix:`,
+  `docs:`…).
+- No direct commit on `main`.
+- Commits are signed (`git config commit.gpgsign true`).
 
-```
-Student clicks "Vérifier" (inside Pupitre)
-  → frontend detects window.__TAURI_INTERNALS__
-  → invoke("local_check", { checkType, params })
-  → Rust runs podman commands locally
-  → {allow, violations} returned to frontend
-```
+`mise run setup:prek` installs the Git hooks of `.pre-commit-config.yaml`, run by
+[prek](https://github.com/j178/prek):
 
-Lab modules with `checkProvider: local` use this flow. Labs with `checkProvider: gitlab` (or no provider) use the remote checker-service as before.
+| Hook | Checks |
+| --- | --- |
+| `pre-commit` | No commit on `main`; `mise run lint` and `mise run build` when code changes |
+| `commit-msg` | [Conventional Commits](https://www.conventionalcommits.org/) subject (`feat(scope): …`) |
+| `pre-push` | Every pushed commit has a valid signature |
 
-### Build Pupitre
-
-See the [`pupitre-desktop`](https://github.com/genesary/pupitre-desktop) repository for build instructions.
-
-## Quick start
-
-```bash
-make dev
-```
-
-See `CONTRIBUTING.md` for the full step-by-step guide, troubleshooting, and deployment details.
-
-## Project structure
-
-```
-./
-├── checker-service/      # Go service (port 8083)
-│   └── internal/
-│       ├── checker/      # GitLab fetch + Rego evaluation
-│       ├── handlers/     # POST /evaluate
-│       └── config/       # Env config
-├── course-service/       # Go service (port 8082)
-│   └── internal/
-│       ├── content/      # Domain types, git fetch, quiz scoring
-│       ├── db/           # GORM connect + schema management (AutoMigrate)
-│       ├── models/       # GORM-mapped structs
-│       ├── repository/   # Repository interfaces + GORM implementations
-│       ├── handlers/     # HTTP routes + CheckModule + lab_results
-│       ├── middleware/   # JWT auth
-│       ├── config/       # Env config
-│       └── metrics/      # Prometheus
-├── user-service/         # Go service (port 8081)
-│   └── internal/
-│       ├── db/           # GORM connect + schema management (AutoMigrate)
-│       ├── models/       # GORM-mapped structs
-│       ├── repository/   # Repository interfaces + GORM implementations
-│       ├── handlers/     # Auth, OAuth, admin, progress
-│       ├── middleware/   # JWT
-│       └── config/       # Env config
-├── frontend/             # Astro
-├── helm/                 # Helm chart (submodule: pupitre-helm)
-├── infra/                # Kind config + example manifests
-├── docs/                 # Architecture, Course spec, Labs, SSO
-└── examples/             # Sample deployment manifests + quiz files
-```
-
-## Configuration
-
-Each service is configured via a **ConfigMap mounted as a file** in the container. Environment variables coexist and override file values.
-
-| Service | Mounted file | Key variables |
-|---|---|---|
-| **course-service** | `/etc/course-service/config.yaml` | `JWT_SECRET`, `DATABASE_URL`, `CHECKER_SERVICE_URL`, `GIT_TOKEN`, `LOG_LEVEL`, `LOG_FORMAT` |
-| **user-service** | `/etc/user-service/config.yaml` | `JWT_SECRET`, `DATABASE_URL`, `OIDC_*`, `LOG_LEVEL`, `LOG_FORMAT` |
-| **checker-service** | env only | `GITLAB_TOKEN`, `GITLAB_BASE_URL`, `LOG_LEVEL`, `LOG_FORMAT` |
-| **frontend** | `/etc/frontend/config.env` | `COURSE_API`, `USER_API` |
-
-Logging is controlled per service via two environment variables:
-
-| Variable | Values | Default | Description |
-|---|---|---|---|
-| `LOG_LEVEL` | `debug` / `info` / `warn` / `error` | `info` | Log verbosity |
-| `LOG_FORMAT` | `json` / `text` | `json` | Output format — `json` for log aggregators (ELK, DataDog), `text` for local dev |
-
-```bash
-# Human-readable logs for local development
-LOG_LEVEL=debug LOG_FORMAT=text ./bin/user-service
-
-# JSON logs for production / log aggregation
-LOG_LEVEL=info LOG_FORMAT=json ./bin/user-service
-```
-
-## Git credentials — course-repo-secret
-
-Courses with private git module repos require a K8s secret:
-
-```bash
-kubectl create secret generic course-repo-secret \
-  --from-file=git-credentials.yaml=./git-credentials.yaml
-```
-
-`git-credentials.yaml` format:
-
-```yaml
-credentials:
-  - url: "github.com/org/*"
-    token: "ghp_xxx"
-```
-
-## Internal API
-
-| Caller | Target | Endpoint | Description |
-|---|---|---|---|
-| Course Service | User Service | `GET /internal/enrollments/check` | Check enrollment |
-| Course Service | User Service | `GET /internal/progress/viewed` | Get viewed lessons |
-| Course Service | User Service | `POST /internal/progress/complete` | Mark lesson complete |
-| Course Service | Checker Service | `POST /evaluate` | Evaluate lab submission |
-
-## Known issue: Bitnami PostgreSQL
-
-The Helm chart uses Bitnami PostgreSQL by default (`postgresql.enabled: true`), which may get stuck `Pending` on KinD due to `Insufficient ephemeral-storage`. If that happens, set `postgresql.enabled: false` in `infra/kind/kind-values.yaml` and run `make helm-install`.
+`mise x -- prek run --all-files` runs the pre-commit checks by hand (prek 0.5.6 or later, from mise.toml).
