@@ -52,6 +52,7 @@ pnpm monorepo, same layout as `ebuildy/pupitre2`: two applications on one origin
 | `docs/specs` | | Specs, one file per feature area |
 | `e2e` | | Playwright tests |
 | `docker/front` | | The frontend image: both apps behind nginx ([`108`](docs/specs/108-backend-operations-and-testing.md)) |
+| `helm`, `pupitre-desktop` | | Git submodules: [`genesary/pupitre-helm`](https://github.com/genesary/pupitre-helm) and [`genesary/pupitre-desktop`](https://github.com/genesary/pupitre-desktop), not part of the pnpm workspace |
 
 Inside `apps/app/src` and `apps/admin/src`:
 
