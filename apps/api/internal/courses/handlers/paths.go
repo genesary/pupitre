@@ -6,7 +6,7 @@ import (
 
 	"go.uber.org/zap"
 
-	"github.com/jojo91550/pupitre2/apps/api/internal/courses/content"
+	"github.com/genesary/pupitre/apps/api/internal/courses/content"
 )
 
 // pathKindSkill identifies a learning path that groups modules by skill.

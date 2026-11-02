@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"sync"
 
-	"github.com/jojo91550/pupitre2/apps/api/internal/users/repository"
+	"github.com/genesary/pupitre/apps/api/internal/users/repository"
 )
 
 // Platform setting keys read from more than one file; pulled out to satisfy

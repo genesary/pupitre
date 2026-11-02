@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/jojo91550/pupitre2/apps/api/internal/courses/content"
-	"github.com/jojo91550/pupitre2/apps/api/internal/courses/definition"
+	"github.com/genesary/pupitre/apps/api/internal/courses/content"
+	"github.com/genesary/pupitre/apps/api/internal/courses/definition"
 )
 
 // Directive keys that Export never writes, because the document already

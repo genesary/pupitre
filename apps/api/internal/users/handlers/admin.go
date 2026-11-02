@@ -9,7 +9,7 @@ import (
 	"github.com/google/uuid"
 	"go.uber.org/zap"
 
-	"github.com/jojo91550/pupitre2/apps/api/internal/users/repository"
+	"github.com/genesary/pupitre/apps/api/internal/users/repository"
 )
 
 // Repeated literals used across the admin handlers, pulled out to satisfy

@@ -4,8 +4,8 @@ import (
 	"github.com/go-chi/chi/v5"
 	chiMiddleware "github.com/go-chi/chi/v5/middleware"
 
-	"github.com/jojo91550/pupitre2/apps/api/internal/courses/config"
-	apimiddleware "github.com/jojo91550/pupitre2/apps/api/internal/platform/middleware"
+	"github.com/genesary/pupitre/apps/api/internal/courses/config"
+	apimiddleware "github.com/genesary/pupitre/apps/api/internal/platform/middleware"
 )
 
 // RegisterRoutes mounts every public route of the courses domain on router,

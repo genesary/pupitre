@@ -8,8 +8,8 @@ import (
 
 	"go.uber.org/zap"
 
-	"github.com/jojo91550/pupitre2/apps/api/internal/platform/metrics"
-	"github.com/jojo91550/pupitre2/apps/api/internal/users/repository"
+	"github.com/genesary/pupitre/apps/api/internal/platform/metrics"
+	"github.com/genesary/pupitre/apps/api/internal/users/repository"
 )
 
 // myCoursesRespKeyCourses is the JSON response field holding the course list.

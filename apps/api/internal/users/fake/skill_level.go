@@ -4,7 +4,7 @@ import (
 	"context"
 	"sync"
 
-	"github.com/jojo91550/pupitre2/apps/api/internal/users/repository"
+	"github.com/genesary/pupitre/apps/api/internal/users/repository"
 )
 
 // SkillLevelRepository is an in-memory skill level repository for tests.

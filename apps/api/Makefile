@@ -58,8 +58,8 @@ down:
 
 KIND_CLUSTER       ?= pupitre
 HELM_RELEASE       ?= pupitre
-# The published chart, or a local clone of jojo91550/pupitre2-helm.
-HELM_CHART         ?= oci://ghcr.io/jojo91550/charts/pupitre
+# The published chart, or a local clone of genesary/pupitre-helm.
+HELM_CHART         ?= oci://ghcr.io/genesary/charts/pupitre
 HELM_CHART_VERSION ?=
 HELM_VALUES        ?= infra/kind/kind-values.yaml
 

@@ -35,7 +35,7 @@ change touches (`docs/specs/0xx` for a page, `1xx` for the API).
 ## Rules
 
 - Before calling something a departure, check the reference: the Go code in `apps/api`, the
-  specs, the chart (`jojo91550/pupitre2-helm`) and `parity.md` ("Deliberate differences").
+  specs, the chart (`genesary/pupitre-helm`) and `parity.md` ("Deliberate differences").
 - Report only what the diff introduces or touches. No style remark that lint already enforces.
 
 ## Output

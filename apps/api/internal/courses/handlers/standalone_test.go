@@ -22,9 +22,9 @@ import (
 	chiMiddleware "github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
 
-	"github.com/jojo91550/pupitre2/apps/api/internal/courses/config"
-	"github.com/jojo91550/pupitre2/apps/api/internal/platform/httpx"
-	"github.com/jojo91550/pupitre2/apps/api/internal/platform/metrics"
+	"github.com/genesary/pupitre/apps/api/internal/courses/config"
+	"github.com/genesary/pupitre/apps/api/internal/platform/httpx"
+	"github.com/genesary/pupitre/apps/api/internal/platform/metrics"
 )
 
 // usersAt is the users domain as the user-service HTTP server of a test

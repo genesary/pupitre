@@ -20,10 +20,10 @@ import (
 
 	"gopkg.in/yaml.v3"
 
-	checkerconfig "github.com/jojo91550/pupitre2/apps/api/internal/checker/config"
-	coursesconfig "github.com/jojo91550/pupitre2/apps/api/internal/courses/config"
-	"github.com/jojo91550/pupitre2/apps/api/internal/platform/clientip"
-	usersconfig "github.com/jojo91550/pupitre2/apps/api/internal/users/config"
+	checkerconfig "github.com/genesary/pupitre/apps/api/internal/checker/config"
+	coursesconfig "github.com/genesary/pupitre/apps/api/internal/courses/config"
+	"github.com/genesary/pupitre/apps/api/internal/platform/clientip"
+	usersconfig "github.com/genesary/pupitre/apps/api/internal/users/config"
 )
 
 const (

@@ -4,7 +4,7 @@ import (
 	"slices"
 	"testing"
 
-	"github.com/jojo91550/pupitre2/apps/api/internal/courses/content"
+	"github.com/genesary/pupitre/apps/api/internal/courses/content"
 )
 
 // richCourse is a course exercising every field that has to survive a

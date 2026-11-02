@@ -9,8 +9,8 @@ import (
 	chiMiddleware "github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/httprate"
 
-	apimiddleware "github.com/jojo91550/pupitre2/apps/api/internal/platform/middleware"
-	"github.com/jojo91550/pupitre2/apps/api/internal/users/config"
+	apimiddleware "github.com/genesary/pupitre/apps/api/internal/platform/middleware"
+	"github.com/genesary/pupitre/apps/api/internal/users/config"
 )
 
 // remoteIP extracts the IP from r.RemoteAddr (already set to the real client

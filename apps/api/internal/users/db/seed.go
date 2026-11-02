@@ -14,7 +14,7 @@ import (
 
 	"golang.org/x/crypto/bcrypt"
 
-	"github.com/jojo91550/pupitre2/apps/api/internal/users/repository"
+	"github.com/genesary/pupitre/apps/api/internal/users/repository"
 )
 
 const (

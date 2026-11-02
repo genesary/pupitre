@@ -6,8 +6,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/jojo91550/pupitre2/apps/api/internal/courses/config"
-	apimiddleware "github.com/jojo91550/pupitre2/apps/api/internal/platform/middleware"
+	"github.com/genesary/pupitre/apps/api/internal/courses/config"
+	apimiddleware "github.com/genesary/pupitre/apps/api/internal/platform/middleware"
 )
 
 // managerAuthHeader returns a Bearer token header for a manager user.

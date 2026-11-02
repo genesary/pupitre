@@ -8,8 +8,8 @@ import (
 	"slices"
 	"sync"
 
-	"github.com/jojo91550/pupitre2/apps/api/internal/courses/models"
-	"github.com/jojo91550/pupitre2/apps/api/internal/courses/repository"
+	"github.com/genesary/pupitre/apps/api/internal/courses/models"
+	"github.com/genesary/pupitre/apps/api/internal/courses/repository"
 )
 
 // LabCheckRepository is an in-memory fake of repository.LabCheckRepository.

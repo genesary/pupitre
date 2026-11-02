@@ -13,7 +13,7 @@ import (
 	"gorm.io/gorm"
 	gormlogger "gorm.io/gorm/logger"
 
-	"github.com/jojo91550/pupitre2/apps/api/internal/users/models"
+	"github.com/genesary/pupitre/apps/api/internal/users/models"
 )
 
 // Connect opens a GORM connection to connURL and verifies connectivity with

@@ -14,8 +14,8 @@ import (
 	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/go-git/go-git/v5/plumbing/object"
 
-	"github.com/jojo91550/pupitre2/apps/api/internal/courses/config"
-	"github.com/jojo91550/pupitre2/apps/api/internal/courses/content"
+	"github.com/genesary/pupitre/apps/api/internal/courses/config"
+	"github.com/genesary/pupitre/apps/api/internal/courses/content"
 )
 
 // gitFixture creates a throwaway local git repo on branch main containing the

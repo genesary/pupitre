@@ -9,10 +9,10 @@ import (
 
 	"go.uber.org/zap"
 
-	"github.com/jojo91550/pupitre2/apps/api/internal/courses/content"
-	"github.com/jojo91550/pupitre2/apps/api/internal/courses/definition"
-	"github.com/jojo91550/pupitre2/apps/api/internal/courses/markdown"
-	"github.com/jojo91550/pupitre2/apps/api/internal/courses/repository"
+	"github.com/genesary/pupitre/apps/api/internal/courses/content"
+	"github.com/genesary/pupitre/apps/api/internal/courses/definition"
+	"github.com/genesary/pupitre/apps/api/internal/courses/markdown"
+	"github.com/genesary/pupitre/apps/api/internal/courses/repository"
 )
 
 // Import modes decide what a document does to the course it names.

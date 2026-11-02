@@ -13,14 +13,14 @@ import (
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 
-	checkerhandlers "github.com/jojo91550/pupitre2/apps/api/internal/checker/handlers"
-	coursesdb "github.com/jojo91550/pupitre2/apps/api/internal/courses/db"
-	courseshandlers "github.com/jojo91550/pupitre2/apps/api/internal/courses/handlers"
-	coursesrepo "github.com/jojo91550/pupitre2/apps/api/internal/courses/repository"
-	"github.com/jojo91550/pupitre2/apps/api/internal/platform/config"
-	usersdb "github.com/jojo91550/pupitre2/apps/api/internal/users/db"
-	usershandlers "github.com/jojo91550/pupitre2/apps/api/internal/users/handlers"
-	usersrepo "github.com/jojo91550/pupitre2/apps/api/internal/users/repository"
+	checkerhandlers "github.com/genesary/pupitre/apps/api/internal/checker/handlers"
+	coursesdb "github.com/genesary/pupitre/apps/api/internal/courses/db"
+	courseshandlers "github.com/genesary/pupitre/apps/api/internal/courses/handlers"
+	coursesrepo "github.com/genesary/pupitre/apps/api/internal/courses/repository"
+	"github.com/genesary/pupitre/apps/api/internal/platform/config"
+	usersdb "github.com/genesary/pupitre/apps/api/internal/users/db"
+	usershandlers "github.com/genesary/pupitre/apps/api/internal/users/handlers"
+	usersrepo "github.com/genesary/pupitre/apps/api/internal/users/repository"
 )
 
 const (

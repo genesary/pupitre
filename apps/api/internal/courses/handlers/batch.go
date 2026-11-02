@@ -9,8 +9,8 @@ import (
 
 	"go.uber.org/zap"
 
-	"github.com/jojo91550/pupitre2/apps/api/internal/courses/content"
-	"github.com/jojo91550/pupitre2/apps/api/internal/courses/repository"
+	"github.com/genesary/pupitre/apps/api/internal/courses/content"
+	"github.com/genesary/pupitre/apps/api/internal/courses/repository"
 )
 
 // maxBatchSlugs caps how many slugs one batch lookup may name. It bounds

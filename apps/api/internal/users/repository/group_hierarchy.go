@@ -8,7 +8,7 @@ import (
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 
-	"github.com/jojo91550/pupitre2/apps/api/internal/users/models"
+	"github.com/genesary/pupitre/apps/api/internal/users/models"
 )
 
 // colPath and colDepth are the column names used in hierarchy update maps.

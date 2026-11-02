@@ -9,8 +9,8 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 
-	"github.com/jojo91550/pupitre2/apps/api/internal/courses/content"
-	"github.com/jojo91550/pupitre2/apps/api/internal/courses/models"
+	"github.com/genesary/pupitre/apps/api/internal/courses/content"
+	"github.com/genesary/pupitre/apps/api/internal/courses/models"
 )
 
 // CourseFilter narrows a catalog listing. Every field is optional; the

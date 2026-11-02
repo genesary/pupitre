@@ -8,9 +8,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/jojo91550/pupitre2/apps/api/internal/checker"
-	"github.com/jojo91550/pupitre2/apps/api/internal/checker/config"
-	"github.com/jojo91550/pupitre2/apps/api/internal/platform/httperr"
+	"github.com/genesary/pupitre/apps/api/internal/checker"
+	"github.com/genesary/pupitre/apps/api/internal/checker/config"
+	"github.com/genesary/pupitre/apps/api/internal/platform/httperr"
 )
 
 // baseConfig returns a Config with sane defaults for handler tests.

@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/jojo91550/pupitre2/apps/api/internal/users/fake"
+	"github.com/genesary/pupitre/apps/api/internal/users/fake"
 )
 
 // TestManagerHandlers_GroupsDBErrorAre5xx sweeps every manager route with a

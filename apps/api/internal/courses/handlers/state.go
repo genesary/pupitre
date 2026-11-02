@@ -17,10 +17,10 @@ import (
 
 	"github.com/go-chi/chi/v5"
 
-	"github.com/jojo91550/pupitre2/apps/api/internal/courses/config"
-	"github.com/jojo91550/pupitre2/apps/api/internal/courses/content"
-	"github.com/jojo91550/pupitre2/apps/api/internal/courses/repository"
-	"github.com/jojo91550/pupitre2/apps/api/internal/platform/middleware"
+	"github.com/genesary/pupitre/apps/api/internal/courses/config"
+	"github.com/genesary/pupitre/apps/api/internal/courses/content"
+	"github.com/genesary/pupitre/apps/api/internal/courses/repository"
+	"github.com/genesary/pupitre/apps/api/internal/platform/middleware"
 )
 
 // maxRequestBodyBytes caps the size of accepted request bodies (1 MB).

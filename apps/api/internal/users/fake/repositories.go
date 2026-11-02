@@ -1,6 +1,6 @@
 package fake
 
-import "github.com/jojo91550/pupitre2/apps/api/internal/users/repository"
+import "github.com/genesary/pupitre/apps/api/internal/users/repository"
 
 // NewRepositories builds a *repository.Repositories backed entirely by
 // empty fakes, letting tests override only the aggregates they need.

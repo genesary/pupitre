@@ -9,7 +9,7 @@ import (
 	"github.com/joho/godotenv"
 	"go.uber.org/zap"
 
-	"github.com/jojo91550/pupitre2/apps/api/internal/server"
+	"github.com/genesary/pupitre/apps/api/internal/server"
 )
 
 // main runs the API and exits non-zero on a fatal start-up or serving error.

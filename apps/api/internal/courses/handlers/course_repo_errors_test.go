@@ -7,9 +7,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/jojo91550/pupitre2/apps/api/internal/courses/config"
-	"github.com/jojo91550/pupitre2/apps/api/internal/courses/fake"
-	"github.com/jojo91550/pupitre2/apps/api/internal/courses/repository"
+	"github.com/genesary/pupitre/apps/api/internal/courses/config"
+	"github.com/genesary/pupitre/apps/api/internal/courses/fake"
+	"github.com/genesary/pupitre/apps/api/internal/courses/repository"
 )
 
 // errCourseState returns a State whose CourseRepository fails every call.

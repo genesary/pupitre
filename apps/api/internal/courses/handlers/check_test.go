@@ -7,7 +7,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/jojo91550/pupitre2/apps/api/internal/courses/fake"
+	"github.com/genesary/pupitre/apps/api/internal/courses/fake"
 )
 
 // TestRecordLocalCheck_InsertThenList verifies a client-reported check is

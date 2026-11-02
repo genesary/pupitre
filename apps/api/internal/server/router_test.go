@@ -12,15 +12,15 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
 
-	checkerconfig "github.com/jojo91550/pupitre2/apps/api/internal/checker/config"
-	coursesconfig "github.com/jojo91550/pupitre2/apps/api/internal/courses/config"
-	coursesrepo "github.com/jojo91550/pupitre2/apps/api/internal/courses/repository"
-	"github.com/jojo91550/pupitre2/apps/api/internal/platform/config"
-	"github.com/jojo91550/pupitre2/apps/api/internal/platform/middleware"
-	usersconfig "github.com/jojo91550/pupitre2/apps/api/internal/users/config"
-	usersfake "github.com/jojo91550/pupitre2/apps/api/internal/users/fake"
-	usersmodels "github.com/jojo91550/pupitre2/apps/api/internal/users/models"
-	usersrepo "github.com/jojo91550/pupitre2/apps/api/internal/users/repository"
+	checkerconfig "github.com/genesary/pupitre/apps/api/internal/checker/config"
+	coursesconfig "github.com/genesary/pupitre/apps/api/internal/courses/config"
+	coursesrepo "github.com/genesary/pupitre/apps/api/internal/courses/repository"
+	"github.com/genesary/pupitre/apps/api/internal/platform/config"
+	"github.com/genesary/pupitre/apps/api/internal/platform/middleware"
+	usersconfig "github.com/genesary/pupitre/apps/api/internal/users/config"
+	usersfake "github.com/genesary/pupitre/apps/api/internal/users/fake"
+	usersmodels "github.com/genesary/pupitre/apps/api/internal/users/models"
+	usersrepo "github.com/genesary/pupitre/apps/api/internal/users/repository"
 )
 
 // studentID is the student of TestRouter_Guards.

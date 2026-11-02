@@ -95,7 +95,7 @@ checked by `internal/server/router_test.go`: every route of
 | Images `pupitre-user-service`, `pupitre-course-service`, `pupitre-checker-service` | `pupitre-api` | ✅ | [108](docs/specs/108-backend-operations-and-testing.md) | One image, `FROM scratch` |
 | Image `pupitre-frontend` (Astro, Node server) | `pupitre-front` (nginx, static files) | ✅ | [108](docs/specs/108-backend-operations-and-testing.md) | Same port (3000); the security headers of [003](docs/specs/003-security.md) S6 |
 | Tag-triggered image publishing and GitHub Release | same | ✅ | [108](docs/specs/108-backend-operations-and-testing.md) | `containers.yaml`, `release.yaml`; released as `v0.1.0` |
-| Chart `genesary/pupitre-helm` | [`jojo91550/pupitre2-helm`](https://github.com/jojo91550/pupitre2-helm) | ✅ | [108](docs/specs/108-backend-operations-and-testing.md) | One API; same values for admin, SSO, database, ingress; uploads volume (190 B22); chart `2.0.0` |
+| Chart `genesary/pupitre-helm` `1.0.0` | [`genesary/pupitre-helm`](https://github.com/genesary/pupitre-helm) `2.0.0` | ✅ | [108](docs/specs/108-backend-operations-and-testing.md) | One API; same values for admin, SSO, database, ingress; uploads volume (190 B22); chart `2.0.0` |
 | Local kind cluster | `apps/api/infra/kind`, `make kind-*` | ✅ | [108](docs/specs/108-backend-operations-and-testing.md) | |
 
 ## Deliberate differences

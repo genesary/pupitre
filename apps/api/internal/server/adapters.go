@@ -9,10 +9,10 @@ import (
 
 	"github.com/go-chi/httprate"
 
-	"github.com/jojo91550/pupitre2/apps/api/internal/checker"
-	checkerhandlers "github.com/jojo91550/pupitre2/apps/api/internal/checker/handlers"
-	courseshandlers "github.com/jojo91550/pupitre2/apps/api/internal/courses/handlers"
-	usershandlers "github.com/jojo91550/pupitre2/apps/api/internal/users/handlers"
+	"github.com/genesary/pupitre/apps/api/internal/checker"
+	checkerhandlers "github.com/genesary/pupitre/apps/api/internal/checker/handlers"
+	courseshandlers "github.com/genesary/pupitre/apps/api/internal/courses/handlers"
+	usershandlers "github.com/genesary/pupitre/apps/api/internal/users/handlers"
 )
 
 // The adapters below are the only code that knows two domains: each one

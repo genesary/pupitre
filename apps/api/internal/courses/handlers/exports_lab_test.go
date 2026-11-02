@@ -8,8 +8,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/jojo91550/pupitre2/apps/api/internal/courses/fake"
-	"github.com/jojo91550/pupitre2/apps/api/internal/courses/models"
+	"github.com/genesary/pupitre/apps/api/internal/courses/fake"
+	"github.com/genesary/pupitre/apps/api/internal/courses/models"
 )
 
 // seededLabState returns a State whose LabCheck repo holds one passing and

@@ -10,8 +10,8 @@ import (
 
 	"go.uber.org/zap"
 
-	"github.com/jojo91550/pupitre2/apps/api/internal/checker"
-	"github.com/jojo91550/pupitre2/apps/api/internal/checker/config"
+	"github.com/genesary/pupitre/apps/api/internal/checker"
+	"github.com/genesary/pupitre/apps/api/internal/checker/config"
 )
 
 // Handler serves the checker-service HTTP API.

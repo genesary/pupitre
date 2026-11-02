@@ -11,7 +11,7 @@ Branch `feature/api-import`.
   `internal/`, `e2e/`, `examples/`, `infra/`, `go.mod`, `go.sum`, `.golangci.yml`, `Makefile`
   into `apps/api/`, keeping their relative layout. Not copied: `frontend/`, `docs/`, `helm`,
   `pupitre-desktop`, `.github/`, `.claude/`.
-- Rewrite the module path to `github.com/jojo91550/pupitre2/apps/api`; nothing else.
+- Rewrite the module path to `github.com/genesary/pupitre/apps/api`; nothing else.
 - Commit message names the source: `feat(api): import the Go backend of genesary/pupitre at 3cdf7b2`.
 - Done when `go build ./...`, `go vet ./...`, `golangci-lint run ./...` and `go test ./... -race`
   pass in `apps/api`, with the three services still separate.
@@ -65,7 +65,7 @@ B5, B6, B7, B12, B11, B10, then the others. Each one updates 190.
 - First, the images: the frontend image and the release workflows that publish both images to
   GHCR on a tag ([108](108-backend-operations-and-testing.md), "Releases"). A first tag gives the
   chart versions to pin.
-- The Helm chart, [`jojo91550/pupitre2-helm`](https://github.com/jojo91550/pupitre2-helm),
+- The Helm chart, [`genesary/pupitre-helm`](https://github.com/genesary/pupitre-helm),
   deploys one API and the frontend image ([108](108-backend-operations-and-testing.md),
   "Deployment"); it mounts the uploads volume ([190](190-backend-defects.md) B22).
   `apps/api/infra/kind` and the kind targets of the `Makefile` deploy it locally.

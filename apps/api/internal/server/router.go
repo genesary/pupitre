@@ -12,11 +12,11 @@ import (
 	"github.com/go-chi/cors"
 	"go.uber.org/zap"
 
-	courseshandlers "github.com/jojo91550/pupitre2/apps/api/internal/courses/handlers"
-	"github.com/jojo91550/pupitre2/apps/api/internal/platform/clientip"
-	"github.com/jojo91550/pupitre2/apps/api/internal/platform/config"
-	"github.com/jojo91550/pupitre2/apps/api/internal/platform/metrics"
-	usershandlers "github.com/jojo91550/pupitre2/apps/api/internal/users/handlers"
+	courseshandlers "github.com/genesary/pupitre/apps/api/internal/courses/handlers"
+	"github.com/genesary/pupitre/apps/api/internal/platform/clientip"
+	"github.com/genesary/pupitre/apps/api/internal/platform/config"
+	"github.com/genesary/pupitre/apps/api/internal/platform/metrics"
+	usershandlers "github.com/genesary/pupitre/apps/api/internal/users/handlers"
 )
 
 // corsMaxAgeSeconds bounds the CORS preflight cache, as both services did.

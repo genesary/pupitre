@@ -72,8 +72,8 @@ target, `VITE_API_URL` (default `http://localhost:8080`). `VITE_USER_SERVICE_URL
 ## Deployment
 
 The Helm chart lives in its own repository,
-[`jojo91550/pupitre2-helm`](https://github.com/jojo91550/pupitre2-helm), adapted from
-`genesary/pupitre-helm` at `48e9ecb` (batch B4 of [199](199-backend-migration-plan.md)). Its
+[`genesary/pupitre-helm`](https://github.com/genesary/pupitre-helm), chart `2.0.0`, rewritten from
+its `1.0.0` at `48e9ecb` (batch B4 of [199](199-backend-migration-plan.md)). Its
 `README.md` holds the install and the switch-over from the reference chart; `helm unittest`
 checks what follows.
 
@@ -107,7 +107,7 @@ checks what follows.
   group mappings to `manager`, which the reference's schema refuses. Both ways were run on a
   minikube cluster from a release of the reference chart with data.
 - **Releases**: a tag `<version>` (no `v`) on the chart repository publishes it to
-  `oci://ghcr.io/jojo91550/charts/pupitre`, as the reference does.
+  `oci://ghcr.io/genesary/charts/pupitre`, as the reference does.
 
 `apps/api/infra/kind` deploys the chart on a local kind cluster, with the bundled PostgreSQL and
 the demo catalogue: `make kind-create`, then `make kind-dev` (image, load, `helm upgrade

@@ -5,7 +5,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/jojo91550/pupitre2/apps/api/internal/courses/content"
+	"github.com/genesary/pupitre/apps/api/internal/courses/content"
 )
 
 // sampleCourse is a fully-populated wire Course used across the round-trip

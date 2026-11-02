@@ -17,7 +17,7 @@ import (
 
 	"github.com/golang-jwt/jwt/v5"
 
-	"github.com/jojo91550/pupitre2/apps/api/internal/platform/httperr"
+	"github.com/genesary/pupitre/apps/api/internal/platform/httperr"
 )
 
 // roleAdmin is the role name granted administrative access.

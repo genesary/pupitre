@@ -13,9 +13,9 @@ import (
 	gooidc "github.com/coreos/go-oidc/v3/oidc"
 	"golang.org/x/oauth2"
 
-	"github.com/jojo91550/pupitre2/apps/api/internal/platform/httpx"
-	"github.com/jojo91550/pupitre2/apps/api/internal/platform/utils"
-	"github.com/jojo91550/pupitre2/apps/api/internal/users/repository"
+	"github.com/genesary/pupitre/apps/api/internal/platform/httpx"
+	"github.com/genesary/pupitre/apps/api/internal/platform/utils"
+	"github.com/genesary/pupitre/apps/api/internal/users/repository"
 )
 
 // oidcProviderKey identifies the dedicated single-instance OIDC login flow,

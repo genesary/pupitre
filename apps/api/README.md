@@ -15,7 +15,7 @@ checker-service on one port, with the domains calling each other in-process. See
 | `internal/platform` | Shared plumbing: merged configuration, JWT guards, HTTP helpers, metrics |
 | `e2e` | Go end-to-end tests against a running API (`API_URL`) |
 | `compose.yaml`, `infra/keycloak` | Local PostgreSQL and Keycloak with a test realm |
-| `infra/kind` | A local kind cluster running the API through the [`pupitre2-helm`](https://github.com/jojo91550/pupitre2-helm) chart |
+| `infra/kind` | A local kind cluster running the API through the [`pupitre-helm`](https://github.com/genesary/pupitre-helm) chart |
 | `infra/manifests` | A standalone PostgreSQL manifest |
 
 From the repository root:
@@ -40,5 +40,5 @@ pnpm dev               # from the repository root: the frontend, proxied to the 
 make kind-delete
 ```
 
-The chart comes from `oci://ghcr.io/jojo91550/charts/pupitre`; `HELM_CHART` points at a local
-clone instead (`make helm-install HELM_CHART=../../../pupitre2-helm`).
+The chart comes from `oci://ghcr.io/genesary/charts/pupitre`; `HELM_CHART` points at a local
+clone instead (`make helm-install HELM_CHART=../../../pupitre-helm`).

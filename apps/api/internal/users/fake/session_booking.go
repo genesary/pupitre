@@ -5,7 +5,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/jojo91550/pupitre2/apps/api/internal/users/repository"
+	"github.com/genesary/pupitre/apps/api/internal/users/repository"
 )
 
 // sessionBookingEntry holds an in-memory booking with its owner and

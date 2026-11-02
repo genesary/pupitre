@@ -7,7 +7,7 @@ import (
 
 	"github.com/google/uuid"
 
-	"github.com/jojo91550/pupitre2/apps/api/internal/users/models"
+	"github.com/genesary/pupitre/apps/api/internal/users/models"
 )
 
 // LessonSlugComplete is the sentinel lesson slug value that marks a course as

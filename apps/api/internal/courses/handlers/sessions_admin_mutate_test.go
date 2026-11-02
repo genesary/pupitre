@@ -7,8 +7,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/jojo91550/pupitre2/apps/api/internal/courses/config"
-	"github.com/jojo91550/pupitre2/apps/api/internal/courses/content"
+	"github.com/genesary/pupitre/apps/api/internal/courses/config"
+	"github.com/genesary/pupitre/apps/api/internal/courses/content"
 )
 
 // sessionCourseState returns a State holding one course that already has a

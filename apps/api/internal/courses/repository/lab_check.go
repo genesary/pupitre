@@ -7,7 +7,7 @@ import (
 
 	"gorm.io/gorm"
 
-	"github.com/jojo91550/pupitre2/apps/api/internal/courses/models"
+	"github.com/genesary/pupitre/apps/api/internal/courses/models"
 )
 
 // maxLabResults caps the number of rows returned by List, mirroring the

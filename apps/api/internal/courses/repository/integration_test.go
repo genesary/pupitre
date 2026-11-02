@@ -21,9 +21,9 @@ import (
 	"gorm.io/gorm"
 	gormlogger "gorm.io/gorm/logger"
 
-	"github.com/jojo91550/pupitre2/apps/api/internal/courses/content"
-	coursedb "github.com/jojo91550/pupitre2/apps/api/internal/courses/db"
-	"github.com/jojo91550/pupitre2/apps/api/internal/courses/repository"
+	"github.com/genesary/pupitre/apps/api/internal/courses/content"
+	coursedb "github.com/genesary/pupitre/apps/api/internal/courses/db"
+	"github.com/genesary/pupitre/apps/api/internal/courses/repository"
 )
 
 // newTestDB connects to TEST_DATABASE_URL, applies the real migrations, and

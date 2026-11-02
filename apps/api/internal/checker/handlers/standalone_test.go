@@ -16,8 +16,8 @@ import (
 	"github.com/go-chi/httprate"
 	"go.uber.org/zap"
 
-	"github.com/jojo91550/pupitre2/apps/api/internal/checker"
-	"github.com/jojo91550/pupitre2/apps/api/internal/platform/httperr"
+	"github.com/genesary/pupitre/apps/api/internal/checker"
+	"github.com/genesary/pupitre/apps/api/internal/platform/httperr"
 )
 
 // maxRequestBodyBytes caps the size of accepted request bodies (1 MB).

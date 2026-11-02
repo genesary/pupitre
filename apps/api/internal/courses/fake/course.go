@@ -7,8 +7,8 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/jojo91550/pupitre2/apps/api/internal/courses/content"
-	"github.com/jojo91550/pupitre2/apps/api/internal/courses/repository"
+	"github.com/genesary/pupitre/apps/api/internal/courses/content"
+	"github.com/genesary/pupitre/apps/api/internal/courses/repository"
 )
 
 // CourseRepository is an in-memory fake of repository.CourseRepository.

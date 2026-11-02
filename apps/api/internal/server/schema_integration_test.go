@@ -19,8 +19,8 @@ import (
 
 	"gorm.io/gorm"
 
-	coursesdb "github.com/jojo91550/pupitre2/apps/api/internal/courses/db"
-	usersdb "github.com/jojo91550/pupitre2/apps/api/internal/users/db"
+	coursesdb "github.com/genesary/pupitre/apps/api/internal/courses/db"
+	usersdb "github.com/genesary/pupitre/apps/api/internal/users/db"
 )
 
 // scratchDatabase creates an empty database next to TEST_DATABASE_URL and

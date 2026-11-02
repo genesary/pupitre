@@ -1,4 +1,4 @@
-module github.com/jojo91550/pupitre2/apps/api
+module github.com/genesary/pupitre/apps/api
 
 go 1.26.10
 

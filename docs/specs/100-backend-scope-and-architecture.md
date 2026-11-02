@@ -40,7 +40,7 @@ the source commit; the history stays in `genesary/pupitre`.
 
 ```
 apps/api/
-├── go.mod                       # module github.com/jojo91550/pupitre2/apps/api, Go 1.26
+├── go.mod                       # module github.com/genesary/pupitre/apps/api, Go 1.26
 ├── .golangci.yml
 ├── Dockerfile                   # one image, built from apps/api
 ├── cmd/pupitre-api/main.go      # the only entry point
@@ -74,7 +74,7 @@ Rules:
   [101](101-backend-configuration.md) fills them from one file and one environment.
 - **One process, one database pool, one router, one `/health`, one `/metrics`.**
 - The module path changes from `github.com/genesary/pupitre` to
-  `github.com/jojo91550/pupitre2/apps/api`; imports are rewritten accordingly.
+  `github.com/genesary/pupitre/apps/api`; imports are rewritten accordingly.
 
 ## Invariants
 

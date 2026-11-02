@@ -7,7 +7,7 @@ import (
 
 	"github.com/lib/pq"
 
-	"github.com/jojo91550/pupitre2/apps/api/internal/courses/models"
+	"github.com/genesary/pupitre/apps/api/internal/courses/models"
 )
 
 // TestTextArrayRoundTrip covers the nil/empty/populated mapping in both

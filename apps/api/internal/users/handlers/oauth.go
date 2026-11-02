@@ -24,12 +24,12 @@ import (
 	"github.com/google/uuid"
 	"golang.org/x/oauth2"
 
-	"github.com/jojo91550/pupitre2/apps/api/internal/platform/httpx"
-	"github.com/jojo91550/pupitre2/apps/api/internal/platform/metrics"
-	"github.com/jojo91550/pupitre2/apps/api/internal/platform/middleware"
-	"github.com/jojo91550/pupitre2/apps/api/internal/users/config"
-	"github.com/jojo91550/pupitre2/apps/api/internal/users/models"
-	"github.com/jojo91550/pupitre2/apps/api/internal/users/repository"
+	"github.com/genesary/pupitre/apps/api/internal/platform/httpx"
+	"github.com/genesary/pupitre/apps/api/internal/platform/metrics"
+	"github.com/genesary/pupitre/apps/api/internal/platform/middleware"
+	"github.com/genesary/pupitre/apps/api/internal/users/config"
+	"github.com/genesary/pupitre/apps/api/internal/users/models"
+	"github.com/genesary/pupitre/apps/api/internal/users/repository"
 )
 
 // Repeated OAuth/OIDC literals and tunables, pulled out to satisfy goconst

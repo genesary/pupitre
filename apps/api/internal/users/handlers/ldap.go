@@ -12,7 +12,7 @@ import (
 
 	ldap "github.com/go-ldap/ldap/v3"
 
-	"github.com/jojo91550/pupitre2/apps/api/internal/users/repository"
+	"github.com/genesary/pupitre/apps/api/internal/users/repository"
 )
 
 // ldapTimeout bounds how long an LDAP login attempt may take end-to-end.

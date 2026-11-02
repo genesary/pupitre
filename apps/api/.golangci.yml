@@ -158,7 +158,7 @@ formatters:
       simplify: true
     goimports:
       local-prefixes:
-        - github.com/jojo91550/pupitre2/apps/api
+        - github.com/genesary/pupitre/apps/api
   exclusions:
     generated: lax
     paths:

@@ -23,9 +23,9 @@ import (
 	"github.com/go-chi/cors"
 	"go.uber.org/zap"
 
-	"github.com/jojo91550/pupitre2/apps/api/internal/platform/httpx"
-	"github.com/jojo91550/pupitre2/apps/api/internal/platform/metrics"
-	"github.com/jojo91550/pupitre2/apps/api/internal/users/config"
+	"github.com/genesary/pupitre/apps/api/internal/platform/httpx"
+	"github.com/genesary/pupitre/apps/api/internal/platform/metrics"
+	"github.com/genesary/pupitre/apps/api/internal/users/config"
 )
 
 // courseSourceAt is the courses domain as the course-service HTTP server

@@ -19,9 +19,9 @@ import (
 	"gorm.io/gorm"
 	gormlogger "gorm.io/gorm/logger"
 
-	"github.com/jojo91550/pupitre2/apps/api/internal/users/db"
-	"github.com/jojo91550/pupitre2/apps/api/internal/users/models"
-	"github.com/jojo91550/pupitre2/apps/api/internal/users/repository"
+	"github.com/genesary/pupitre/apps/api/internal/users/db"
+	"github.com/genesary/pupitre/apps/api/internal/users/models"
+	"github.com/genesary/pupitre/apps/api/internal/users/repository"
 )
 
 // newTestDB connects to TEST_DATABASE_URL, applies the real migrations, and

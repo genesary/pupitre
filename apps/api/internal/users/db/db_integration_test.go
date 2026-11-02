@@ -9,7 +9,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/jojo91550/pupitre2/apps/api/internal/users/db"
+	"github.com/genesary/pupitre/apps/api/internal/users/db"
 )
 
 // dbURL returns TEST_DATABASE_URL or skips the test.

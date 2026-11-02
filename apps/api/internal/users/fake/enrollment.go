@@ -10,8 +10,8 @@ import (
 
 	"github.com/google/uuid"
 
-	"github.com/jojo91550/pupitre2/apps/api/internal/users/models"
-	"github.com/jojo91550/pupitre2/apps/api/internal/users/repository"
+	"github.com/genesary/pupitre/apps/api/internal/users/models"
+	"github.com/genesary/pupitre/apps/api/internal/users/repository"
 )
 
 // EnrollmentRepository is an in-memory repository.EnrollmentRepository for

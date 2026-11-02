@@ -8,8 +8,8 @@ import (
 	"github.com/go-chi/chi/v5"
 	"go.uber.org/zap"
 
-	"github.com/jojo91550/pupitre2/apps/api/internal/platform/middleware"
-	"github.com/jojo91550/pupitre2/apps/api/internal/users/repository"
+	"github.com/genesary/pupitre/apps/api/internal/platform/middleware"
+	"github.com/genesary/pupitre/apps/api/internal/users/repository"
 )
 
 // defaultGroupName is the platform-wide group every user belongs to;

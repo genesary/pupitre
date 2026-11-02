@@ -3,8 +3,8 @@ package repository
 import (
 	"fmt"
 
-	"github.com/jojo91550/pupitre2/apps/api/internal/courses/content"
-	"github.com/jojo91550/pupitre2/apps/api/internal/courses/models"
+	"github.com/genesary/pupitre/apps/api/internal/courses/content"
+	"github.com/genesary/pupitre/apps/api/internal/courses/models"
 )
 
 // courseFromModel converts a persisted course row into its domain form,

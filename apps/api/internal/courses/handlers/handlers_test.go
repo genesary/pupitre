@@ -8,11 +8,11 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/jojo91550/pupitre2/apps/api/internal/courses/config"
-	"github.com/jojo91550/pupitre2/apps/api/internal/courses/content"
-	"github.com/jojo91550/pupitre2/apps/api/internal/courses/fake"
-	"github.com/jojo91550/pupitre2/apps/api/internal/courses/repository"
-	apimiddleware "github.com/jojo91550/pupitre2/apps/api/internal/platform/middleware"
+	"github.com/genesary/pupitre/apps/api/internal/courses/config"
+	"github.com/genesary/pupitre/apps/api/internal/courses/content"
+	"github.com/genesary/pupitre/apps/api/internal/courses/fake"
+	"github.com/genesary/pupitre/apps/api/internal/courses/repository"
+	apimiddleware "github.com/genesary/pupitre/apps/api/internal/platform/middleware"
 )
 
 // newStateWith builds a State backed by in-memory repository fakes seeded

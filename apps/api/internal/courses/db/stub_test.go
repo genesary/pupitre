@@ -3,8 +3,8 @@ package db
 import (
 	"context"
 
-	"github.com/jojo91550/pupitre2/apps/api/internal/courses/content"
-	"github.com/jojo91550/pupitre2/apps/api/internal/courses/repository"
+	"github.com/genesary/pupitre/apps/api/internal/courses/content"
+	"github.com/genesary/pupitre/apps/api/internal/courses/repository"
 )
 
 // countingCourseRepository is a repository.CourseRepository that records

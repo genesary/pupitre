@@ -10,7 +10,7 @@ import (
 
 	"github.com/golang-jwt/jwt/v5"
 
-	"github.com/jojo91550/pupitre2/apps/api/internal/users/config"
+	"github.com/genesary/pupitre/apps/api/internal/users/config"
 )
 
 // testStateNonce is the nonce of the states the tests make.

@@ -8,7 +8,7 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 
-	"github.com/jojo91550/pupitre2/apps/api/internal/users/models"
+	"github.com/genesary/pupitre/apps/api/internal/users/models"
 )
 
 // lessonSlugComplete is the sentinel lessonslug value that marks a course as

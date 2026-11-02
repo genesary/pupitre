@@ -14,9 +14,9 @@ import (
 	"gorm.io/gorm"
 	gormlogger "gorm.io/gorm/logger"
 
-	"github.com/jojo91550/pupitre2/apps/api/internal/users/config"
-	"github.com/jojo91550/pupitre2/apps/api/internal/users/db"
-	"github.com/jojo91550/pupitre2/apps/api/internal/users/repository"
+	"github.com/genesary/pupitre/apps/api/internal/users/config"
+	"github.com/genesary/pupitre/apps/api/internal/users/db"
+	"github.com/genesary/pupitre/apps/api/internal/users/repository"
 )
 
 // seedDB connects, migrates and wipes the tables the seeders write to.

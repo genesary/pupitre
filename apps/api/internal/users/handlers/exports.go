@@ -12,9 +12,9 @@ import (
 
 	"go.uber.org/zap"
 
-	"github.com/jojo91550/pupitre2/apps/api/internal/platform/csvsafe"
-	"github.com/jojo91550/pupitre2/apps/api/internal/users/models"
-	"github.com/jojo91550/pupitre2/apps/api/internal/users/repository"
+	"github.com/genesary/pupitre/apps/api/internal/platform/csvsafe"
+	"github.com/genesary/pupitre/apps/api/internal/users/models"
+	"github.com/genesary/pupitre/apps/api/internal/users/repository"
 )
 
 // previewLimit is the maximum number of rows returned by ExportPreview.

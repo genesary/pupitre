@@ -9,9 +9,9 @@ import (
 
 	"go.uber.org/zap"
 
-	"github.com/jojo91550/pupitre2/apps/api/internal/courses/content"
-	"github.com/jojo91550/pupitre2/apps/api/internal/courses/repository"
-	"github.com/jojo91550/pupitre2/apps/api/internal/platform/middleware"
+	"github.com/genesary/pupitre/apps/api/internal/courses/content"
+	"github.com/genesary/pupitre/apps/api/internal/courses/repository"
+	"github.com/genesary/pupitre/apps/api/internal/platform/middleware"
 )
 
 // pathCheckResponse is the JSON body returned by user-service

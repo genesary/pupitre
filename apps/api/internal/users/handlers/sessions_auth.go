@@ -10,8 +10,8 @@ import (
 	"github.com/google/uuid"
 	"go.uber.org/zap"
 
-	"github.com/jojo91550/pupitre2/apps/api/internal/platform/middleware"
-	"github.com/jojo91550/pupitre2/apps/api/internal/users/repository"
+	"github.com/genesary/pupitre/apps/api/internal/platform/middleware"
+	"github.com/genesary/pupitre/apps/api/internal/users/repository"
 )
 
 // Sessions that can be revoked (docs/specs/190-backend-defects.md B7). A

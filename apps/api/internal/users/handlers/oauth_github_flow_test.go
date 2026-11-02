@@ -7,9 +7,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/jojo91550/pupitre2/apps/api/internal/platform/httpx"
-	"github.com/jojo91550/pupitre2/apps/api/internal/users/config"
-	"github.com/jojo91550/pupitre2/apps/api/internal/users/fake"
+	"github.com/genesary/pupitre/apps/api/internal/platform/httpx"
+	"github.com/genesary/pupitre/apps/api/internal/users/config"
+	"github.com/genesary/pupitre/apps/api/internal/users/fake"
 )
 
 // githubStub is an [http.RoundTripper] that answers GitHub's OAuth token and

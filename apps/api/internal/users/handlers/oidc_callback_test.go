@@ -15,9 +15,9 @@ import (
 
 	"github.com/golang-jwt/jwt/v5"
 
-	"github.com/jojo91550/pupitre2/apps/api/internal/users/config"
-	"github.com/jojo91550/pupitre2/apps/api/internal/users/fake"
-	"github.com/jojo91550/pupitre2/apps/api/internal/users/models"
+	"github.com/genesary/pupitre/apps/api/internal/users/config"
+	"github.com/genesary/pupitre/apps/api/internal/users/fake"
+	"github.com/genesary/pupitre/apps/api/internal/users/models"
 )
 
 // mockIdP is a minimal OIDC provider: discovery, JWKS, a token endpoint that
