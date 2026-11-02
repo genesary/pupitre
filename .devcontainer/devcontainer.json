@@ -1,15 +1,15 @@
 {
-  "name": "pupitre2",
+  "name": "pupitre",
   "build": {
     "dockerfile": "Containerfile",
     "context": ".."
   },
-  "workspaceFolder": "/workspaces/pupitre2",
-  "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/pupitre2,type=bind",
+  "workspaceFolder": "/workspaces/pupitre",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/pupitre,type=bind",
   "remoteUser": "vscode",
   "mounts": [
     // Linux node_modules, kept apart from the host's (native binaries differ)
-    "source=pupitre2-node-modules,target=/workspaces/pupitre2/node_modules,type=volume"
+    "source=pupitre-node-modules,target=/workspaces/pupitre/node_modules,type=volume"
   ],
   "forwardPorts": [3000],
   "portsAttributes": {

@@ -1,7 +1,7 @@
 # Parity with genesary/pupitre
 
-Feature parity of pupitre2 with [`genesary/pupitre`](https://github.com/genesary/pupitre) at
-commit `3cdf7b2`, the reference of every spec. One row per page of its Astro frontend
+Feature parity of the React frontend and the single API with this repository at commit
+`3cdf7b2`, the reference of every spec. One row per page of its Astro frontend
 (`frontend/src/pages`, 37 pages), then its backend and its deployment.
 [`ebuildy/pupitre2`](https://github.com/ebuildy/pupitre2) keeps the same kind of table
 (`parity.md`) for its full rewrite; the feature numbers of its checklist (`Fxxx`) are the ones of
@@ -16,7 +16,7 @@ the one against pupitre-api, PostgreSQL and Keycloak (`e2e/backend/`, `pnpm test
 
 Served by the learner app (`apps/app`).
 
-| genesary page | pupitre2 | Status | Spec | Tests | Notes |
+| Astro page (`3cdf7b2`) | React | Status | Spec | Tests | Notes |
 | --- | --- | --- | --- | --- | --- |
 | `index.astro` | `/` | ✅ | [001](docs/specs/001-keycloak-authentication.md) | | Redirects to `/courses`, as before |
 | `dashboard.astro` | `/dashboard` | ✅ | [001](docs/specs/001-keycloak-authentication.md) | | Redirects to `/courses`, as before |
@@ -43,7 +43,7 @@ Served by the learner app (`apps/app`).
 
 Served by the admin app (`apps/admin`), under `/manager`.
 
-| genesary page | pupitre2 | Status | Spec | Tests | Notes |
+| Astro page (`3cdf7b2`) | React | Status | Spec | Tests | Notes |
 | --- | --- | --- | --- | --- | --- |
 | `manager/index.astro` | `/manager` | ✅ | [030](docs/specs/030-manager-space.md) | mock `apps` | Opens « Mes membres » |
 | `manager/users/index.astro` | `/manager/users` | ✅ | [030](docs/specs/030-manager-space.md) | mock `manager`; backend `roles` | Group filter works (090 A21) |
@@ -54,7 +54,7 @@ Served by the admin app (`apps/admin`), under `/manager`.
 
 Served by the admin app (`apps/admin`), under `/admin`.
 
-| genesary page | pupitre2 | Status | Spec | Tests | Notes |
+| Astro page (`3cdf7b2`) | React | Status | Spec | Tests | Notes |
 | --- | --- | --- | --- | --- | --- |
 | `admin/[...slug].astro` | `/admin` | ✅ | [040](docs/specs/040-admin-dashboard.md) | backend `roles` | The dashboard; an unknown admin URL is a 404 (090 A15), one sidebar (A4), no always-zero statistics (A3) |
 | `admin/monitoring/index.astro` | `/admin/monitoring` | ✅ | [040](docs/specs/040-admin-dashboard.md) | backend `roles` | No « Recalculer la progression »: it always failed (090 A23) |
@@ -76,7 +76,7 @@ routes, tables and rules ([100](docs/specs/100-backend-scope-and-architecture.md
 checked by `internal/server/router_test.go`: every route of
 [103](docs/specs/103-backend-http-api.md) is served, no other.
 
-| genesary | pupitre2 | Status | Spec | Notes |
+| Reference (`3cdf7b2`) | Now | Status | Spec | Notes |
 | --- | --- | --- | --- | --- |
 | user-service: accounts, sign-in (local, OAuth, OIDC, LDAP), groups, enrollments, XP, badges, paths, sessions, settings, exports | `internal/users` | ✅ | [105](docs/specs/105-backend-authentication.md), [106](docs/specs/106-backend-courses-and-content.md) | Every route kept |
 | course-service: courses, modules, git content, quizzes, progress, patterns, uploads, lab checks | `internal/courses` | ✅ | [106](docs/specs/106-backend-courses-and-content.md), [107](docs/specs/107-backend-labs-and-checker.md) | Every route kept |
@@ -90,7 +90,7 @@ checked by `internal/server/router_test.go`: every route of
 
 ## Deployment
 
-| genesary | pupitre2 | Status | Spec | Notes |
+| Reference (`3cdf7b2`) | Now | Status | Spec | Notes |
 | --- | --- | --- | --- | --- |
 | Images `pupitre-user-service`, `pupitre-course-service`, `pupitre-checker-service` | `pupitre-api` | ✅ | [108](docs/specs/108-backend-operations-and-testing.md) | One image, `FROM scratch` |
 | Image `pupitre-frontend` (Astro, Node server) | `pupitre-front` (nginx, static files) | ✅ | [108](docs/specs/108-backend-operations-and-testing.md) | Same port (3000); the security headers of [003](docs/specs/003-security.md) S6 |
@@ -100,7 +100,7 @@ checked by `internal/server/router_test.go`: every route of
 
 ## Deliberate differences
 
-| Topic | genesary | pupitre2 | Why | Spec |
+| Topic | Reference (`3cdf7b2`) | Now | Why | Spec |
 | --- | --- | --- | --- | --- |
 | Sign-in | E-mail and password, registration, GitHub, LDAP, OIDC | OIDC through Keycloak only | Decision of the project; the backend still serves the other routes, turned off by settings (audit H7) | [001](docs/specs/001-keycloak-authentication.md) |
 | Frontend defects | 28 defects of the Astro pages | Fixed | Found while writing the specs, and in use (A26-A28) | [090](docs/specs/090-gaps-and-defects.md) A1-A28 |
@@ -113,13 +113,13 @@ checked by `internal/server/router_test.go`: every route of
 | Base font size | 16 px | 17 px, the whole interface about 6 % larger | Readability, decision of the project | [005](docs/specs/005-ui-theme-navigation.md) |
 | Light mode panels | Content over the page background | A white panel on every learner page | Readability over the background drawing, decision of the project | [005](docs/specs/005-ui-theme-navigation.md) |
 | Dark mode cards | Translucent, blurred cards over `--color-page` | Solid `--color-paper` cards everywhere, like the course page's module rows | Decision of the project | [005](docs/specs/005-ui-theme-navigation.md) |
-| Guided tour | None | A tour of the learner app led by the bird of the logo and a first lesson tip, state kept in the browser | New feature of pupitre2 | [007](docs/specs/007-guided-tour.md) |
+| Guided tour | None | A tour of the learner app led by the bird of the logo and a first lesson tip, state kept in the browser | New feature of the React frontend | [007](docs/specs/007-guided-tour.md) |
 
 ## To do
 
 | Item | Status | Spec | Notes |
 | --- | --- | --- | --- |
-| Desktop app (`genesary/pupitre-desktop`) against pupitre2 | ⬜ | [014](docs/specs/014-labs.md), [099](docs/specs/099-migration-plan.md) | The local lab check is kept and compatible; checking it with the app is the next batch |
-| Switch-over of a running genesary installation | ⬜ | [099](docs/specs/099-migration-plan.md), [199](docs/specs/199-backend-migration-plan.md) | Procedure ready and tried on a test cluster (pupitre2-helm `README.md`) |
+| Desktop app (`genesary/pupitre-desktop`) against the single API | ⬜ | [014](docs/specs/014-labs.md), [099](docs/specs/099-migration-plan.md) | The local lab check is kept and compatible; checking it with the app is the next batch |
+| Switch-over of a running genesary installation | ⬜ | [099](docs/specs/099-migration-plan.md), [199](docs/specs/199-backend-migration-plan.md) | Procedure ready and tried on a test cluster (pupitre-helm `README.md`) |
 | Dark mode of `.mod-row` and the glass cards | 🟡 | [099](docs/specs/099-migration-plan.md) | genesary's CSS has no dark variant for them: kept as is until decided |
 | Course thumbnail, path level | ➖ | [190](docs/specs/190-backend-defects.md) B18 | Not in genesary's API: new features, out of the scope of the move |

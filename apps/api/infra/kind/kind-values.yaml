@@ -1,4 +1,4 @@
-# Values of the pupitre2-helm chart for a local kind cluster
+# Values of the pupitre-helm chart for a local kind cluster
 # (docs/specs/108-backend-operations-and-testing.md, "Deployment").
 # The API runs in the cluster on http://localhost:8080; the frontend runs on
 # the host with `pnpm dev`, which proxies /api and /uploads to it.

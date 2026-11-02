@@ -10,7 +10,7 @@ ARG TARGETARCH
 ARG PLAYWRIGHT_VERSION=1.64.0
 # Needed by mise's shell completion
 ARG USAGE_VERSION=7.1.1
-ARG WORKSPACE=/workspaces/pupitre2
+ARG WORKSPACE=/workspaces/pupitre
 
 USER vscode
 WORKDIR /home/vscode

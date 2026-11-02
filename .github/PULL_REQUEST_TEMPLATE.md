@@ -2,7 +2,7 @@
 
 <!--
 Adapted from genesary/pupitre at 3cdf7b2 (.github/PULL_REQUEST_TEMPLATE.md),
-with the commands and rules of pupitre2 (AGENTS.md).
+with the commands and rules of AGENTS.md.
 
 Briefly describe what this pull request does. Be sure to direct your reviewers'
 attention to anything that needs special consideration.

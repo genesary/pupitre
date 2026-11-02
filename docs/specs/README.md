@@ -1,4 +1,4 @@
-# pupitre2 specs
+# pupitre specs
 
 This folder describes the **new React frontend** of pupitre. It replaces the Astro frontend of
 [`genesary/pupitre`](https://github.com/genesary/pupitre) (`frontend/`) **without changing the Go
@@ -19,8 +19,8 @@ Specs 100 to 199 describe the **backend**: the Go services of `genesary/pupitre`
 - **Reference rewrite**: [`ebuildy/pupitre2`](https://github.com/ebuildy/pupitre2), a full
   rewrite with its own TypeScript backend. Its specs were used as a checklist so that no feature
   is forgotten, and its **frontend code may be reused** with its author's agreement (see
-  "Reusing the reference frontend" in [090](090-gaps-and-defects.md)). Its backend is not: pupitre2
-  keeps the existing Go backend.
+  "Reusing the reference frontend" in [090](090-gaps-and-defects.md)). Its backend is not: the existing Go
+  backend is kept.
 - **Security audit** of 2026-10-20: its frontend requirements are in [003](003-security.md).
 
 Coverage of every page and service of `genesary/pupitre` is tracked in [`parity.md`](../../parity.md).

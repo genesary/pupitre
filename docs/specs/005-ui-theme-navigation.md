@@ -34,7 +34,7 @@ theme, declared in `packages/ui/src/styles/globals.css` (`:root` and `.dark`).
 
 ## Visual design
 
-**pupitre2 keeps the current pupitre design.** The colours above, the fonts, the radii and the
+**The React frontend keeps the pupitre design.** The colours above, the fonts, the radii and the
 look of every screen (cards, badges, category colours, "Reprendre" hero, level colours, lesson
 layout, quiz palette, podium…) are those of the current Astro frontend, not a new design.
 

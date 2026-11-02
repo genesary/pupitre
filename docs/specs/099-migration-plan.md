@@ -1,7 +1,7 @@
 # 099 - Migration plan in batches
 
 Each batch is a `feature/…` branch and a pull request that can ship on its own. The Astro
-frontend stays in service until the end of batch 5; the reverse proxy then switches to pupitre2.
+frontend stays in service until the end of batch 5; the reverse proxy then switches to the React frontend.
 
 ## Status
 

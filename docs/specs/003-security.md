@@ -103,7 +103,7 @@ These findings are not fixed in the frontend, but the frontend must not work aro
 | C4 | Validate `avatarUrl` server side (emoji of an earned badge or `/uploads/…`) |
 | H2 | Restrict managers to their scope (members, exports, attendance) |
 | H3 | Token revocation (short-lived token, `token_version`) |
-| H4 | Forward only known headers (the Astro proxy goes away with pupitre2, but the reverse proxy must not forward `X-Internal-Secret` nor trust a client-supplied `X-Forwarded-For`) |
+| H4 | Forward only known headers (the Astro proxy goes away with the React frontend, but the reverse proxy must not forward `X-Internal-Secret` nor trust a client-supplied `X-Forwarded-For`) |
 | H7 | Disable local registration and local login |
 | M1 | Filter private courses out of `/api/batch/courses` |
 

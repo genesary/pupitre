@@ -3,9 +3,9 @@
 ## What these specs add compared with the `ebuildy/pupitre2` reference
 
 The reference describes a full rewrite (TypeScript backend, two separate React applications,
-server-side sessions). pupitre2 only rewrites the frontend. The specs therefore add:
+server-side sessions). The specs 000 to 099 only rewrite the frontend. The specs therefore add:
 
-| Topic | Reference | pupitre2 |
+| Topic | Reference | React frontend |
 | --- | --- | --- |
 | Backend | Rewritten in TypeScript (routes `/api/me`, `/api/sessions`…) | **Unchanged**: the specs call the existing Go routes ([004](004-api-and-routing.md)) |
 | Applications | Two applications (learner and admin) | **Two** applications too, on one origin: the learner app, and the admin app (administration and manager space) under `/admin` and `/manager`, sharing `@pupitre/core` |

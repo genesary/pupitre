@@ -51,14 +51,14 @@ groups a `student`, managers included. That is the rule documented by the refere
 ## Kept as the reference
 
 These audit findings describe a behaviour the reference documents or that its deployment relies
-on. Changing it would move pupitre2 away from `genesary/pupitre`, so it is kept as it is:
+on. Changing it would move the API away from the reference (`3cdf7b2`), so it is kept as it is:
 
 | # | Source | Finding | Why it is kept |
 | --- | --- | --- | --- |
 | B15 | Audit M7 | `/metrics` is public | Documented as public by the reference and routed on purpose by its chart's ingress; the API's chart routes it the same way ([108](108-backend-operations-and-testing.md)) |
 | B16 | Audit L1, L2 | OIDC client secret and LDAP bind password stored in clear; `oidc_insecure_skip_verify` available in production | Encryption would need a new mandatory key in every deployment. `insecureSkipVerify` is a documented option of the reference chart, for providers behind an internal CA |
-| B17 | Audit L3 | No email verification at registration | The reference has no mail sending, and pupitre2 signs in through Keycloak only ([001](001-keycloak-authentication.md)), which verifies emails. For the same reason, `POST /api/auth/register` still answers `409` for a taken email or username: without a verification mail, it cannot hide that an account exists |
-| B2 | 090 A22 | `PathEnrollmentRow` and `GroupRow` have no json tags: fields are sent as `Slug`, `EnrolledAt`… | The reference's frontend reads `Slug` and so does pupitre2's (`api-types.ts`): it works, renaming would change the response for nothing |
+| B17 | Audit L3 | No email verification at registration | The reference has no mail sending, and the React frontend signs in through Keycloak only ([001](001-keycloak-authentication.md)), which verifies emails. For the same reason, `POST /api/auth/register` still answers `409` for a taken email or username: without a verification mail, it cannot hide that an account exists |
+| B2 | 090 A22 | `PathEnrollmentRow` and `GroupRow` have no json tags: fields are sent as `Slug`, `EnrolledAt`… | The reference's frontend reads `Slug` and so does the React frontend's (`api-types.ts`): it works, renaming would change the response for nothing |
 | B3 | 090 A23 | No route recomputes progress; `/api/admin/sync-progress` marks one lesson for one user | A need to specify, not a defect: the route is kept as it is |
 | B18 | 090 A2, A18 | No course `thumbnail`; `GET /api/my/paths` does not return `level` | The reference has neither field: they would be new features (column, admin input, display), out of the scope of the move |
 

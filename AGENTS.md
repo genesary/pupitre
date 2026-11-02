@@ -1,8 +1,8 @@
-# pupitre2
+# pupitre
 
-React frontend of the pupitre e-learning platform. It replaces the Astro frontend of
-[`genesary/pupitre`](https://github.com/genesary/pupitre) and talks to its Go backend
-(user-service, course-service) **as it is**. Specs: [`docs/specs`](docs/specs/README.md), in
+The pupitre e-learning platform: a React frontend and its Go backend. They replace the Astro
+frontend and the Go services of `genesary/pupitre` at commit `3cdf7b2`, the reference of every
+spec, and keep its API **as it is**. Specs: [`docs/specs`](docs/specs/README.md), in
 English; they are the source of truth for behaviour.
 
 ## Git: commit and push only when asked

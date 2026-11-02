@@ -1,8 +1,8 @@
-# pupitre2
+# pupitre
 
 The pupitre e-learning platform: a React frontend (two apps) and its Go backend, `pupitre-api`.
-They replace the Astro frontend and the three Go services of
-[`genesary/pupitre`](https://github.com/genesary/pupitre), with the same API.
+They replace the Astro frontend and the three Go services of this repository at commit
+`3cdf7b2`, with the same API.
 
 - Stack: React 19, TypeScript, Vite, React Router, Tailwind CSS v4, shadcn/ui, TanStack Query,
   pnpm.

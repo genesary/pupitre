@@ -70,7 +70,7 @@ Response: `{ totalScore, maxScore, passed, questionResults[], cooldowns }`. Each
   shows « ⏳ Réessayez dans Ns » (counting down every second), and every locked question
   « 🔒 Question verrouillée ». These questions are disabled.
 - Cooldowns are kept on the client so they survive a reload. The current frontend uses a cookie
-  `pcd_<slug>_<index>`; pupitre2 uses `sessionStorage` with the same key, since the server returns
+  `pcd_<slug>_<index>`; the React frontend uses `sessionStorage` with the same key, since the server returns
   `cooldowns` with the module anyway. The server value always wins.
 
 ## Anti-copy

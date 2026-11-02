@@ -1,9 +1,9 @@
 ---
 name: review
-description: Reviews the current branch of pupitre2 (or a pull request) with the project's reviewers - security (spec 003 and any known vulnerability class), correctness and parity with genesary/pupitre - and reports verified findings with their fix, plus best-practice suggestions. Use it before opening or merging a pull request; the "AI review" workflow runs it on every pull request.
+description: Reviews the current branch of pupitre (or a pull request) with the project's reviewers - security (spec 003 and any known vulnerability class), correctness and parity with genesary/pupitre - and reports verified findings with their fix, plus best-practice suggestions. Use it before opening or merging a pull request; the "AI review" workflow runs it on every pull request.
 ---
 
-# Review a pupitre2 change
+# Review a pupitre change
 
 Arguments: none to review the current branch against `origin/main`, or `--pr <number>` to
 review a pull request and post the result on it (used by `.github/workflows/ai-review.yaml`).

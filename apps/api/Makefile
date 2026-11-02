@@ -3,7 +3,7 @@
 # (docs/specs/108-backend-operations-and-testing.md)
 #
 # The same commands exist as `pnpm api:*` scripts at the repository root.
-# The kind targets deploy the API with the pupitre2-helm chart.
+# The kind targets deploy the API with the pupitre-helm chart.
 # ─────────────────────────────────────────────────────────────────────────────
 
 # Local overrides (git-ignored), e.g. DOCKER=podman.

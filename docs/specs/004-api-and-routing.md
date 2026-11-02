@@ -19,7 +19,7 @@ The pages are routed the same way: `/admin` and `/admin/*` (the admin app's base
 assets, every other page to the learner app's ([000](000-scope-and-stack.md)).
 
 The current Astro proxy (`pages/api/[...path].ts`) forwards **every** client header, which is
-finding H4. In pupitre2, the dev proxy forwards only `Authorization`, `Content-Type`, `Accept`
+finding H4. In the React frontend, the dev proxy forwards only `Authorization`, `Content-Type`, `Accept`
 and `Cookie` (the API's only cookie is the OAuth state, [105](105-backend-authentication.md)),
 and the production reverse proxy must do the same.
 

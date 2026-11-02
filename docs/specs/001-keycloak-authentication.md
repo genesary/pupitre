@@ -109,7 +109,7 @@ The current frontend type (`role: "admin" | "student"`) is missing `manager`.
 
 ## Removed routes
 
-| Current route | Behaviour in pupitre2 |
+| Astro route | Behaviour in the React frontend |
 | --- | --- |
 | `/register` | Redirects to `/login` |
 | `/dashboard`, `/` | Redirect to `/courses` |

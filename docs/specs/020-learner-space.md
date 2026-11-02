@@ -46,7 +46,7 @@ Every `/my-*` page and `/skills/:slug` require a signed-in user ([002](002-roles
 - One card per skill: name, level, « X/Y cours » with a bar. The card links to `/skills/:slug`.
 - Level: the one returned by the server (`level`). The current frontend **recomputes** it from
   the ratio (≥ 100 % « Maître », ≥ 60 % « Avancé », ≥ 30 % « Intermédiaire », otherwise
-  « Débutant »); pupitre2 uses the server value and keeps this computation only as a fallback
+  « Débutant »); the React frontend uses the server value and keeps this computation only as a fallback
   when `level` is missing.
 - The « Maître » level has a gold style.
 - First section « Acquises »: the skills returned by the server.

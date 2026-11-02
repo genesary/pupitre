@@ -1,6 +1,6 @@
 name: Containers
 
-# The two images of pupitre2 (docs/specs/108-backend-operations-and-testing.md):
+# The two images of pupitre (docs/specs/108-backend-operations-and-testing.md):
 # pupitre-api (apps/api/Dockerfile) and pupitre-front (docker/front/Dockerfile).
 # Every run scans the Dockerfiles (KICS) and builds both images; a tag v*
 # also pushes them to GHCR and scans the pushed images (Trivy). Adapted

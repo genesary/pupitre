@@ -2,7 +2,7 @@
 
 ## Scope
 
-pupitre2 holds the platform **frontend**. It talks to the existing Go API, which is not changed.
+This repository holds the platform **frontend**. It talks to the existing Go API, which is not changed.
 The repository is a frontend monolith: a single React application that holds the learner space,
 the manager space and the administration. There is no separate admin application.
 
@@ -43,7 +43,7 @@ file ([090](090-gaps-and-defects.md)). `apps/api` is reserved for a later backen
 services stay as they are.
 
 ```
-pupitre2/
+pupitre/
 ├── AGENTS.md                    # rules for coding agents (CLAUDE.md imports it)
 ├── docs/specs/                  # this folder
 ├── apps/
