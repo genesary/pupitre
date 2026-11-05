@@ -7,7 +7,7 @@ import { ApiError } from '@pupitre/core/lib/api-client';
 import { completeLesson, getCourse, getModule, listModules, listPatterns } from '@pupitre/core/lib/api';
 import type { ModuleDetail, ModuleSummary } from '@pupitre/core/lib/api-types';
 import { MarkdownContent } from '@pupitre/core/components/MarkdownContent';
-import { hostOf, isModuleDone, moduleHref } from '@/lib/module-links';
+import { hostOf, isModuleDone, moduleHref, moduleIcon } from '@/lib/module-links';
 import { InlineQuiz } from '@/components/quiz/InlineQuiz';
 import { patternCss, renderMarkdown, toPatternMap, type TocEntry } from '@pupitre/core/lib/markdown';
 import { safeUrl } from '@pupitre/ui/lib/security';
@@ -39,12 +39,7 @@ const ICON_DOCS = (
 );
 
 function treeIcon(module: ModuleSummary): string {
-  if (module.locked) return '🔒';
-  if (module.type === 'quiz') return '🧩';
-  if (module.type === 'video') return '🎬';
-  if (module.type === 'image') return '🖼️';
-  if (module.type === 'lab') return '🧪';
-  return '📝';
+  return moduleIcon(module) ?? '📝';
 }
 
 function useReadingMode() {
@@ -121,6 +116,7 @@ function Lesson({ slug, courseTitle, module, modules }: LessonProps) {
       .catch(() => {}) // already completed
       .finally(() => {
         void queryClient.invalidateQueries({ queryKey: ['course', slug, 'modules'] });
+        void queryClient.invalidateQueries({ queryKey: ['my'] });
         finish();
       });
   }, [finish, module.slug, queryClient, slug]);
@@ -214,6 +210,7 @@ function Lesson({ slug, courseTitle, module, modules }: LessonProps) {
               onPassed={() => {
                 setQuizPassed(true);
                 void queryClient.invalidateQueries({ queryKey: ['course', slug, 'modules'] });
+                void queryClient.invalidateQueries({ queryKey: ['my'] });
               }}
             />
           )}

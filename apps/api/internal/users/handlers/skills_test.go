@@ -5,6 +5,7 @@ import (
 	"errors"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 
 	"github.com/genesary/pupitre/apps/api/internal/users/config"
@@ -289,6 +290,51 @@ func TestMySkillModules_InvalidSlug(t *testing.T) {
 
 	r := newTestRouter()
 	rec := htDo(t, r, http.MethodGet, "/api/my/skills/INVALID_SLUG!", "", htAuthHeader(t, "student"))
+
+	if rec.Code != http.StatusBadRequest {
+		t.Errorf("want 400, got %d", rec.Code)
+	}
+}
+
+// TestMySkillModules_FreeTextSkills verifies that a skill which is not a slug
+// reaches the catalog: skills are free text in the course definitions, and the
+// demo catalogue has accented ones.
+func TestMySkillModules_FreeTextSkills(t *testing.T) {
+	t.Parallel()
+
+	for path, skill := range map[string]string{
+		"le-mod%C3%A8le-osi": "le-modèle-osi",
+		"CI%2FCD":            "CI/CD",
+		"C%2B%2B":            "C++",
+		"Bases%20de%20SQL":   "Bases de SQL",
+	} {
+		t.Run(skill, func(t *testing.T) {
+			t.Parallel()
+
+			srv, _ := newCatalogServer(t, catalogFixture{Skills: map[string][]SkillModule{
+				skill: {{Slug: "intro", Type: "text", CourseSlug: "reseau", Index: 0}},
+			}})
+
+			r := newSkillModulesRouter(t, fake.NewRepositories(), srv.URL)
+			rec := htDo(t, r, http.MethodGet, "/api/my/skills/"+path, "", htAuthHeaderForSubject(t, "student", htUserID))
+
+			if rec.Code != http.StatusOK {
+				t.Fatalf("want 200, got %d: %s", rec.Code, rec.Body)
+			}
+
+			if !strings.Contains(rec.Body.String(), `"intro"`) {
+				t.Errorf("modules of %q missing: %s", skill, rec.Body)
+			}
+		})
+	}
+}
+
+// TestMySkillModules_TooLong verifies the length bound of a skill name.
+func TestMySkillModules_TooLong(t *testing.T) {
+	t.Parallel()
+
+	r := newTestRouter()
+	rec := htDo(t, r, http.MethodGet, "/api/my/skills/"+strings.Repeat("a", maxSkillLength+1), "", htAuthHeader(t, "student"))
 
 	if rec.Code != http.StatusBadRequest {
 		t.Errorf("want 400, got %d", rec.Code)

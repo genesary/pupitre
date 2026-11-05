@@ -1,6 +1,6 @@
 package checker
 
-// EvaluateRequest is sent by course-service to POST /evaluate.
+// EvaluateRequest is one lab policy evaluation asked by the courses domain.
 // The project template has already been resolved ({{ .Username }} replaced).
 // Raw Rego text is not accepted: the policy is fetched directly from the
 // course git repository so an attacker who can reach this endpoint cannot

@@ -4,15 +4,15 @@ import { toast } from 'sonner';
 
 import { importCourse, importPreview, type ImportPreview, type ImportRequest } from '@pupitre/core/lib/api';
 import type { Course } from '@pupitre/core/lib/api-types';
+import { DIFFICULTY_BADGES } from '@pupitre/core/lib/course-meta';
 import { ConfirmDialog } from '@pupitre/core/components/ConfirmDialog';
 import { Modal, ModalClose } from '@pupitre/core/components/Modal';
+import { MODULE_TYPE_BADGES } from '@/lib/course-definition';
 
 // « Importer depuis du markdown », markup of
 // pupitre's admin/courses page. The server refuses documents above 10 MB.
 
 const MAX_BYTES = 10 * 1024 * 1024;
-const TYPE_BADGES: Record<string, string> = { text: 'badge-blue', video: 'badge-orange', quiz: 'badge-green', lab: 'badge-purple' };
-const DIFFICULTY_BADGES: Record<string, string> = { beginner: 'badge-green', intermediate: 'badge-orange', advanced: 'badge-red' };
 
 function PreviewResult({ preview }: { preview: ImportPreview }) {
   const course = preview.course ?? {};
@@ -42,7 +42,7 @@ function PreviewResult({ preview }: { preview: ImportPreview }) {
           <div key={`${index}-${m.slug}`} className={`import-mod${m.existing ? ' existing' : ''}`}>
             <span className="import-mod-idx">{index}</span>
             <span className="import-mod-name">{m.name}</span>
-            <span className={`badge ${TYPE_BADGES[m.type] ?? 'badge-gray'} text-[.7rem]`}>{m.type}</span>
+            <span className={`badge ${MODULE_TYPE_BADGES[m.type] ?? 'badge-gray'} text-[.7rem]`}>{m.type}</span>
             {m.existing && <span className="badge badge-gray text-[.7rem]">existant</span>}
             {m.hidden && <span className="badge badge-red text-[.7rem]">masqué</span>}
             {m.src && (
@@ -73,6 +73,12 @@ export function ImportDialog({ courses, onClose, onImported }: { courses: Course
   const [markdown, setMarkdown] = useState('');
   const [preview, setPreview] = useState<ImportPreview | null>(null);
   const [confirmReplace, setConfirmReplace] = useState(false);
+
+  // The preview describes one set of options: another set needs a new one.
+  const changeOption = (setOption: (value: string) => void, value: string) => {
+    setOption(value);
+    setPreview(null);
+  };
 
   const bytes = new TextEncoder().encode(markdown).length;
   const body = (): ImportRequest => ({
@@ -161,14 +167,14 @@ export function ImportDialog({ courses, onClose, onImported }: { courses: Course
               <label className="label" htmlFor="im-slug">
                 Slug
               </label>
-              <input className="input font-mono" id="im-slug" type="text" placeholder="depuis le frontmatter" value={slug} onChange={(event) => setSlug(event.target.value)} />
+              <input className="input font-mono" id="im-slug" type="text" placeholder="depuis le frontmatter" value={slug} onChange={(event) => changeOption(setSlug, event.target.value)} />
             </div>
           ) : (
             <div>
               <label className="label" htmlFor="im-course">
                 Cours cible
               </label>
-              <select className="input" id="im-course" value={target} onChange={(event) => setTarget(event.target.value)}>
+              <select className="input" id="im-course" value={target} onChange={(event) => changeOption(setTarget, event.target.value)}>
                 {courses.map((course) => (
                   <option key={course.slug} value={course.slug}>
                     {course.title}
@@ -181,7 +187,7 @@ export function ImportDialog({ courses, onClose, onImported }: { courses: Course
             <label className="label" htmlFor="im-split">
               Découpage
             </label>
-            <select className="input" id="im-split" value={split} onChange={(event) => setSplit(event.target.value)}>
+            <select className="input" id="im-split" value={split} onChange={(event) => changeOption(setSplit, event.target.value)}>
               <option value="">Auto (frontmatter, sinon un seul module)</option>
               <option value="none">Un seul module</option>
               <option value="h1"># — un module par titre de niveau 1</option>

@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 
 import { clearCourseCache, clearModuleCache, type CourseDefinition, type ModuleSpec } from '@pupitre/core/lib/api';
-import { removeModule, saveDefinition, setModule, type DefinitionChangedError } from '@/lib/course-definition';
+import { MODULE_TYPE_BADGES, removeModule, saveDefinition, setModule, type DefinitionChangedError } from '@/lib/course-definition';
 import { moveItem } from '@/lib/reorder';
 import { ConfirmDialog } from '@pupitre/core/components/ConfirmDialog';
 import { ModuleForm } from '@/components/admin/courses/ModuleForm';
@@ -12,8 +12,6 @@ import { SortableList } from '@/components/admin/SortableList';
 // Modules tab of a course. The list is the
 // definition's modules, hidden ones and git sources included; every change goes
 // through saveDefinition (read again, compare, write whole).
-
-const TYPE_BADGES: Record<string, string> = { text: 'badge-blue', video: 'badge-orange', quiz: 'badge-green', lab: 'badge-purple' };
 
 const EMPTY: ModuleSpec = { name: '', type: 'text', content: '' };
 
@@ -130,7 +128,7 @@ export function ModulesTab({ slug, definition }: { slug: string; definition: Use
               <div className="mod-info">
                 <div className="flex items-center gap-1.5 flex-wrap">
                   <span className="mod-name">{module.name}</span>
-                  <span className={`badge ${TYPE_BADGES[module.type] ?? 'badge-gray'} text-[.7rem]`}>{module.type}</span>
+                  <span className={`badge ${MODULE_TYPE_BADGES[module.type] ?? 'badge-gray'} text-[.7rem]`}>{module.type}</span>
                   {module.hidden && <span className="badge badge-red text-[.7rem]">masqué</span>}
                   {module.inline && <span className="badge badge-blue text-[.7rem]">inline</span>}
                   {module.src && <span className="badge badge-gray text-[.7rem]">git</span>}

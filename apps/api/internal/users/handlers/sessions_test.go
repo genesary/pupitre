@@ -34,7 +34,12 @@ func newSessionsRouter(t *testing.T, repos *repository.Repositories, courseServi
 func TestBookSession_Success(t *testing.T) {
 	t.Parallel()
 
-	r := newTestRouter()
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintln(w, `{"sessions":[{"id":"sess-1"}]}`)
+	}))
+	defer srv.Close()
+
+	r := newSessionsRouter(t, fake.NewRepositories(), srv.URL)
 	rec := htDo(t, r, http.MethodPost, "/api/session-bookings/my-course/sess-1", "", htAuthHeader(t, "student"))
 
 	if rec.Code != http.StatusNoContent {
@@ -118,12 +123,17 @@ func TestBookSession_CountError(t *testing.T) {
 func TestBookSession_BookError(t *testing.T) {
 	t.Parallel()
 
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintln(w, `{"sessions":[{"id":"sess-1"}]}`)
+	}))
+	defer srv.Close()
+
 	repos := fake.NewRepositories()
 	sb := fake.NewSessionBookingRepository()
 	sb.Err = errors.New("db down")
 	repos.SessionBookings = sb
 
-	r := newTestRouterWithRepos(repos)
+	r := newSessionsRouter(t, repos, srv.URL)
 	rec := htDo(t, r, http.MethodPost, "/api/session-bookings/my-course/sess-1", "", htAuthHeader(t, "student"))
 
 	if rec.Code != http.StatusInternalServerError {
@@ -131,8 +141,8 @@ func TestBookSession_BookError(t *testing.T) {
 	}
 }
 
-// TestBookSession_CourseServiceDown verifies that a missing course service
-// (capacity falls back to 0 = unlimited) still allows booking.
+// TestBookSession_CourseServiceDown verifies that no seat is booked while the
+// capacity of the session cannot be read.
 func TestBookSession_CourseServiceDown(t *testing.T) {
 	t.Parallel()
 
@@ -140,8 +150,17 @@ func TestBookSession_CourseServiceDown(t *testing.T) {
 	r := newSessionsRouter(t, repos, "http://127.0.0.1:0")
 	rec := htDo(t, r, http.MethodPost, "/api/session-bookings/my-course/sess-1", "", htAuthHeader(t, "student"))
 
-	if rec.Code != http.StatusNoContent {
-		t.Errorf("want 204 (soft fail on capacity), got %d: %s", rec.Code, rec.Body.String())
+	if rec.Code != http.StatusBadGateway {
+		t.Errorf("want 502, got %d: %s", rec.Code, rec.Body.String())
+	}
+
+	count, err := repos.SessionBookings.CountBySession(t.Context(), "my-course", "sess-1")
+	if err != nil {
+		t.Fatalf("CountBySession: %v", err)
+	}
+
+	if count != 0 {
+		t.Errorf("seats booked = %d, want 0", count)
 	}
 }
 

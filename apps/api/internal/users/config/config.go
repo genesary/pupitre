@@ -173,7 +173,7 @@ func Load() (cfg *Config, warnings []string) { //nolint:nonamedreturns // gocrit
 	cfg.CORSOrigins = sliceFromEnv("CORS_ORIGINS", cfg.CORSOrigins)
 	cfg.OAuthRedirectBase = stringFromEnv("OAUTH_REDIRECT_BASE", cfg.OAuthRedirectBase)
 	cfg.AuthRateLimitRequests = intFromEnv("AUTH_RATE_LIMIT_REQUESTS", cfg.AuthRateLimitRequests)
-	cfg.AuthRateLimitWindowSeconds = intFromEnv("AUTH_RATE_LIMIT_WINDOW_SECONDS", cfg.AuthRateLimitWindowSeconds)
+	cfg.AuthRateLimitWindowSeconds = authRateLimitWindow(cfg.AuthRateLimitWindowSeconds)
 	cfg.LeaderboardMaxEntries = positiveIntFromEnv("LEADERBOARD_MAX_ENTRIES", cfg.LeaderboardMaxEntries)
 
 	loadAdminPassword(cfg)
@@ -273,6 +273,19 @@ func positiveIntFromEnv(key string, current int) int {
 	}
 
 	return n
+}
+
+// authRateLimitWindow resolves the auth rate-limit window from the
+// environment, then the file. The limit is switched off through
+// AUTH_RATE_LIMIT_REQUESTS: a window of 0 would have the limiter divide by
+// zero and never refuse a request, so it falls back to the default.
+func authRateLimitWindow(current int) int {
+	window := positiveIntFromEnv("AUTH_RATE_LIMIT_WINDOW_SECONDS", current)
+	if window <= 0 {
+		return defaultAuthRateLimitWindowSeconds
+	}
+
+	return window
 }
 
 // loadAdminPassword resolves cfg.AdminPassword and cfg.AdminPasswordFile

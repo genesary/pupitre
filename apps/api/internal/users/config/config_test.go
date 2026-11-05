@@ -92,6 +92,46 @@ func TestLoad_InvalidIntegers(t *testing.T) {
 	}
 }
 
+// TestLoad_AuthRateLimitWindowZero verifies that a window the limiter cannot
+// work with falls back to the default: with 0 it never refuses a request,
+// which would switch the brute-force protection off silently.
+func TestLoad_AuthRateLimitWindowZero(t *testing.T) {
+	t.Setenv("AUTH_RATE_LIMIT_WINDOW_SECONDS", "0")
+
+	c, _ := Load()
+	if c.AuthRateLimitWindowSeconds != defaultAuthRateLimitWindowSeconds {
+		t.Errorf("want default %d, got %d", defaultAuthRateLimitWindowSeconds, c.AuthRateLimitWindowSeconds)
+	}
+}
+
+// TestLoad_AuthRateLimitWindowNegative verifies the same rule for a negative
+// window.
+func TestLoad_AuthRateLimitWindowNegative(t *testing.T) {
+	t.Setenv("AUTH_RATE_LIMIT_WINDOW_SECONDS", "-5")
+
+	c, _ := Load()
+	if c.AuthRateLimitWindowSeconds != defaultAuthRateLimitWindowSeconds {
+		t.Errorf("want default %d, got %d", defaultAuthRateLimitWindowSeconds, c.AuthRateLimitWindowSeconds)
+	}
+}
+
+// TestLoad_AuthRateLimitWindowFromFile verifies the same rule for the file.
+func TestLoad_AuthRateLimitWindowFromFile(t *testing.T) {
+	path := t.TempDir() + "/config.yaml"
+
+	err := os.WriteFile(path, []byte("authRateLimitWindowSeconds: 0\n"), 0o600)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	t.Setenv("CONFIG_PATH", path)
+
+	c, _ := Load()
+	if c.AuthRateLimitWindowSeconds != defaultAuthRateLimitWindowSeconds {
+		t.Errorf("want default %d, got %d", defaultAuthRateLimitWindowSeconds, c.AuthRateLimitWindowSeconds)
+	}
+}
+
 // TestLoad_AdminPassword verifies that Load reads the admin password from
 // the ADMIN_PASSWORD environment variable.
 func TestLoad_AdminPassword(t *testing.T) {

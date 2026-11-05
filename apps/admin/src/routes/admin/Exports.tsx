@@ -1,10 +1,11 @@
 import { useMutation, useQueries, useQuery } from '@tanstack/react-query';
-import { useEffect, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
 import { exportCategories, exportDownload, exportPreview, type ExportSource } from '@pupitre/core/lib/api';
 import type { ExportCategory, ExportRequest } from '@pupitre/core/lib/api-types';
 import { saveBlob } from '@/lib/save-blob';
+import { useDebounced } from '@/lib/use-debounced';
 
 // /admin/exports, markup of pupitre's
 // admin/exports/index.astro. Two sources: user-service and the lab checks of
@@ -13,15 +14,6 @@ import { saveBlob } from '@/lib/save-blob';
 type Category = ExportCategory & { source: ExportSource };
 
 const SOURCES: ExportSource[] = ['/admin/exports', '/admin/exports/lab-checks'];
-
-function useDebounced<T>(value: T, delay: number): T {
-  const [debounced, setDebounced] = useState(value);
-  useEffect(() => {
-    const timer = setTimeout(() => setDebounced(value), delay);
-    return () => clearTimeout(timer);
-  }, [value, delay]);
-  return debounced;
-}
 
 function FilterControl({
   filter,
@@ -87,7 +79,10 @@ export function Exports() {
     setFilters({});
   };
 
-  const body: ExportRequest | null = category && fields.length > 0 ? { category: category.id, fields, filters } : null;
+  const body = useMemo<ExportRequest | null>(
+    () => (categoryId && fields.length > 0 ? { category: categoryId, fields, filters } : null),
+    [categoryId, fields, filters],
+  );
   const debounced = useDebounced(body, 400);
   const preview = useQuery({
     queryKey: ['exports', 'preview', category?.source, debounced],

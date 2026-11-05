@@ -1,12 +1,18 @@
 package handlers
 
 import (
+	"errors"
+	"fmt"
 	"net/http"
 
 	"go.uber.org/zap"
 
 	"github.com/genesary/pupitre/apps/api/internal/users/repository"
 )
+
+// ErrCourseNotFound is what CourseSource.CourseSessions returns for a course
+// that does not exist.
+var ErrCourseNotFound = errors.New("course not found")
 
 // CourseSessionInfo is the part of a course session BookSession needs to
 // enforce per-session seat limits.
@@ -20,28 +26,22 @@ type markPresenceBody struct {
 	Present bool `json:"present"`
 }
 
-// sessionCapacity returns the capacity of sessionID within slug by calling
-// course-service. Returns 0 if the session has no capacity limit or is not
-// found (unlimited booking allowed).
-func (s *State) sessionCapacity(req *http.Request, slug, sessionID string) int {
-	if !slugRE.MatchString(slug) {
-		return 0
-	}
-
+// sessionCapacity returns the capacity of sessionID within slug, 0 if the
+// session has no limit or the course does not list it. An error means the
+// limit is unknown, so the caller must not book.
+func (s *State) sessionCapacity(req *http.Request, slug, sessionID string) (int, error) {
 	sessions, err := s.courseSource().CourseSessions(req.Context(), slug)
 	if err != nil {
-		zap.L().Warn("could not fetch course for capacity check", zap.String("slug", slug), zap.Error(err))
-
-		return 0
+		return 0, fmt.Errorf("course sessions: %w", err)
 	}
 
 	for _, sess := range sessions {
 		if sess.ID == sessionID {
-			return sess.Capacity
+			return sess.Capacity, nil
 		}
 	}
 
-	return 0
+	return 0, nil
 }
 
 // BookSession godoc
@@ -51,14 +51,33 @@ func (s *State) sessionCapacity(req *http.Request, slug, sessionID string) int {
 // @Param    slug       path  string  true  "Course slug"
 // @Param    sessionId  path  string  true  "Session ID"
 // @Success  204  "No Content"
+// @Failure  404  {object}  map[string]string
 // @Failure  409  {object}  map[string]string
+// @Failure  502  {object}  map[string]string
 // @Router   /api/courses/{slug}/sessions/{sessionId}/book [post].
 func (s *State) BookSession(writer http.ResponseWriter, req *http.Request) {
 	claims := s.claims(req)
 	slug := param(req, "slug")
 	sessionID := param(req, "sessionId")
 
-	seated, err := s.Repos.SessionBookings.BookSeat(req.Context(), claims.Subject, slug, sessionID, s.sessionCapacity(req, slug, sessionID))
+	capacity, err := s.sessionCapacity(req, slug, sessionID)
+	if errors.Is(err, ErrCourseNotFound) {
+		s.Error(writer, http.StatusNotFound, "Course not found")
+
+		return
+	}
+
+	if err != nil {
+		zap.L().Error("failed to read session capacity",
+			zap.String("courseSlug", slug),
+			zap.String("sessionID", sessionID),
+			zap.Error(err))
+		s.Error(writer, http.StatusBadGateway, "Failed to check session capacity")
+
+		return
+	}
+
+	seated, err := s.Repos.SessionBookings.BookSeat(req.Context(), claims.Subject, slug, sessionID, capacity)
 	if err != nil {
 		zap.L().Error("failed to book session",
 			zap.String("userID", claims.Subject),

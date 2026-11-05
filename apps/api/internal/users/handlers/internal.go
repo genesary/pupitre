@@ -5,10 +5,8 @@ package handlers
 // track, e.g. quiz-only courses).
 const courseCompleteLessonSlug = "__complete__"
 
-// CourseCompletion is a completed course, as the course-complete endpoint
-// receives it.
-// It extends courseBody with skill and difficulty metadata so user-service
-// can update the learner's per-skill expertise level in one call.
+// CourseCompletion is a completed course, with the skill and difficulty
+// metadata that update the learner's per-skill expertise level in one call.
 type CourseCompletion struct {
 	UserID            string              `json:"userId"`
 	CourseSlug        string              `json:"courseSlug"`
@@ -17,8 +15,7 @@ type CourseCompletion struct {
 	SkillTotalCourses map[string]int      `json:"skillTotalCourses,omitempty"`
 }
 
-// ModuleResult is a quiz or lab result, as the module-progress endpoint
-// receives it.
+// ModuleResult is a quiz or lab result.
 type ModuleResult struct {
 	UserID string `json:"userId"`
 
@@ -34,7 +31,7 @@ type ModuleResult struct {
 	Passed   bool `json:"passed"`
 }
 
-// moduleProgressRow is a single row returned by InternalGetModuleProgress.
+// moduleProgressRow is one module of a learner's progress in a course.
 type moduleProgressRow struct {
 	ModuleIndex int `json:"moduleIndex"`
 

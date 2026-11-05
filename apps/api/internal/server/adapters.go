@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"time"
@@ -12,6 +13,7 @@ import (
 	"github.com/genesary/pupitre/apps/api/internal/checker"
 	checkerhandlers "github.com/genesary/pupitre/apps/api/internal/checker/handlers"
 	courseshandlers "github.com/genesary/pupitre/apps/api/internal/courses/handlers"
+	coursesrepo "github.com/genesary/pupitre/apps/api/internal/courses/repository"
 	usershandlers "github.com/genesary/pupitre/apps/api/internal/users/handlers"
 )
 
@@ -190,6 +192,10 @@ func (a *coursesSource) SkillModules(ctx context.Context, skills []string) (map[
 // CourseSessions implements usershandlers.CourseSource.
 func (a *coursesSource) CourseSessions(ctx context.Context, courseSlug string) ([]usershandlers.CourseSessionInfo, error) {
 	course, err := a.courses.CourseDetail(ctx, courseSlug)
+	if errors.Is(err, coursesrepo.ErrNotFound) {
+		return nil, usershandlers.ErrCourseNotFound
+	}
+
 	if err != nil {
 		return nil, fmt.Errorf("course detail: %w", err)
 	}

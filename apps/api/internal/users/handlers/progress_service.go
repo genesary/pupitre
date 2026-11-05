@@ -12,9 +12,7 @@ import (
 )
 
 // The methods below are what the courses domain asks of this one: a
-// learner's enrollments and progress, read and written. The /internal/*
-// handlers of the standalone user-service decode a request and call them;
-// the monolith calls them directly.
+// learner's enrollments and progress, read and written.
 
 // errMissingProgressKeys is returned when a progress read names no user or
 // no course.

@@ -329,8 +329,8 @@ type CourseSource interface {
 	Paths(ctx context.Context, slugs []string) ([]PathInfo, error)
 	// SkillModules returns the modules teaching each skill.
 	SkillModules(ctx context.Context, skills []string) (map[string][]SkillModule, error)
-	// CourseSessions returns the sessions of a course, private or not: an
-	// error for an unknown course.
+	// CourseSessions returns the sessions of a course, private or not:
+	// ErrCourseNotFound for an unknown course.
 	CourseSessions(ctx context.Context, courseSlug string) ([]CourseSessionInfo, error)
 	// PublicCourseTitles returns the title of every public course, by slug,
 	// as the anonymous catalogue lists them. CSV exports label rows with it.

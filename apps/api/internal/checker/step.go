@@ -33,7 +33,7 @@ var conventionalCommitRe = regexp.MustCompile(
 	`^(feat|fix|chore|docs|style|refactor|test|perf|ci|build|revert)(\([^)]+\))?: .+`,
 )
 
-// StepRequest is sent to POST /check-step.
+// StepRequest is one step check asked by the courses domain.
 type StepRequest struct {
 	Username    string         `json:"username"`
 	Project     string         `json:"project"`
@@ -41,7 +41,7 @@ type StepRequest struct {
 	CheckParams map[string]any `json:"checkParams"`
 }
 
-// StepResponse is returned by POST /check-step.
+// StepResponse is the result of a step check.
 type StepResponse = EvaluateResponse
 
 // stepState holds pre-fetched GitLab data shared across all check functions

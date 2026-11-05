@@ -1,3 +1,4 @@
+import { safeRedirect } from '@pupitre/ui/lib/security';
 import { readItem, removeItem, writeItem } from '@pupitre/ui/lib/storage';
 
 // Where the end of a course leads back to, set by a learning path page.
@@ -14,5 +15,5 @@ export function setCourseReturn(path: string) {
 export function takeCourseReturn(): string | null {
   const path = readItem('session', RETURN_KEY);
   removeItem('session', RETURN_KEY);
-  return path && path.startsWith('/') && !path.startsWith('//') ? path : null;
+  return safeRedirect(path, '') || null;
 }

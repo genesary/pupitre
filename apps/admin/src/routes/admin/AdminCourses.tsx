@@ -4,6 +4,7 @@ import { toast } from 'sonner';
 
 import { adminCourses, clearAllCache, courseDefinition, createCourse, deleteCourse, exportCourseMarkdown } from '@pupitre/core/lib/api';
 import type { Course } from '@pupitre/core/lib/api-types';
+import { DIFFICULTY_BADGES } from '@pupitre/core/lib/course-meta';
 import { metaOf, saveDefinition, toYaml, withMeta, type CourseMeta } from '@/lib/course-definition';
 import { saveBlob } from '@/lib/save-blob';
 import { ConfirmDialog } from '@pupitre/core/components/ConfirmDialog';
@@ -17,7 +18,6 @@ import { ModulesTab } from '@/components/admin/courses/ModulesTab';
 // admin/courses/index.astro. A course is edited through its whole definition,
 // read again and compared before every write.
 
-const DIFFICULTY_BADGES: Record<string, string> = { beginner: 'badge-green', intermediate: 'badge-orange', advanced: 'badge-red' };
 
 function CoursePanel({ slug, editing, onEditDone }: { slug: string; editing: boolean; onEditDone: () => void }) {
   const queryClient = useQueryClient();

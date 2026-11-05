@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { toast } from 'sonner';
 
 import {
@@ -13,20 +13,12 @@ import {
   unenrollGroup,
 } from '@pupitre/core/lib/api';
 import { ConfirmDialog } from '@pupitre/core/components/ConfirmDialog';
+import { useDebounced } from '@/lib/use-debounced';
 
 // Enrollments tab of a course: groups, then
 // individual users found by search (250 ms debounce, 2 characters at least).
 
 type Removal = { kind: 'group' | 'user'; id: string; name: string };
-
-function useDebounced(value: string, delay: number) {
-  const [debounced, setDebounced] = useState(value);
-  useEffect(() => {
-    const timer = setTimeout(() => setDebounced(value), delay);
-    return () => clearTimeout(timer);
-  }, [value, delay]);
-  return debounced;
-}
 
 export function EnrollmentsTab({ slug }: { slug: string }) {
   const queryClient = useQueryClient();

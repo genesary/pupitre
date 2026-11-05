@@ -1,4 +1,4 @@
-// Package handlers wires up the checker-service HTTP API.
+// Package handlers runs lab checks against the configured GitLab instance.
 package handlers
 
 import (
@@ -14,7 +14,7 @@ import (
 	"github.com/genesary/pupitre/apps/api/internal/checker/config"
 )
 
-// Handler serves the checker-service HTTP API.
+// Handler runs the lab checks of the courses domain.
 type Handler struct {
 	config *config.Config
 }
@@ -24,8 +24,8 @@ func New(cfg *config.Config) *Handler {
 	return &Handler{config: cfg}
 }
 
-// Failure is a check the checker refused or could not complete: the
-// status and message checker-service answered with.
+// Failure is a check the checker refused or could not complete, with the
+// status and message that describe it.
 type Failure struct {
 	Status  int
 	Message string
@@ -36,8 +36,7 @@ func failure(status int, message string) *Failure {
 	return &Failure{Status: status, Message: message}
 }
 
-// RunEvaluate runs one lab policy evaluation. POST /evaluate decodes its
-// body and calls it; the monolith calls it directly.
+// RunEvaluate runs one lab policy evaluation.
 func (h *Handler) RunEvaluate(ctx context.Context, req checker.EvaluateRequest) (*checker.EvaluateResponse, *Failure) {
 	if fail := requireEvaluateFields(req); fail != nil {
 		return nil, fail
@@ -73,7 +72,7 @@ func (h *Handler) RunEvaluate(ctx context.Context, req checker.EvaluateRequest) 
 }
 
 // requireEvaluateFields refuses an evaluation that names no learner,
-// project or policy, with the messages of POST /evaluate.
+// project or policy.
 func requireEvaluateFields(req checker.EvaluateRequest) *Failure {
 	if req.Username == "" || req.Project == "" {
 		return failure(http.StatusBadRequest, "username and project are required")
@@ -86,8 +85,7 @@ func requireEvaluateFields(req checker.EvaluateRequest) *Failure {
 	return nil
 }
 
-// RunCheckStep runs one named step check. POST /check-step decodes its
-// body and calls it; the monolith calls it directly.
+// RunCheckStep runs one named step check.
 func (h *Handler) RunCheckStep(ctx context.Context, req checker.StepRequest) (*checker.StepResponse, *Failure) {
 	if req.Username == "" || req.Project == "" || req.CheckType == "" {
 		return nil, failure(http.StatusBadRequest, "username, project and checkType are required")
@@ -153,7 +151,7 @@ func (h *Handler) fetchCourseCheckPolicy(ctx context.Context, req checker.Evalua
 }
 
 // fetchStudentGitLabProjectState fetches the student's GitLab project and MR
-// state using the checker-service's GitLab token.
+// state using the checker's GitLab token.
 func (h *Handler) fetchStudentGitLabProjectState(ctx context.Context, req checker.EvaluateRequest) (*checker.GitLabState, *Failure) {
 	fetcher, err := checker.NewFetcher(ctx, h.config.GitLabToken, h.config.GitLabBaseURL)
 	if err != nil {

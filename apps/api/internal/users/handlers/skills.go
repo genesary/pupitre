@@ -3,6 +3,8 @@ package handlers
 import (
 	"fmt"
 	"net/http"
+	"net/url"
+	"regexp"
 
 	"go.uber.org/zap"
 
@@ -24,13 +26,32 @@ type skillModuleStatus struct {
 	Status string `json:"status"` // "completed" | "available" | "locked"
 }
 
+// maxSkillLength bounds the skill names the route accepts, in bytes.
+const maxSkillLength = 128
+
+// skillRE matches a skill name. Skills are free text from the course
+// definitions, such as "CI/CD" or "le-modèle-osi", not slugs.
+var skillRE = regexp.MustCompile(`^[\p{L}\p{N}][\p{L}\p{M}\p{N} ._/+#&'’-]*$`)
+
+// skillParam returns the skill the route names. A slash in a skill arrives as
+// %2F: chi then routes on the escaped path and leaves the parameter escaped.
+func skillParam(req *http.Request) string {
+	skill := param(req, "slug")
+	if req.URL.RawPath == "" {
+		return skill
+	}
+
+	unescaped, err := url.PathUnescape(skill)
+	if err != nil {
+		return skill
+	}
+
+	return unescaped
+}
+
 // fetchSkillModules resolves every module tagged with skill through the
 // catalog, which batches and caches the lookup.
 func (s *State) fetchSkillModules(req *http.Request, skill string) ([]SkillModule, error) {
-	if !slugRE.MatchString(skill) {
-		return nil, fmt.Errorf("invalid skill slug: %q", skill)
-	}
-
 	modules, found := s.catalog().SkillModules(req.Context(), []string{skill})[skill]
 	if !found {
 		return nil, fmt.Errorf("fetch skill modules: %q unavailable", skill)
@@ -104,9 +125,9 @@ func skillIsCompleted(modules []SkillModule, passed, viewed map[string]struct{})
 // @Router   /api/my/skills/{slug} [get].
 func (s *State) MySkillModules(writer http.ResponseWriter, request *http.Request) {
 	claims := s.claims(request)
-	skill := param(request, "slug")
+	skill := skillParam(request)
 
-	if !slugRE.MatchString(skill) {
+	if len(skill) > maxSkillLength || !skillRE.MatchString(skill) {
 		s.Error(writer, http.StatusBadRequest, "Invalid skill slug")
 
 		return

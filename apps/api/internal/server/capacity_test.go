@@ -36,3 +36,25 @@ func TestWiring_PrivateCourseSessionCapacity(t *testing.T) {
 		t.Errorf("booking a full session of a private course: %d %s, want 409 Session is full", rec.Code, rec.Body.String())
 	}
 }
+
+// TestWiring_BookUnknownCourse verifies that a session of a course that does
+// not exist cannot be booked.
+func TestWiring_BookUnknownCourse(t *testing.T) {
+	t.Parallel()
+
+	app := newWiredApp(t)
+
+	rec := app.do(t, http.MethodPost, "/api/session-bookings/no-such-course/s1")
+	if rec.Code != http.StatusNotFound {
+		t.Errorf("booking a session of an unknown course: %d %s, want 404", rec.Code, rec.Body.String())
+	}
+
+	count, err := app.usersRepos.SessionBookings.CountBySession(t.Context(), "no-such-course", "s1")
+	if err != nil {
+		t.Fatalf("CountBySession: %v", err)
+	}
+
+	if count != 0 {
+		t.Errorf("seats booked = %d, want 0", count)
+	}
+}

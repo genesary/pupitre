@@ -85,6 +85,9 @@ export function withMeta(spec: CourseSpec, meta: CourseMeta): CourseSpec {
   return Object.fromEntries(Object.entries(next).filter(([, value]) => value !== undefined)) as CourseSpec;
 }
 
+/** Badge class of each module type. */
+export const MODULE_TYPE_BADGES: Record<string, string> = { text: 'badge-blue', video: 'badge-orange', quiz: 'badge-green', lab: 'badge-purple' };
+
 /** Types whose body is markdown stored on the module (Astro modTakesMarkdown). */
 export const takesMarkdown = (type: string) => type === 'text' || type === 'lab';
 
