@@ -121,8 +121,7 @@ func Wire(cfg *config.Config, usersRepos *usersrepo.Repositories, coursesRepos *
 
 // prepareDatabase migrates the schema of both domains, then seeds it: the
 // demo catalogue first, so demo progress can refer to demo courses, then
-// the admin account, the OIDC settings and the demo users
-// (docs/specs/102-backend-data-and-migrations.md).
+// the admin account, the OIDC settings and the demo users.
 func prepareDatabase(ctx context.Context, gdb *gorm.DB, usersRepos *usersrepo.Repositories, cfg *config.Config) error {
 	err := Migrate(ctx, gdb)
 	if err != nil {

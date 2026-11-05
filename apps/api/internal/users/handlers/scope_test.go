@@ -7,8 +7,7 @@ import (
 	"github.com/genesary/pupitre/apps/api/internal/users/fake"
 )
 
-// Regression tests for defect B6 (docs/specs/190-backend-defects.md): a
-// manager acts on the members of the groups they manage, no one else.
+// A manager acts on the members of the groups they manage, no one else.
 
 // TestExport_ManagerIsScoped checks that a manager's export is limited to
 // their groups, and an admin's is not.

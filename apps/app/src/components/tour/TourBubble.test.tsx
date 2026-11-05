@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 
 import { TourBubble } from './TourBubble';
 
-describe('tour bubble (spec 007)', () => {
+describe('tour bubble', () => {
   it('keeps Shift+Tab inside while a step waits and the bubble holds focus', () => {
     render(
       <TourBubble rect={null} stepKey="waiting" title="…" actions={<button>Passer la visite</button>}>

@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { slugError } from '@/lib/slug';
 
-describe('slug rule (spec 042)', () => {
+describe('slug rule', () => {
   it('accepts lowercase words joined by hyphens', () => {
     expect(slugError('test-cours')).toBeNull();
     expect(slugError('k8s-101')).toBeNull();

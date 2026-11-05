@@ -57,7 +57,7 @@ export const MOCK_ACCOUNTS: MockAccount[] = [
   },
   {
     // Reproduces audit findings C2 and C4: these values must show as text and
-    // never run (spec 003). An alert box means a regression.
+    // never run. An alert box means a regression.
     description: 'Compte piégé (test XSS)',
     user: {
       id: '9c8b7a65-4d3e-4f21-b0a9-8e7d6c5b4a39',

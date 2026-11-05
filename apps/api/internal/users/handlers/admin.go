@@ -240,8 +240,7 @@ func (s *State) UpdateUser(writer http.ResponseWriter, request *http.Request) {
 	}
 
 	// A deactivation ends the user's sessions; a role change takes effect
-	// at once anyway, the guards reading the role of the row
-	// (docs/specs/190-backend-defects.md B7).
+	// at once anyway, the guards reading the role of the row.
 	if body.IsActive != nil && !*body.IsActive {
 		err = s.revokeSessions(request.Context(), userUUID)
 		if err != nil {

@@ -319,10 +319,8 @@ func (c *Catalog) fetchSkillModules(ctx context.Context, skills []string) (map[s
 	return modules, nil
 }
 
-// CourseSource is what the users domain reads from the courses domain. In
-// the monolith it calls the courses domain directly; the HTTP
-// implementation below serves the standalone user-service binary until it
-// is removed (docs/specs/104-backend-in-process-calls.md).
+// CourseSource is what the users domain reads from the courses domain, as
+// function calls.
 type CourseSource interface {
 	// Courses returns the courses among slugs that exist, private ones
 	// included.

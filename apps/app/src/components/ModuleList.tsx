@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router';
 import type { ModuleSummary } from '@pupitre/core/lib/api-types';
 import { moduleHref, moduleIcon } from '@/lib/module-links';
 
-// Module rows of the course page (docs/specs/011-course-page-and-enrollment.md).
+// Module rows of the course page.
 
 const TYPE_LABELS: Record<string, string> = { quiz: 'Quiz', video: 'Vidéo', image: 'Image', lab: 'Lab', lesson: 'Lecture' };
 

@@ -3,7 +3,7 @@ import { useState } from 'react';
 import type { CourseMeta } from '@/lib/course-definition';
 import { slugError } from '@/lib/slug';
 
-// Course metadata of docs/specs/042-admin-courses.md, used by « Nouveau cours »
+// Course metadata form, used by « Nouveau cours »
 // (with the slug) and « Modifier ». Markup of pupitre's draft panel.
 
 type CourseFormProps = {

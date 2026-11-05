@@ -6,7 +6,7 @@ import { getPublicUser, userBadges } from '@pupitre/core/lib/api';
 import { UserAvatar } from '@pupitre/ui/components/user-avatar';
 import { LoadingState } from '@pupitre/core/components/PageStates';
 
-// /users/:id (docs/specs/020-learner-space.md), markup of pupitre's users/[id].astro.
+// /users/:id, markup of pupitre's users/[id].astro.
 
 export function PublicProfile() {
   const { id = '' } = useParams();

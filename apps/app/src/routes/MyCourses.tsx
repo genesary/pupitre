@@ -7,7 +7,7 @@ import type { MyCourse } from '@pupitre/core/lib/api-types';
 import { courseIcon } from '@pupitre/core/lib/course-meta';
 import { LoadError, LoadingState } from '@pupitre/core/components/PageStates';
 
-// /my-courses (docs/specs/020-learner-space.md), markup of pupitre's my-courses.astro.
+// /my-courses, markup of pupitre's my-courses.astro.
 
 type Status = 'not-started' | 'in-progress' | 'completed';
 

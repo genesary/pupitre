@@ -53,8 +53,7 @@ const (
 	oauthStateTokenTTL  = 10 * time.Minute
 	oauthMaxUsernameLen = 32
 
-	// oauthStateCookie holds the nonce of the state the browser was given
-	// (docs/specs/190-backend-defects.md B13).
+	// oauthStateCookie holds the nonce of the state the browser was given.
 	oauthStateCookie     = "pupitre_oauth_state"
 	oauthStateCookiePath = "/api/auth"
 	oauthNonceBytes      = 32
@@ -89,7 +88,7 @@ type oauthStateClaims struct {
 // browser with an HttpOnly cookie holding its nonce. Without the binding, an
 // attacker could send a victim a callback link carrying the attacker's own
 // code and state, and sign the victim in to the attacker's account (login
-// CSRF, docs/specs/190-backend-defects.md B13).
+// CSRF).
 func (s *State) startOAuthState(writer http.ResponseWriter, provider, redirectBase string) (string, error) {
 	raw := make([]byte, oauthNonceBytes)
 

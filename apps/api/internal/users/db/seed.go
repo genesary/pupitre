@@ -110,8 +110,8 @@ func randomPasswordHash() (string, error) {
 //     (cost 12) before being stored.
 //  3. If adminPassword is empty, an admin account created now gets a random
 //     password that nobody knows, and a warning says to set ADMIN_PASSWORD.
-//     There is no default password any more (docs/specs/190-backend-defects.md
-//     B5): the well-known Admin@1234 opened every unconfigured instance.
+//     There is no default password any more: the well-known Admin@1234
+//     opened every unconfigured instance.
 //
 // Behaviour on conflict (admin email already exists):
 //   - If a custom password was provided (cases 1 or 2) the hash is always

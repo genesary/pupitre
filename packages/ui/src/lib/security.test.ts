@@ -61,7 +61,7 @@ describe('safeExternalUrl', () => {
   });
 });
 
-describe('sanitizeHtml (spec 003 S2)', () => {
+describe('sanitizeHtml', () => {
   it('removes scripts and event handlers', () => {
     const html = sanitizeHtml('<p>ok</p><script>alert(1)</script><img src="x" onerror="alert(1)">');
     expect(html).toContain('<p>ok</p>');

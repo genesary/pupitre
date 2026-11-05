@@ -156,7 +156,7 @@ type cooldownState struct {
 
 // questionResultAPI is the client-facing result of scoring a single quiz
 // question. It never carries the correct answer: a learner could read it,
-// then submit again with it (docs/specs/190-backend-defects.md B17).
+// then submit again with it.
 type questionResultAPI struct {
 	QuestionID   string              `json:"questionId"`
 	Type         string              `json:"type"`

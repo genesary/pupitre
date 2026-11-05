@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router';
 import type { MyCourse } from '@pupitre/core/lib/api-types';
 import { courseIcon } from '@pupitre/core/lib/course-meta';
 
-// The « Reprendre » block of the catalogue (docs/specs/010-catalogue.md).
+// The « Reprendre » block of the catalogue.
 
 export function ContinueHero({ course }: { course: MyCourse }) {
   const navigate = useNavigate();

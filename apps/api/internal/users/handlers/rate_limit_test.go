@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-// TestLimitByEmail is the regression test for defect B12: attempts on one
+// TestLimitByEmail is a regression test: attempts on one
 // email are limited whatever address they come from, and other emails, or
 // bodies without one, are not affected.
 func TestLimitByEmail(t *testing.T) {

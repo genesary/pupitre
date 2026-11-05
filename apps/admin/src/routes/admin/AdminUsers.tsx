@@ -8,7 +8,7 @@ import { useCurrentUser } from '@pupitre/core/lib/session';
 import { ConfirmDialog } from '@pupitre/core/components/ConfirmDialog';
 import { Modal } from '@pupitre/core/components/Modal';
 
-// /admin/users (docs/specs/041-admin-users.md), markup of pupitre's admin/users/index.astro.
+// /admin/users, markup of pupitre's admin/users/index.astro.
 
 const PAGE_SIZE = 50;
 

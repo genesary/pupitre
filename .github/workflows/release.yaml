@@ -4,7 +4,6 @@ name: Release
 # commits since the previous tag (git-cliff, cliff.toml). The images of the
 # same tag are published by containers.yaml. Adapted from genesary/pupitre
 # at 3cdf7b2 (.github/workflows/release.yaml);
-# docs/specs/108-backend-operations-and-testing.md, "Releases".
 
 on:
   push:

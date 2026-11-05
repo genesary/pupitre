@@ -16,7 +16,7 @@ func clearEnv(t *testing.T) {
 		"CONFIG_PATH", "PORT", "DATABASE_URL", "DB_MAX_OPEN_CONNS", "DB_MAX_IDLE_CONNS", "JWT_SECRET",
 		"GIT_CREDENTIALS_PATH", "USER_SERVICE_URL", "COURSE_SERVICE_URL", "CHECKER_SERVICE_URL",
 		"INTERNAL_SERVICE_SECRET", "RATE_LIMIT_REQUESTS", "RATE_LIMIT_WINDOW_SECONDS",
-		"LAB_CHECK_RATE_LIMIT_REQUESTS", "LAB_CHECK_RATE_LIMIT_WINDOW_SECONDS",
+		"LAB_CHECK_RATE_LIMIT_REQUESTS", "LAB_CHECK_RATE_LIMIT_WINDOW_SECONDS", "TRUSTED_PROXIES",
 	} {
 		t.Setenv(key, "")
 	}
@@ -24,7 +24,7 @@ func clearEnv(t *testing.T) {
 	t.Setenv("JWT_SECRET", "a-test-signing-secret-of-enough-length-0123")
 }
 
-// TestLoad_Defaults checks the monolith's own defaults (spec 101).
+// TestLoad_Defaults checks the monolith's own defaults.
 func TestLoad_Defaults(t *testing.T) { //nolint:paralleltest // sets environment variables
 	clearEnv(t)
 
@@ -111,6 +111,40 @@ func TestLoad_RemovedKeysWarn(t *testing.T) {
 	}
 }
 
+// TestLoad_TrustedProxies checks that only loopback is trusted by default,
+// with a warning, and that a configured list replaces it silently.
+func TestLoad_TrustedProxies(t *testing.T) {
+	clearEnv(t)
+
+	cfg, warnings, err := Load()
+	if err != nil {
+		t.Fatalf("Load: %v", err)
+	}
+
+	if len(cfg.TrustedProxies) != 2 || cfg.TrustedProxies[0].String() != "127.0.0.0/8" {
+		t.Errorf("default trusted proxies = %v", cfg.TrustedProxies)
+	}
+
+	if !strings.Contains(strings.Join(warnings, "\n"), "TRUSTED_PROXIES is not set") {
+		t.Errorf("no warning for the default in %q", warnings)
+	}
+
+	t.Setenv("TRUSTED_PROXIES", "10.42.0.0/16")
+
+	cfg, warnings, err = Load()
+	if err != nil {
+		t.Fatalf("Load: %v", err)
+	}
+
+	if len(cfg.TrustedProxies) != 1 || cfg.TrustedProxies[0].String() != "10.42.0.0/16" {
+		t.Errorf("configured trusted proxies = %v", cfg.TrustedProxies)
+	}
+
+	if strings.Contains(strings.Join(warnings, "\n"), "TRUSTED_PROXIES") {
+		t.Errorf("warning despite the setting: %q", warnings)
+	}
+}
+
 // TestLoad_OldRateLimitVariables checks that checker-service's variables
 // still set the limit, unless the new ones are set.
 func TestLoad_OldRateLimitVariables(t *testing.T) {
@@ -154,7 +188,7 @@ func TestLoad_InvalidPort(t *testing.T) {
 }
 
 // TestLoad_WeakJWTSecret stops the start-up on the public default secret or
-// a short one (docs/specs/190-backend-defects.md B4).
+// a short one.
 func TestLoad_WeakJWTSecret(t *testing.T) { //nolint:paralleltest // sets environment variables
 	for _, secret := range []string{"", "change-me-in-production-use-a-long-random-string", "short-secret"} {
 		clearEnv(t)

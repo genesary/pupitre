@@ -225,7 +225,7 @@ func (failingProgress) LabIdentity(context.Context, string) (string, error) {
 	return "", errUsersDown
 }
 
-// TestWiring_UsersFailureSemantics checks the failure rules of spec 104: a
+// TestWiring_UsersFailureSemantics checks the failure rules: a
 // failing read degrades to empty progress, a failing lesson completion
 // fails the request with the message course-service used.
 func TestWiring_UsersFailureSemantics(t *testing.T) {
@@ -247,8 +247,7 @@ func TestWiring_UsersFailureSemantics(t *testing.T) {
 
 // TestWiring_LabCheckerLimit checks the in-process checker: its refusals
 // reach the learner as a 502 with the checker's message, and the limit is
-// per learner, answering 429 with the time to wait (regression test of
-// defect B9, docs/specs/190-backend-defects.md).
+// per learner, answering 429 with the time to wait.
 func TestWiring_LabCheckerLimit(t *testing.T) {
 	t.Parallel()
 
@@ -310,10 +309,7 @@ func TestWiring_PrivateCourseChecksTheSession(t *testing.T) {
 		t.Fatalf("private course when enrolled: %d %s", rec.Code, rec.Body.String())
 	}
 
-	// A revoked token opens nothing, enrolled or not. JWT times have a
-	// one-second resolution: wait so the revocation follows the token.
-	time.Sleep(time.Until(time.Now().Truncate(time.Second).Add(time.Second)))
-
+	// A revoked token opens nothing, enrolled or not.
 	if rec := app.do(t, http.MethodPost, "/api/auth/logout"); rec.Code != http.StatusOK {
 		t.Fatalf("logout: %d %s", rec.Code, rec.Body.String())
 	}
@@ -323,7 +319,7 @@ func TestWiring_PrivateCourseChecksTheSession(t *testing.T) {
 	}
 }
 
-// TestWiring_SessionsCanBeRevoked is the regression test for defect B7: the
+// TestWiring_SessionsCanBeRevoked is a regression test: the
 // guards read the user's row on each request, so a sign-out, a deactivation
 // or a role change takes effect at once instead of at the token's expiry.
 func TestWiring_SessionsCanBeRevoked(t *testing.T) {
@@ -354,10 +350,6 @@ func TestWiring_SessionsCanBeRevoked(t *testing.T) {
 	}
 
 	// Signing out revokes the token used, and every other one issued before.
-	// JWT times have a one-second resolution: wait for the next second so
-	// the revocation is strictly after the token.
-	time.Sleep(time.Until(time.Now().Truncate(time.Second).Add(time.Second)))
-
 	if rec := app.do(t, http.MethodPost, "/api/auth/logout"); rec.Code != http.StatusOK {
 		t.Fatalf("logout: %d %s", rec.Code, rec.Body.String())
 	}
@@ -366,9 +358,8 @@ func TestWiring_SessionsCanBeRevoked(t *testing.T) {
 		t.Fatalf("me after sign-out: %d, want 401", rec.Code)
 	}
 
-	// A deactivated user is refused even with a fresh token.
-	time.Sleep(time.Until(time.Now().Truncate(time.Second).Add(time.Second)))
-
+	// A token issued right after the sign-out works, even within the same
+	// second, but a deactivated user is refused even with a fresh token.
 	fresh, err := middleware.CreateToken(learnerID, "learner@example.com", "student", "learner", testJWTSecret, 1)
 	if err != nil {
 		t.Fatalf("create token: %v", err)

@@ -45,7 +45,7 @@ const startTour = async () => {
   await act(() => new Promise((resolve) => requestAnimationFrame(resolve)));
 };
 
-describe('tour provider (spec 007)', () => {
+describe('tour provider', () => {
   beforeEach(() => vi.mocked(useCurrentUser).mockReturnValue(user('u1', 'alice')));
 
   it('offers the tour to a signed-in user, with the username as text', () => {

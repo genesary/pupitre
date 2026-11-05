@@ -8,7 +8,7 @@ import { useSiteNavigate } from '@pupitre/core/lib/site';
 import { openSession } from '@pupitre/core/lib/session';
 import { safeRedirect } from '@pupitre/ui/lib/security';
 
-// /auth/callback — Keycloak comes back here (docs/specs/001). The route must not
+// /auth/callback — Keycloak comes back here. The route must not
 // change: it is the redirect URI registered in Keycloak.
 
 function errorMessage(error: string): string {

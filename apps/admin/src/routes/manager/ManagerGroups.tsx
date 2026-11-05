@@ -16,7 +16,7 @@ import { buildTree, type GroupNode as Node } from '@/lib/group-tree';
 import { ConfirmDialog } from '@pupitre/core/components/ConfirmDialog';
 import { Modal, ModalClose } from '@pupitre/core/components/Modal';
 
-// /manager/groups (docs/specs/030-manager-space.md), markup of pupitre's
+// /manager/groups, markup of pupitre's
 // manager/groups/index.astro; its inline styles are written as Tailwind classes.
 
 type Target = { id: string; name: string };
@@ -147,7 +147,7 @@ function MembersModal({ group, onClose }: { group: Target; onClose: () => void }
     queryKey: ['manager', 'groups', group.id, 'members'],
     queryFn: () => managerGroupMembers(group.id),
   });
-  // Only members of the scope are offered (spec 030, audit finding H2).
+  // Only members of the scope are offered.
   const scope = useQuery({ queryKey: ['manager', 'users'], queryFn: managerUsers });
 
   const refresh = () => void queryClient.invalidateQueries({ queryKey: ['manager'] });

@@ -1,8 +1,7 @@
 name: API
 
 # pupitre-api (apps/api): lint, unit tests, integration tests against
-# PostgreSQL, and the Go end-to-end suite against the running binary
-# (docs/specs/108-backend-operations-and-testing.md).
+# PostgreSQL, and the Go end-to-end suite against the running binary.
 
 on:
   push:

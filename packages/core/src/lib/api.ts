@@ -41,12 +41,12 @@ import type {
   UserPublic,
 } from './api-types';
 
-// One typed function per Go route used by the frontend (docs/specs/004-api-and-routing.md),
+// One typed function per Go route used by the frontend,
 // on top of the HTTP client of api-client.ts.
 
 const enc = encodeURIComponent;
 
-// ── Authentication (user-service, Keycloak only: docs/specs/001) ────────────
+// ── Authentication (user-service, Keycloak only) ────────────
 
 export const getPublicSettings = () => request<PublicSettings>('/settings/public', { anonymous: true });
 
@@ -57,10 +57,10 @@ export const oidcCallback = (code: string, state: string) =>
 
 export const getMe = () => request<UserPublic>('/auth/me');
 
-/** Ends every session of the signed-in user on the server (docs/specs/190-backend-defects.md B7). */
+/** Ends every session of the signed-in user on the server. */
 export const logout = () => request<{ message: string }>('/auth/logout', { method: 'POST' });
 
-/** Bio or emoji avatar only: username and avatar URLs are not offered (docs/specs/021). */
+/** Bio or emoji avatar only: username and avatar URLs are not offered. */
 export const updateProfile = (body: { bio: string } | { avatarUrl: string }) =>
   request<UserPublic>('/auth/profile', { method: 'PUT', body });
 
@@ -144,7 +144,7 @@ export const cancelBooking = (slug: string, sessionId: string) =>
 
 export const listPaths = () => request<{ paths: LearningPath[] }>('/paths');
 
-// Course sessions: admin or manager (docs/specs/022).
+// Course sessions: admin or manager.
 
 export const createSession = (slug: string, body: SessionInput) =>
   request<unknown>(`/admin/courses/${enc(slug)}/sessions`, { method: 'POST', body });
@@ -155,10 +155,10 @@ export const updateSession = (slug: string, sessionId: string, body: SessionInpu
 export const deleteSession = (slug: string, sessionId: string) =>
   request<unknown>(`/admin/courses/${enc(slug)}/sessions/${enc(sessionId)}`, { method: 'DELETE' });
 
-/** Requires a signed-in user: the Astro frontend called it anonymously (defect A1). */
+/** Requires a signed-in user: the Astro frontend called it anonymously. */
 export const listPatterns = () => request<{ patterns: MarkdownPattern[] }>('/patterns');
 
-// ── Manager space (docs/specs/030) ──────────────────────────────────────────
+// ── Manager space ──────────────────────────────────────────
 
 export const managerUsers = () =>
   request<{ users: ScopeUser[] | null; total: number; groups: ScopeGroup[] }>('/manager/users');
@@ -204,7 +204,7 @@ export const managerEnrollPath = (slug: string, userId: string) =>
 export const managerUnenrollPath = (slug: string, userId: string) =>
   request<{ message: string }>(`/manager/paths/${enc(slug)}/enrollments/${enc(userId)}`, { method: 'DELETE' });
 
-// ── Attendance (docs/specs/022): /api/admin/… for an admin, /api/manager/… for a manager ──
+// ── Attendance: /api/admin/… for an admin, /api/manager/… for a manager ──
 
 type TrainerRole = 'admin' | 'manager';
 
@@ -217,7 +217,7 @@ export const markPresence = (role: TrainerRole, slug: string, sessionId: string,
     body: { present },
   });
 
-// ── CSV exports (docs/specs/047): user-service and course-service lab checks ──
+// ── CSV exports: user-service and course-service lab checks ──
 
 export type ExportSource = '/admin/exports' | '/admin/exports/lab-checks';
 
@@ -230,7 +230,7 @@ export const exportPreview = (source: ExportSource, body: ExportRequest) =>
 export const exportDownload = (source: ExportSource, body: ExportRequest) =>
   requestBlob(`${source}/download`, { method: 'POST', body });
 
-// ── Administration (docs/specs/040-047) ─────────────────────────────────────
+// ── Administration ─────────────────────────────────────
 
 export const adminStats = () => request<AdminStats>('/admin/stats');
 
@@ -243,7 +243,7 @@ export const adminUsers = () => request<{ users: ScopeUser[] | null; total: numb
 
 export const authProviders = () => request<{ providers: { provider: string; count: number }[] | null }>('/admin/users/providers');
 
-/** Role and activation only: username, bio and avatar come from Keycloak or the profile (spec 041). */
+/** Role and activation only: username, bio and avatar come from Keycloak or the profile. */
 export const updateUserAdmin = (userId: string, body: { role: Role; isActive: boolean }) =>
   request<UserPublic>(`/admin/users/${enc(userId)}`, { method: 'PUT', body });
 
@@ -286,7 +286,7 @@ export type LabCheckRow = {
 export const labChecks = (course = '') =>
   request<LabCheckRow[]>(`/admin/lab-checks${course ? `?course=${enc(course)}` : ''}`);
 
-// Groups (user-service groups.go, admin.go — docs/specs/044)
+// Groups (user-service groups.go, admin.go)
 
 export const adminGroups = () => request<{ groups: AdminGroup[] | null }>('/admin/groups');
 
@@ -325,7 +325,7 @@ export const saveGroupMapping = (mapping: GroupMapping) =>
 export const deleteGroupMapping = (groupName: string) =>
   request<{ message: string }>(`/admin/groups/mappings/${enc(groupName)}`, { method: 'DELETE' });
 
-// Learning paths (course-service paths_admin.go, user-service paths.go — docs/specs/043)
+// Learning paths (course-service paths_admin.go, user-service paths.go)
 
 /** definition.Path */
 export type PathSpec = {
@@ -337,7 +337,7 @@ export type PathSpec = {
   skills?: string[];
 };
 
-/** Read through the admin route: the public one adds the courses' skills (spec 043). */
+/** Read through the admin route: the public one adds the courses' skills. */
 export const pathDefinition = (slug: string) =>
   request<{ slug: string; spec: PathSpec }>(`/admin/courses/paths/${enc(slug)}/definition`);
 
@@ -360,7 +360,7 @@ export const adminUnenrollPath = (slug: string, userId: string) =>
   request<{ message: string }>(`/admin/paths/${enc(slug)}/enrollments/${enc(userId)}`, { method: 'DELETE' });
 
 // Courses (course-service admin_definition.go, courses_import.go, state.go;
-// user-service admin.go enrollments — docs/specs/042)
+// user-service admin.go enrollments)
 
 /** definition.Course. Unknown fields are kept as read, so a save never drops them. */
 export type CourseSpec = {

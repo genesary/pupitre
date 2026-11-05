@@ -1,4 +1,4 @@
-// Slug rule of docs/specs/042-admin-courses.md (course-service admin_definition.go
+// Slug rule (course-service admin_definition.go
 // accepts ^[a-z0-9][a-z0-9-]*$; the spec is stricter: no leading, trailing or
 // double hyphen), and the reserved path segments of the admin routes.
 

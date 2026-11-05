@@ -11,9 +11,9 @@ import { safeExternalUrl } from '@pupitre/ui/lib/security';
 
 import { renderLab } from '@/lib/render-lab';
 
-// Lab modules (docs/specs/014-labs.md), markup of the lab part of pupitre's
+// Lab modules, markup of the lab part of pupitre's
 // lesson page. `<!-- check:N -->` markers place the step blocks, which are
-// React components between sanitised markdown segments (spec 003 S2).
+// React components between sanitised markdown segments.
 
 function CheckOutcome({ result, error }: { result?: CheckResult; error?: string }) {
   if (error) return <div className="check-err">{error}</div>;

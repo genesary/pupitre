@@ -2,7 +2,7 @@ import { toast } from 'sonner';
 
 import { Modal, ModalClose } from '@pupitre/core/components/Modal';
 
-// Read-only « Définition » dialog with « Copier » (docs/specs/042, 043, 045),
+// Read-only « Définition » dialog with « Copier »,
 // markup of the Astro admin pages' modal-box.
 
 export function DefinitionModal({ title, text, onClose }: { title: string; text: string; onClose: () => void }) {

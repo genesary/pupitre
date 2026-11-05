@@ -13,8 +13,8 @@ import (
 
 // limitByEmail limits the requests that name the same email to requests
 // per window, as the per-address limit does for an address: guessing one
-// account's password from many addresses is limited too
-// (docs/specs/190-backend-defects.md B12). A request without an email in
+// account's password from many addresses is limited too.
+// A request without an email in
 // its JSON body (the SSO callbacks) is not counted.
 func limitByEmail(requests int, window time.Duration) func(http.Handler) http.Handler {
 	limiter := httprate.NewRateLimiter(requests, window)

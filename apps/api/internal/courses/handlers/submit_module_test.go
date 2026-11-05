@@ -175,8 +175,8 @@ func TestSubmitModule_ResolvedFromGit(t *testing.T) {
 	}
 }
 
-// TestSubmitModule_NoCorrectAnswer is the regression test of defect B17
-// (docs/specs/190-backend-defects.md): a wrong submission does not reveal
+// TestSubmitModule_NoCorrectAnswer is a regression test:
+// a wrong submission does not reveal
 // the correct answers.
 func TestSubmitModule_NoCorrectAnswer(t *testing.T) {
 	t.Parallel()

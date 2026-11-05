@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 
 import { ACCOUNTS, signIn } from './helpers';
 
-// The frontend is two applications on one origin (docs/specs/000-scope-and-stack.md):
+// The frontend is two applications on one origin:
 // the learner app, and the admin app under /admin and /manager.
 
 test('a learner browsing the learner app downloads nothing from the admin app', async ({ page }) => {

@@ -1,4 +1,4 @@
-// API types, written from the Go response structs (docs/specs/004-api-and-routing.md).
+// API types, written from the Go response structs.
 // JSON field names are the `json:"…"` tags; each type names its source handler.
 
 export type Role = 'student' | 'manager' | 'admin';
@@ -77,7 +77,7 @@ export type Course = {
   difficulty: Difficulty | string;
   isPublic: boolean;
   moduleCount: number;
-  /** Actually the number of modules (defect A17). */
+  /** Actually the number of modules. */
   labCount: number;
   enrollmentCount: number;
   scope?: string;
@@ -101,7 +101,7 @@ export type MyCourse = {
   /** Number of modules of the course. */
   labCount: number;
   enrollmentCount: number;
-  /** Number of completed lessons (defect A17). */
+  /** Number of completed lessons. */
   completedLabs: number;
   totalScore: number;
   lastActivity: string | null;
@@ -251,7 +251,7 @@ export type MarkdownPattern = {
   parameter: string;
   html: string;
   css: string;
-  /** Never executed (spec 003 S2). */
+  /** Never executed. */
   js: string;
   scope: string;
   fromConfig: boolean;
@@ -259,14 +259,14 @@ export type MarkdownPattern = {
   updatedAt: string;
 };
 
-// ── Learner space (user-service, docs/specs/020) ───────────────────────────
+// ── Learner space (user-service) ───────────────────────────
 
 export type ProgressStatus = 'completed' | 'available' | 'locked';
 
 /** user-service/internal/handlers/paths.go — courseStatus. For a skill path, `slug` is a skill. */
 export type PathMemberStatus = { slug: string; status: ProgressStatus };
 
-/** user-service/internal/handlers/paths.go — myPath. It has no `level` field (defect A18). */
+/** user-service/internal/handlers/paths.go — myPath. It has no `level` field. */
 export type MyPath = {
   slug: string;
   title: string;
@@ -327,7 +327,7 @@ export type PublicUser = { id: string; username: string; avatarUrl: string | nul
 /** course-service/internal/handlers/sessions_admin.go — sessionBody */
 export type SessionInput = { title: string; date: string; location: string; capacity: number };
 
-// ── Manager space (user-service manager.go, paths.go, docs/specs/030) ─────
+// ── Manager space (user-service manager.go, paths.go) ─────
 
 /** user-service/internal/repository/user.go — AdminUserRow */
 export type ScopeUser = {
@@ -354,7 +354,7 @@ export type EnrollmentRow = { courseSlug: string; completedLabs: number; totalSc
 
 /**
  * repository/path_enrollment.go — PathEnrollmentRow. The struct has no json
- * tags, so Go sends the field names as they are (defect A22).
+ * tags, so Go sends the field names as they are.
  */
 export type PathEnrollmentRow = { Slug: string; EnrolledAt: string };
 
@@ -383,7 +383,7 @@ export type LearningPath = {
 /** repository/session_booking.go — SessionParticipantRow */
 export type SessionParticipant = { userId: string; username: string; email: string; bookedAt: string; present: boolean };
 
-// ── CSV exports (user-service exports.go, course-service exports.go, docs/specs/047) ──
+// ── CSV exports (user-service exports.go, course-service exports.go) ──
 
 export type ExportFilter = {
   id: string;
@@ -405,9 +405,9 @@ export type ExportRequest = { category: string; fields: string[]; filters: Recor
 
 export type ExportPreview = { headers: string[]; rows: Record<string, string>[]; totalCount: number };
 
-// ── Administration (docs/specs/040-047) ─────────────────────────────────────
+// ── Administration ─────────────────────────────────────
 
-/** user-service admin.go — AdminStats. total_labs, total_submissions and success_rate are hard-coded to 0 (defect A3). */
+/** user-service admin.go — AdminStats. total_labs, total_submissions and success_rate are hard-coded to 0. */
 export type AdminStats = {
   total_users: number;
   totalCourses: number;

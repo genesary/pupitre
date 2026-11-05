@@ -2,8 +2,7 @@ import type { Role } from '@pupitre/core/lib/api-types';
 
 import { TOUR_STEP_TEXTS } from '@/lib/messages/tour';
 
-// Steps of the guided tour and of the first lesson tip
-// (docs/specs/007-guided-tour.md, "Steps" and "First lesson tip").
+// Steps of the guided tour and of the first lesson tip.
 
 /** Raised only when the tour changes enough to be offered again. */
 export const TOUR_VERSION = 1;

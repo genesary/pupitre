@@ -9,7 +9,7 @@ import { stepPath, type TourStep } from '@/lib/tour-steps';
 import { TourBubble } from './TourBubble';
 import { TourSpotlight } from './TourSpotlight';
 
-// Runs a list of steps (docs/specs/007-guided-tour.md): goes to the page of
+// Runs a list of steps: goes to the page of
 // each step, waits for its target, highlights it and shows the bird's bubble.
 // Used by the guided tour and by the first lesson tip.
 

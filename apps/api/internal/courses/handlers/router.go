@@ -10,8 +10,7 @@ import (
 
 // RegisterRoutes mounts every public route of the courses domain on router,
 // each group behind its body limit and guard. It adds no global middleware
-// and no /health or /metrics: the monolith's router owns those
-// (docs/specs/103-backend-http-api.md).
+// and no /health or /metrics: the monolith's router owns those.
 func RegisterRoutes(router chi.Router, state *State, cfg *config.Config) {
 	sessions := apimiddleware.WithSessionCheck(state.Sessions)
 	authMW := apimiddleware.Auth(cfg.JWTSecret, sessions)

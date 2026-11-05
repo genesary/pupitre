@@ -16,7 +16,7 @@ import { apiError, currentAccount } from './http';
 import type { PathDefinition } from './model';
 import { badgesOf } from './learner-handlers';
 
-// Routes of the learner space (batch 2, docs/specs/020, 021, 022), mirroring
+// Routes of the learner space mirroring
 // user-service (paths.go, skills.go, xp.go, my_groups.go, badges.go, auth.go)
 // and course-service (sessions_admin.go).
 

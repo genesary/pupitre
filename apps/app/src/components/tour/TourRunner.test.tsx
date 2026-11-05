@@ -47,7 +47,7 @@ function renderSteps(steps: TourStep[], page: ReactNode) {
 
 const key = (name: string) => act(() => void fireEvent.keyDown(document, { key: name }));
 
-describe('tour runner (spec 007)', () => {
+describe('tour runner', () => {
   it('goes forward and back with the keyboard, skipping a hidden optional step', async () => {
     const onEnd = renderTour();
     expect(await screen.findByText('Un')).toBeInTheDocument();
@@ -84,7 +84,7 @@ describe('tour runner (spec 007)', () => {
     expect(await screen.findByText('Étape 1 sur 3 : Un')).toBeInTheDocument();
   });
 
-  // Steps of the `loaded` shortcut (spec 007, "Navigation between pages").
+  // Steps of the `loaded` shortcut.
   const LOADING: TourStep[] = [
     { id: 'card', targets: ['absent'], optional: true, loaded: 'page-loaded', title: 'Carte', text: '' },
     { id: 'end', title: 'Fin', text: '' },

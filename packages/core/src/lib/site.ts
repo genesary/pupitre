@@ -1,7 +1,7 @@
 import { createContext, useContext } from 'react';
 import { useNavigate, type NavigateOptions } from 'react-router';
 
-// The frontend is two applications on one origin (docs/specs/000-scope-and-stack.md):
+// The frontend is two applications on one origin:
 // the learner app, and the admin app served under /admin and /manager. Each
 // one routes its own paths; a path of the other one needs a page load. The
 // session lives in sessionStorage, shared by both on the same origin.

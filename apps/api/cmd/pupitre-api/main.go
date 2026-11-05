@@ -1,6 +1,5 @@
 // Package main is the entry point of pupitre-api, the single backend of
-// pupitre: authentication, users, courses, progress and lab checks
-// (docs/specs/100-backend-scope-and-architecture.md).
+// pupitre: authentication, users, courses, progress and lab checks.
 package main
 
 import (

@@ -1,7 +1,7 @@
 import type { AdminLeaderboardEntry } from '@pupitre/core/lib/api-types';
 import { UserAvatar } from '@pupitre/ui/components/user-avatar';
 
-// Rows of the admin score leaderboard (docs/specs/040-admin-dashboard.md),
+// Rows of the admin score leaderboard,
 // markup of pupitre's admin/leaderboard and monitoring pages.
 
 const MEDALS = ['🥇', '🥈', '🥉'];

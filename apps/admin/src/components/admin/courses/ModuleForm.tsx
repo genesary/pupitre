@@ -5,10 +5,10 @@ import { cleanModule, takesMarkdown } from '@/lib/course-definition';
 import { renderMarkdown } from '@pupitre/core/lib/markdown';
 import { MarkdownContent } from '@pupitre/core/components/MarkdownContent';
 
-// « Ajouter » / « Modifier » module form of docs/specs/042-admin-courses.md,
+// « Ajouter » / « Modifier » module form,
 // markup of pupitre's admin/courses page. The fields without a control
 // (questions, steps, prerequisites, skills…) are edited as JSON, validated
-// before sending. The Astro « Quiz ref » field is not carried over (defect A5).
+// before sending. The Astro « Quiz ref » field is not carried over.
 
 const TYPES = ['text', 'video', 'image', 'quiz', 'lab', 'modules'];
 const BASE_KEYS = ['name', 'type', 'content', 'src', 'ref', 'path', 'hidden', 'inline'];

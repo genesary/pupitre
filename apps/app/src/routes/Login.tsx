@@ -8,7 +8,7 @@ import { SiteNavigate } from '@pupitre/core/components/SiteLink';
 import { useSession } from '@pupitre/core/lib/session';
 import { safeExternalUrl, safeRedirect } from '@pupitre/ui/lib/security';
 
-// /login (docs/specs/001), with the card of pupitre's pages/login.astro. Keycloak
+// /login, with the card of pupitre's pages/login.astro. Keycloak
 // is the only sign-in method: the e-mail, LDAP and registration parts are gone.
 
 function SsoIcon() {

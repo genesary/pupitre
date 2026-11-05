@@ -1,7 +1,7 @@
 package handlers
 
 // checker-service is gone: the monolith calls RunEvaluate and RunCheckStep
-// directly (docs/specs/107-backend-labs-and-checker.md). This file keeps,
+// directly. This file keeps,
 // for the tests only, checker-service's router and HTTP handlers, as thin
 // shims over those methods, so the handler tests keep their assertions.
 

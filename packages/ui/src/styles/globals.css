@@ -14,8 +14,8 @@
 @source '../../../../apps/*/src';
 
 /*
- * The pupitre design, ported unchanged from the Astro frontend
- * (docs/specs/005-ui-theme-navigation.md, "Visual design"). Same order as its
+ * The pupitre design, ported unchanged from the Astro frontend.
+ * Same order as its
  * frontend/src/styles/global.css.
  */
 @import './pupitre/tokens.css';
@@ -26,10 +26,10 @@
 @import './pupitre/learning.css';
 @import './pupitre/admin.css';
 @import './pupitre/compat.css';
-/* Contrast fixes the pupitre CSS needs: dark mode (spec 090, A26), locked modules (A27). */
+/* Contrast fixes the pupitre CSS needs: dark mode, locked modules. */
 @import './contrast-fixes.css';
 
-/* Larger text for readability (a decided change of spec 005): pupitre's base was 16px, and
+/* Larger text for readability: pupitre's base was 16px, and
    almost every size and spacing is in rem, so the whole interface grows by about 6 %. A
    percentage (17px at the browser default) still follows the user's own default font size. */
 html {

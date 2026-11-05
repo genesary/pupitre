@@ -2,7 +2,7 @@ import { useState, type ReactNode } from 'react';
 
 // An ordered list with the pupitre module-row markup (.mod-item), reordered by
 // drag and drop on the handle or with the ↑ ↓ buttons, which keyboard users
-// can reach (docs/specs/042, 043).
+// can reach.
 
 type SortableListProps<T> = {
   items: T[];

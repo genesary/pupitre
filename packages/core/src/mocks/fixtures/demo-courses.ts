@@ -2,7 +2,7 @@ import type { CourseDefinition, PathDefinition } from '../model';
 
 // Hand-written courses that cover what the Go seed catalogue does not: every
 // markdown feature, media, every question type, in-person sessions, an XP gate
-// a private course and a skill path. Mock mode only (docs/specs/006-mock-mode.md).
+// a private course and a skill path. Mock mode only.
 
 const inDays = (days: number, hour: number) => {
   const date = new Date();
@@ -93,7 +93,7 @@ kubectl logs mon-pod -f
 
 ### Contenu piégé
 
-Le HTML ci-dessous ne doit **rien** exécuter (spec 003) :
+Le HTML ci-dessous ne doit **rien** exécuter :
 
 <img src="x" onerror="alert('xss-markdown')">
 <a href="javascript:alert('xss-link')">un lien piégé</a>

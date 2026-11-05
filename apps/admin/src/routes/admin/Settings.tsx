@@ -14,9 +14,9 @@ import {
   type SettingValues,
 } from '@/lib/settings';
 
-// /admin/settings (docs/specs/046-admin-settings.md), markup of pupitre's
+// /admin/settings, markup of pupitre's
 // admin/settings/index.astro. Each section saves only its changed keys; the
-// Astro page sent every key back, masked secrets included (defect A24).
+// Astro page sent every key back, masked secrets included.
 
 type Settings = { settings: PlatformSetting[] };
 

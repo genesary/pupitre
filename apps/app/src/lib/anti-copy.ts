@@ -1,6 +1,6 @@
 import type { ClipboardEvent, MouseEvent } from 'react';
 
-/** Anti-copy of the quiz containers (spec 013): a deterrent, not a protection. */
+/** Anti-copy of the quiz containers: a deterrent, not a protection. */
 export const antiCopy = {
   onCopy: (event: ClipboardEvent) => event.preventDefault(),
   onCut: (event: ClipboardEvent) => event.preventDefault(),

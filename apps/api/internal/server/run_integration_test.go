@@ -2,8 +2,7 @@
 
 // run_integration_test.go boots the whole API through Run against a live
 // PostgreSQL instance (TEST_DATABASE_URL), checks that it serves, then stops
-// it with SIGTERM. It replaces the start-up tests of the three services
-// (docs/specs/190-backend-defects.md B19).
+// it with SIGTERM. It replaces the start-up tests of the three services.
 
 package server
 

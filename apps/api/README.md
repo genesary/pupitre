@@ -3,9 +3,7 @@
 The Go backend of pupitre, imported without its history from
 [`genesary/pupitre`](https://github.com/genesary/pupitre) at commit `3cdf7b2`, and merged into one
 application: `cmd/pupitre-api` serves every route of user-service, course-service and
-checker-service on one port, with the domains calling each other in-process. See the backend specs
-[`100`-`199`](../../docs/specs/100-backend-scope-and-architecture.md) and the plan in
-[`199`](../../docs/specs/199-backend-migration-plan.md).
+checker-service on one port, with the domains calling each other in-process.
 
 | Path | Content |
 | --- | --- |
@@ -30,6 +28,11 @@ pnpm api:build   # go build and go vet
 
 Or, in `apps/api`, the `Makefile`: `make build test lint`, `make test-integration` (needs
 PostgreSQL), `make test-e2e` (needs a running API), `make image`.
+
+Behind a reverse proxy, set `TRUSTED_PROXIES` (comma-separated addresses or CIDR blocks) to the
+proxy's own addresses, such as the ingress controller's pods. Only loopback is trusted by default:
+without it, every client shares the proxy's address and one rate limit. Do not list a network that
+holds clients, or they can forge `X-Forwarded-For`.
 
 The API in a local kind cluster, with `kind`, `kubectl` and `helm` installed:
 

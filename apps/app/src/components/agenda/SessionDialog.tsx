@@ -7,8 +7,8 @@ import { createSession, updateSession } from '@pupitre/core/lib/api';
 import type { Course, CourseSession, SessionInput } from '@pupitre/core/lib/api-types';
 import { toLocalInput } from '@/lib/calendar';
 
-// « Nouvelle session » / « Modifier la session » dialog of the agenda
-// (docs/specs/022-agenda-and-sessions.md), with the markup of agenda.astro's
+// « Nouvelle session » / « Modifier la session » dialog of the agenda,
+// with the markup of agenda.astro's
 // modal. A missing value is shown below its field and nothing is sent; the
 // Astro page used alert().
 

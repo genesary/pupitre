@@ -6,7 +6,7 @@ import type { Course, MyGroup } from '@pupitre/core/lib/api-types';
 import { courseIcon } from '@pupitre/core/lib/course-meta';
 import { LoadError } from '@pupitre/core/components/PageStates';
 
-// /my-groups (docs/specs/020-learner-space.md), markup of pupitre's my-groups.astro.
+// /my-groups, markup of pupitre's my-groups.astro.
 
 const ROLES: Record<string, { className: string; label: string }> = {
   admin: { className: 'mg-role-admin', label: 'Admin' },

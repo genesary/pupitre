@@ -17,7 +17,7 @@ import (
 
 // The adapters below are the only code that knows two domains: each one
 // implements an interface a domain declares, by calling the domain that
-// owns the data (docs/specs/104-backend-in-process-calls.md). The domains
+// owns the data. The domains
 // themselves never import each other.
 
 // usersProgress gives the courses domain the users domain's progress.
@@ -232,7 +232,7 @@ func convert(src, dst any) error {
 // labCheckRateLimitKey prefixes the key of the lab check limiter, which
 // counts the checks of each learner apart. checker-service's limit was meant
 // per client, but its only client was course-service, so it applied to all
-// learners together (docs/specs/190-backend-defects.md B9).
+// learners together.
 const labCheckRateLimitKey = "lab-checks:"
 
 // genericCheckerMessage is what course-service answered when
@@ -312,7 +312,7 @@ func (a *labChecker) limited(ctx context.Context, learner string) bool {
 // rateLimited is the error of a check refused by the limit: 429 with the
 // time to wait, which the frontend tells the learner. checker-service
 // answered 429 too, but course-service relayed it as a 502 with its generic
-// message (docs/specs/190-backend-defects.md B9).
+// message.
 func (a *labChecker) rateLimited() error {
 	return &courseshandlers.CheckerError{
 		Status:     http.StatusTooManyRequests,

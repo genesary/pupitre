@@ -3,7 +3,7 @@ import { useState } from 'react';
 
 import { labChecks } from '@pupitre/core/lib/api';
 
-// /admin/labs (docs/specs/047-admin-exports-and-labs.md), markup of pupitre's
+// /admin/labs, markup of pupitre's
 // admin/labs/index.astro, plus the verification column of the spec.
 
 const dateTime = (iso: string) =>

@@ -7,8 +7,8 @@ import (
 	"github.com/genesary/pupitre/apps/api/internal/courses/content"
 )
 
-// TestWiring_PrivateCourseSessionCapacity is the regression test of defect
-// B24 (docs/specs/190-backend-defects.md): the capacity of a session of a
+// TestWiring_PrivateCourseSessionCapacity is a regression test:
+// the capacity of a session of a
 // private course is enforced, as for a public course.
 func TestWiring_PrivateCourseSessionCapacity(t *testing.T) {
 	t.Parallel()

@@ -14,7 +14,7 @@ import {
 } from '@pupitre/core/lib/api';
 import { ConfirmDialog } from '@pupitre/core/components/ConfirmDialog';
 
-// Enrollments tab of a course (docs/specs/042-admin-courses.md): groups, then
+// Enrollments tab of a course: groups, then
 // individual users found by search (250 ms debounce, 2 characters at least).
 
 type Removal = { kind: 'group' | 'user'; id: string; name: string };

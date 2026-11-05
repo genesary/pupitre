@@ -1,4 +1,4 @@
-# docs/specs/003-security.md, S6. Included in every location: nginx drops the
+# Included in every location: nginx drops the
 # server's add_header in a location that sets one of its own. `always` keeps
 # them on error pages too.
 add_header Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' https: data:; font-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'" always;

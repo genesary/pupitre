@@ -4,7 +4,7 @@ import { readItem, writeItem } from '@pupitre/ui/lib/storage';
 
 // Learner state of the mock backend: what user-service and course-service keep
 // in PostgreSQL. Stored in sessionStorage, so it survives the page reloads of
-// the sign-in flow and resets with the tab (docs/specs/006-mock-mode.md).
+// the sign-in flow and resets with the tab.
 
 const STORAGE_KEY = 'pupitre.mock.db';
 
@@ -125,7 +125,7 @@ const LINUX_LESSONS = [
 /**
  * alice has finished linux-intro and started two courses and a path, so every
  * screen has content. admin and the trap account hold badges too: the
- * leaderboard then shows the trap account's payloads (spec 003).
+ * leaderboard then shows the trap account's payloads.
  */
 function seed(): MockDb {
   const xp = (source: string, sourceSlug: string, amount: number, days: number): XpEvent => ({

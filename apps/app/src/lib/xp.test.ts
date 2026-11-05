@@ -11,7 +11,7 @@ describe('xp levels', () => {
     expect(levelOf(3500).name).toBe('Maître');
   });
 
-  it('shows 850 XP to Expert at 650 XP (spec 020)', () => {
+  it('shows 850 XP to Expert at 650 XP', () => {
     const progress = xpProgress(650, 3);
     expect(progress.next?.level).toBe(4);
     expect(progress.next?.name).toBe('Expert');

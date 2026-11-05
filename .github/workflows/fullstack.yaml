@@ -1,8 +1,7 @@
 name: Full stack
 
 # The Playwright suite against the real backend: both apps, pupitre-api,
-# PostgreSQL and Keycloak from apps/api/compose.yaml
-# (docs/specs/108-backend-operations-and-testing.md).
+# PostgreSQL and Keycloak from apps/api/compose.yaml.
 
 on:
   push:

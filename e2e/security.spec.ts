@@ -2,8 +2,8 @@ import { expect, test } from '@playwright/test';
 
 import { ACCOUNTS, forbidDialogs, signIn, TRAP_ID } from './helpers';
 
-// The trap account carries the XSS payloads of audit findings C2 and C4
-// (docs/specs/003-security.md): they must show as text and never run.
+// The trap account carries the XSS payloads of audit findings C2 and C4:
+// they must show as text and never run.
 
 test('the payloads of the trap account never run', async ({ page }) => {
   forbidDialogs(page);

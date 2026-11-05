@@ -1,7 +1,7 @@
 //go:build integration
 
 // roles_integration_test.go covers the manager role in group mappings
-// (docs/specs/190-backend-defects.md B20) against a live PostgreSQL
+// against a live PostgreSQL
 // instance. Behind the `integration` build tag; run with TEST_DATABASE_URL
 // set.
 

@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 
 import { ACCOUNTS, inDays, signIn, signOut } from './helpers';
 
-// In-person sessions (docs/specs/022-agenda-and-sessions.md).
+// In-person sessions.
 
 test('an admin schedules a session; a learner books it; once full it refuses more', async ({ page }) => {
   await signIn(page, ACCOUNTS.admin, '/agenda');

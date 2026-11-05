@@ -12,8 +12,8 @@ import (
 	"github.com/genesary/pupitre/apps/api/internal/users/models"
 )
 
-// TestLogin_DoesNotRevealAccounts is the regression test of defect B14
-// (docs/specs/190-backend-defects.md): an unknown email and an SSO account
+// TestLogin_DoesNotRevealAccounts is a regression test:
+// an unknown email and an SSO account
 // get the same answer as a wrong password.
 func TestLogin_DoesNotRevealAccounts(t *testing.T) {
 	t.Parallel()

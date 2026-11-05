@@ -38,11 +38,8 @@ func emptyCourseProgress() *courseProgress {
 	}
 }
 
-// UserProgress is what the courses domain needs from the users domain:
-// a learner's enrollments and progress, read and written. In the monolith
-// it is a set of function calls into the users domain; the HTTP
-// implementation below serves the standalone course-service binary until
-// it is removed (docs/specs/104-backend-in-process-calls.md).
+// UserProgress is what the courses domain needs from the users domain, as
+// function calls: a learner's enrollments and progress, read and written.
 type UserProgress interface {
 	// CourseOverview returns a learner's full progress in one course.
 	CourseOverview(ctx context.Context, userID, courseSlug string) (ProgressOverview, error)
@@ -63,7 +60,7 @@ type UserProgress interface {
 	// RecordModule records a quiz or lab result and its XP.
 	RecordModule(ctx context.Context, result ModuleResult) error
 	// LabIdentity returns the login the identity provider gave the user,
-	// or "" (docs/specs/190-backend-defects.md B11).
+	// or "".
 	LabIdentity(ctx context.Context, userID string) (string, error)
 }
 

@@ -83,7 +83,7 @@ func TestSeedDevCourses_DisabledByDefault(t *testing.T) {
 
 // TestDevCoursesPrerequisites checks that every module prerequisite of the
 // demo catalogue names a module of its course. A wrong slug locks the module
-// for good: python-basics' quiz did (docs/specs/190-backend-defects.md B23).
+// for good: python-basics' quiz did.
 func TestDevCoursesPrerequisites(t *testing.T) {
 	t.Parallel()
 

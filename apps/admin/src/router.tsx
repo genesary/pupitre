@@ -21,7 +21,7 @@ import { ManagerLayout } from '@/routes/manager/ManagerLayout';
 import { ManagerPaths } from '@/routes/manager/ManagerPaths';
 import { ManagerUsers } from '@/routes/manager/ManagerUsers';
 
-// Route table of the admin app (docs/specs/002-roles-and-guards.md): /admin/*
+// Route table of the admin app: /admin/*
 // and /manager/*. Every other path belongs to the learner app: links to it are
 // page loads (SiteLink in @pupitre/core).
 

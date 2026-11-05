@@ -11,7 +11,7 @@ import {
   type CategoryColor,
 } from '@pupitre/core/lib/course-meta';
 
-// A course card of the catalogue grid (docs/specs/010-catalogue.md).
+// A course card of the catalogue grid.
 
 type CourseCardProps = {
   course: Course;
@@ -19,7 +19,7 @@ type CourseCardProps = {
   enrolled: boolean;
   /** Position in the grid: staggers the entrance animation (index.css, .cat-grid). */
   index: number;
-  /** The card the guided tour points at (docs/specs/007-guided-tour.md). */
+  /** The card the guided tour points at. */
   tour?: boolean;
 };
 

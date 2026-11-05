@@ -1,6 +1,6 @@
 // Runs the Go commands of apps/api from the repository root, so the frontend
-// scripts and the backend ones live side by side in package.json
-// (docs/specs/108-backend-operations-and-testing.md). apps/api has no
+// scripts and the backend ones live side by side in package.json.
+// apps/api has no
 // package.json: a frontend contributor needs no Go toolchain.
 //
 //   node scripts/api.mjs dev | test | lint | build | up | down

@@ -28,8 +28,7 @@ COPY --from=builder /out/pupitre-api /app/pupitre-api
 
 # No ENV config defaults here: env vars override the mounted ConfigMap file
 # (precedence: code defaults → CONFIG_PATH file → env). Defaults live in
-# internal/platform/config and each domain's config package
-# (docs/specs/101-backend-configuration.md).
+# internal/platform/config and each domain's config package.
 #
 # Writable paths are mounted by the deployment: /tmp (git cache) and the
 # uploads directory (UPLOADS_DIR).

@@ -147,8 +147,8 @@ var breakingMigrations = []breakingMigration{
 	{
 		// group_role_mappings.platformrole accepted admin and student only,
 		// while the API and the admin page offered manager too: saving such a
-		// mapping failed with "Database error" (docs/specs/190-backend-defects.md
-		// B20). AutoMigrate does not change an existing check constraint, so
+		// mapping failed with "Database error". AutoMigrate does not change an
+		// existing check constraint, so
 		// drop it here; AutoMigrate then creates it again from the model,
 		// which lists the three roles.
 		Name: "20261026_group_role_mappings_allow_manager",

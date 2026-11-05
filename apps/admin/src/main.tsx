@@ -50,7 +50,7 @@ async function start() {
     window.location.assign(reason === 'logout' ? '/login' : loginPath(window.location));
   });
 
-  // Refresh role, avatar and username of the shared session (spec 001).
+  // Refresh role, avatar and username of the shared session.
   if (getSession()) {
     getMe().then(updateUser).catch(() => {});
   }

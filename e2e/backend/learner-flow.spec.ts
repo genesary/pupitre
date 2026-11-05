@@ -3,8 +3,8 @@ import { expect, test } from '@playwright/test';
 import { ACCOUNTS, adminCall, signIn } from './helpers';
 
 // A learner takes a whole course against the real API: the courses domain
-// records progress, XP and the badge in the users domain, in-process
-// (docs/specs/104-backend-in-process-calls.md). The database outlives a run:
+// records progress, XP and the badge in the users domain, in-process.
+// The database outlives a run:
 // a course already taken by a previous run is simply taken again.
 
 const COURSE = 'linux-intro';

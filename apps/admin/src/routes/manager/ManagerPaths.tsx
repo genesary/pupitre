@@ -6,7 +6,7 @@ import { listPaths, managerEnrollPath, managerPathEnrollments, managerUnenrollPa
 import type { PathEnrolledUser } from '@pupitre/core/lib/api-types';
 import { ConfirmDialog } from '@pupitre/core/components/ConfirmDialog';
 
-// /manager/paths (docs/specs/030-manager-space.md), markup of pupitre's manager/paths/index.astro.
+// /manager/paths, markup of pupitre's manager/paths/index.astro.
 
 const STATUS_CLASSES: Record<string, string> = {
   completed: 'course-tag-completed',

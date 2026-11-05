@@ -13,7 +13,7 @@ import { CooldownBanner, InlineText, QuestionOptions } from '@/components/quiz/Q
 import { QuizReview } from '@/components/quiz/QuizResultPanel';
 import { isAnswered, useQuiz } from '@/lib/use-quiz';
 
-// /courses/:slug/quiz/:index (docs/specs/013-quizzes.md), markup of pupitre's
+// /courses/:slug/quiz/:index, markup of pupitre's
 // pages/courses/[slug]/quiz/[index].astro.
 
 function QuizScreen({ slug, courseTitle, quiz, modules }: { slug: string; courseTitle: string; quiz: ModuleDetail; modules: ModuleSummary[] }) {

@@ -1,6 +1,6 @@
 import { courseDefinition, updateCourse, type CourseSpec, type ModuleSpec } from '@pupitre/core/lib/api';
 
-// Editing a course definition (docs/specs/042-admin-courses.md). The server
+// Editing a course definition. The server
 // replaces the definition whole, so every change reads it again, checks that
 // nobody changed it since the editor opened it, and sends it back whole.
 

@@ -2,7 +2,7 @@ import { useId, useLayoutEffect, useRef, useState, type KeyboardEvent, type Reac
 
 import { SPOTLIGHT_MARGIN } from './TourSpotlight';
 
-// The bird of the logo and its speech bubble (docs/specs/007-guided-tour.md, "Display").
+// The bird of the logo and its speech bubble.
 // The bubble goes below the target, above it when there is no room, and is
 // docked at the bottom of narrow screens. Moving it is the bird's flight.
 

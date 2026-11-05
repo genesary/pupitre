@@ -6,7 +6,7 @@ import { bookSession, cancelBooking } from '@pupitre/core/lib/api';
 import type { CourseSession } from '@pupitre/core/lib/api-types';
 import { useSession } from '@pupitre/core/lib/session';
 
-// An in-person session of a course, with its booking button (docs/specs/011-course-page-and-enrollment.md).
+// An in-person session of a course, with its booking button.
 
 export function SessionCard({ slug, session, booked }: { slug: string; session: CourseSession; booked: boolean }) {
   const signedIn = Boolean(useSession());

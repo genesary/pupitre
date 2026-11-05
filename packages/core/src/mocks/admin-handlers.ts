@@ -10,7 +10,7 @@ import { apiError, currentAccount } from './http';
 import { pathMembers } from './space-handlers';
 import type { CourseDefinition, ModuleDefinition, PathDefinition } from './model';
 
-// Routes of the administration (batch 4, docs/specs/040-047), mirroring
+// Routes of the administration mirroring
 // user-service admin.go, groups.go, settings.go, patterns.go, paths.go and
 // course-service admin_definition.go, paths_admin.go, courses_import.go,
 // lab_results.go, state.go (cache). Admin role required everywhere.

@@ -5,7 +5,7 @@ import { toast } from 'sonner';
 import { exportCategories, exportDownload, exportPreview, type ExportSource } from '@pupitre/core/lib/api';
 import type { ExportCategory, ExportRequest } from '@pupitre/core/lib/api-types';
 
-// /admin/exports (docs/specs/047-admin-exports-and-labs.md), markup of pupitre's
+// /admin/exports, markup of pupitre's
 // admin/exports/index.astro. Two sources: user-service and the lab checks of
 // course-service; each category remembers its own. Preview cells are text.
 

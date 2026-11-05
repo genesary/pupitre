@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { renderLab } from '@/lib/render-lab';
 
-describe('renderLab (spec 014)', () => {
+describe('renderLab', () => {
   const md = '## Lab\n\n### Étape 1\n\nFaire A.\n\n<!-- check:0 -->\n\n### Étape 2\n\n<!-- check:1 -->\n\nFin.';
 
   it('places each step at its marker', () => {

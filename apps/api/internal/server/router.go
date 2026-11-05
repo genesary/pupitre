@@ -1,6 +1,5 @@
 // Package server assembles the monolith: one database, the users, courses
-// and checker domains wired to each other in-process, and one HTTP router
-// (docs/specs/100-backend-scope-and-architecture.md).
+// and checker domains wired to each other in-process, and one HTTP router.
 package server
 
 import (
@@ -33,12 +32,12 @@ type Domains struct {
 
 // BuildRouter builds the single router of the monolith. Every route keeps
 // the guard and body limit it had in its service; the domains' internal
-// routes are not mounted (docs/specs/103-backend-http-api.md).
+// routes are not mounted.
 func BuildRouter(domains Domains, cfg *config.Config, withLogger bool) *chi.Mux {
 	router := chi.NewRouter()
 	router.Use(chiMiddleware.RequestID)
 	// The client address, from the forwarding headers of trusted proxies
-	// only (docs/specs/190-backend-defects.md B12).
+	// only.
 	router.Use(clientip.Middleware(cfg.TrustedProxies))
 
 	if withLogger {

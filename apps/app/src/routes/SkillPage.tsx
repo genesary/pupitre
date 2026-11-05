@@ -5,7 +5,7 @@ import { listCourses, myCourses, mySkillModules } from '@pupitre/core/lib/api';
 import type { Course } from '@pupitre/core/lib/api-types';
 import { LoadError, LoadingState } from '@pupitre/core/components/PageStates';
 
-// /skills/:slug (docs/specs/020-learner-space.md), markup of pupitre's skills/[slug].astro.
+// /skills/:slug, markup of pupitre's skills/[slug].astro.
 
 const DIFFICULTIES: Record<string, { label: string; className: string }> = {
   beginner: { label: 'Débutant', className: 'diff-beginner' },

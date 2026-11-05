@@ -1,6 +1,5 @@
 // XP levels of user-service/internal/handlers/xp.go, duplicated as the Astro
-// my-xp.astro page did: they must stay identical to the backend (defect A11,
-// docs/specs/020-learner-space.md).
+// my-xp.astro page did: they must stay identical to the backend.
 
 export type XpLevel = { level: number; name: string; icon: string; threshold: number };
 

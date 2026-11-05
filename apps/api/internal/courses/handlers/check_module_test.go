@@ -218,8 +218,8 @@ func TestCheckModule_NoGitContent(t *testing.T) {
 	}
 }
 
-// TestCheckModule_NoIdentityProviderLogin is the regression test for defect
-// B11: without a login from the identity provider, a lab check is refused
+// TestCheckModule_NoIdentityProviderLogin is a regression test:
+// without a login from the identity provider, a lab check is refused
 // rather than run against the editable profile username.
 func TestCheckModule_NoIdentityProviderLogin(t *testing.T) {
 	t.Parallel()

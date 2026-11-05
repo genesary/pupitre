@@ -20,7 +20,7 @@ export default tseslint.config(
     rules: {
       ...reactHooks.configs.recommended.rules,
       'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
-      // docs/specs/003-security.md S1: no raw HTML outside <SafeHtml>.
+      // No raw HTML outside <SafeHtml>.
       'no-restricted-syntax': [
         'error',
         {

@@ -1,8 +1,8 @@
 import { ApiError } from '@pupitre/core/lib/api-client';
 
-// The message shown when a lab check fails (docs/specs/014-labs.md). Over
-// the lab check limit, the API answers 429 "Too many lab checks, retry in N s"
-// (docs/specs/190-backend-defects.md B9): the learner reads it in French.
+// The message shown when a lab check fails. Over
+// the lab check limit, the API answers 429 "Too many lab checks, retry in N s":
+// the learner reads it in French.
 
 const RETRY_IN = /retry in (\d+) s/;
 

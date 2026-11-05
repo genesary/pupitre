@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 
 import { ACCOUNTS, signIn } from './helpers';
 
-// Sign-in, guards and sign-out (docs/specs/001-keycloak-authentication.md, 002-roles-and-guards.md).
+// Sign-in, guards and sign-out.
 
 test('a visitor is sent to the sign-in page, then back where they were going', async ({ page }) => {
   await page.goto('/my-courses');

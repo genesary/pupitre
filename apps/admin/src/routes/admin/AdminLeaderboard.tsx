@@ -3,8 +3,8 @@ import { useQuery } from '@tanstack/react-query';
 import { adminLeaderboard } from '@pupitre/core/lib/api';
 import { ScoreLeaderboardRows } from '@/components/admin/ScoreLeaderboard';
 
-// /admin/leaderboard (docs/specs/040-admin-dashboard.md), markup of pupitre's
-// admin/leaderboard/index.astro, without its « Recalculer » button (defect A23).
+// /admin/leaderboard, markup of pupitre's
+// admin/leaderboard/index.astro, without its « Recalculer » button.
 
 export function AdminLeaderboard() {
   const board = useQuery({ queryKey: ['admin', 'leaderboard'], queryFn: adminLeaderboard });

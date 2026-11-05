@@ -1,5 +1,5 @@
-// A tiny stand-in for the GitLab REST API read by the lab step checks
-// (docs/specs/107-backend-labs-and-checker.md). Tests describe a learner's
+// A tiny stand-in for the GitLab REST API read by the lab step checks.
+// Tests describe a learner's
 // project with POST /__fake/projects; pupitre-api then reads it through
 // /api/v4/… like a real GitLab (GITLAB_BASE_URL).
 //

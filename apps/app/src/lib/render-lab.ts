@@ -1,7 +1,7 @@
 import { renderMarkdown, type PatternMap, type TocEntry } from '@pupitre/core/lib/markdown';
 
 // Lab markdown: `<!-- check:N -->` markers split it into sanitised segments,
-// between which the step blocks are mounted (docs/specs/014-labs.md).
+// between which the step blocks are mounted.
 
 const MARKER = /<!--\s*check:(\d+)\s*-->/g;
 

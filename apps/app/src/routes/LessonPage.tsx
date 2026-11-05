@@ -18,7 +18,7 @@ import { usePatternStyles } from '@pupitre/core/lib/use-pattern-styles';
 import { LabContent } from '@/components/lab/LabContent';
 import { LessonTip } from '@/components/tour/LessonTip';
 
-// /courses/:slug/lessons/:index (docs/specs/012-lesson-player.md), markup of
+// /courses/:slug/lessons/:index, markup of
 // pupitre's pages/courses/[slug]/lessons/[index].astro.
 
 const MODE_KEY = 'pupitre.readingMode';

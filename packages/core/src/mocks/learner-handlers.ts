@@ -23,7 +23,7 @@ import { MOCK_PATTERNS } from './fixtures/patterns';
 import { apiError, currentAccount } from './http';
 import type { CourseDefinition } from './model';
 
-// Routes of the learner flow (batch 1), mirroring course-service and
+// Routes of the learner flow, mirroring course-service and
 // user-service. Every write is saved to the mock state.
 
 /** modules.go — ensureModuleAccess: auto-enrolment in public courses, prerequisites. */

@@ -1,5 +1,4 @@
-// The layer under the bird's bubble (docs/specs/007-guided-tour.md,
-// "Highlight"): it dims the page, cuts a hole around the target and swallows
+// The layer under the bird's bubble: it dims the page, cuts a hole around the target and swallows
 // clicks, so the page and the tour stay in step.
 
 const MARGIN = 8;

@@ -1,6 +1,6 @@
 //go:build integration
 
-// schema_integration_test.go checks the data invariant of spec 102 against
+// schema_integration_test.go checks the data invariant against
 // a live PostgreSQL instance (TEST_DATABASE_URL): the monolith's migrations
 // produce the same schema as the two services did, and running them on a
 // database the services already migrated changes nothing.
@@ -151,8 +151,8 @@ func TestMigrate_SameSchemaAsTheServices(t *testing.T) {
 		t.Fatalf("read _schema_migrations: %v", err)
 	}
 
-	// The user-service migration, then the one of the fixes
-	// (docs/specs/190-backend-defects.md B20), each once.
+	// The user-service migration, then the one of the fixes,
+	// each once.
 	wantApplied := []string{"20260829_dedupe_user_xp_events", "20261026_group_role_mappings_allow_manager"}
 	if !slices.Equal(applied, wantApplied) {
 		t.Fatalf("_schema_migrations = %v, want %v", applied, wantApplied)

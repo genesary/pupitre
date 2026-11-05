@@ -21,15 +21,15 @@ func (limitedChecker) CheckStep(context.Context, StepCheckRequest) (CheckRespons
 }
 
 // TestCallCheckerRoute_RateLimited checks that a learner over the lab check
-// limit gets 429 with Retry-After (docs/specs/190-backend-defects.md B9).
-func TestCallCheckerRoute_RateLimited(t *testing.T) {
+// limit gets 429 with Retry-After.
+func TestCallChecker_RateLimited(t *testing.T) {
 	t.Parallel()
 
 	s := &State{Checker: limitedChecker{}}
 	rec := httptest.NewRecorder()
 	req := httptest.NewRequestWithContext(t.Context(), http.MethodPost, "/", http.NoBody)
 
-	_, ok := s.callCheckerRoute(rec, req, "/evaluate", EvaluateRequest{Username: "alice"})
+	_, ok := s.callChecker(rec, req, EvaluateRequest{Username: "alice"})
 	if ok {
 		t.Fatal("a refused check was reported as done")
 	}

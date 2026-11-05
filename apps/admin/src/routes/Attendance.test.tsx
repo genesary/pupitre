@@ -35,7 +35,7 @@ function renderAs(role: 'admin' | 'manager') {
   );
 }
 
-describe('attendance (spec 022)', () => {
+describe('attendance', () => {
   afterEach(() => {
     endSession('logout');
     vi.clearAllMocks();

@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-/** Pattern CSS lives in one <style> element per page (spec 003 S2). */
+/** Pattern CSS lives in one <style> element per page. */
 export function usePatternStyles(css: string) {
   useEffect(() => {
     const style = document.createElement('style');

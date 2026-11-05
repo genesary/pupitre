@@ -142,8 +142,8 @@ func TestBatchRoutes_RejectTooManySlugs(t *testing.T) {
 	}
 }
 
-// TestBatchCourses_PublicRouteHidesPrivateCourses is the regression test for
-// defect B10: the public batch route listed private courses, while the
+// TestBatchCourses_PublicRouteHidesPrivateCourses is a regression test:
+// the public batch route listed private courses, while the
 // in-process lookup of the users domain must still see them.
 func TestBatchCourses_PublicRouteHidesPrivateCourses(t *testing.T) {
 	t.Parallel()

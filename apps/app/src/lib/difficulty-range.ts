@@ -1,8 +1,7 @@
 import type { Course } from '@pupitre/core/lib/api-types';
 import { DIFFICULTY_LABELS, LEVEL_ORDER } from '@pupitre/core/lib/course-meta';
 
-// The difficulty range slider of the catalogue (docs/specs/010-catalogue.md,
-// "Difficulty"): levels 1 to 3, in LEVEL_ORDER.
+// The difficulty range slider of the catalogue: levels 1 to 3, in LEVEL_ORDER.
 
 export const LEVELS = ['beginner', 'intermediate', 'advanced'] as const;
 

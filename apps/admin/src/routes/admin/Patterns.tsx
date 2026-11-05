@@ -10,9 +10,9 @@ import { ConfirmDialog } from '@pupitre/core/components/ConfirmDialog';
 import { MarkdownContent } from '@pupitre/core/components/MarkdownContent';
 import { DefinitionModal } from '@/components/admin/DefinitionModal';
 
-// /admin/patterns (docs/specs/045-admin-patterns.md), markup of pupitre's
+// /admin/patterns, markup of pupitre's
 // admin/patterns/index.astro. The preview uses the lesson pipeline (sanitized
-// HTML, one <style> element); the JS field is stored but never run (defect A13).
+// HTML, one <style> element); the JS field is stored but never run.
 
 const EMPTY: PatternInput = {
   name: '',

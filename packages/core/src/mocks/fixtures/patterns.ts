@@ -1,8 +1,8 @@
 import type { MarkdownPattern } from '../../lib/api-types';
 
-// Two markdown patterns for the mock mode: an inline one and a block one
-// (docs/specs/045-admin-patterns.md). The `js` field is filled on purpose: it
-// must never run (spec 003 S2).
+// Two markdown patterns for the mock mode: an inline one and a block one.
+// The `js` field is filled on purpose: it
+// must never run.
 
 const createdAt = '2026-09-01T09:00:00Z';
 

@@ -11,7 +11,7 @@ vi.mock('@pupitre/core/lib/api', () => ({ createSession: vi.fn(), updateSession:
 
 const course = { slug: 'atelier', title: 'Atelier Kubernetes', inPerson: true } as Course;
 
-describe('session dialog (spec 022)', () => {
+describe('session dialog', () => {
   it('shows a missing location below its field and sends nothing', async () => {
     const user = userEvent.setup();
     render(

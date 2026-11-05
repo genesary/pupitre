@@ -1,6 +1,6 @@
 import { readItem, removeItem, writeItem } from '@pupitre/ui/lib/storage';
 
-// Values kept across the round trip to Keycloak (docs/specs/001). The state is
+// Values kept across the round trip to Keycloak. The state is
 // compared on return to refuse a callback this browser did not start (login CSRF,
 // audit finding M3).
 

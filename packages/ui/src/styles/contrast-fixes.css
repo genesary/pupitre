@@ -1,5 +1,5 @@
 /*
- * Contrast fixes the pupitre CSS needs (docs/specs/090-gaps-and-defects.md, A26 and A27). Kept
+ * Contrast fixes the pupitre CSS needs. Kept
  * apart from the copies in ./pupitre, which stay unchanged. The values are pupitre's tokens, plus
  * the dark-mode colours below, which tokens.css does not have. Unlayered, so they win over the
  * layered rules.
@@ -18,7 +18,7 @@
 }
 
 /*
- * A27, both modes: a locked module stays readable. pupitre dims the whole row to 50 % (55 % in
+ * Both modes: a locked module stays readable. pupitre dims the whole row to 50 % (55 % in
  * the lesson sidebar), which leaves its name and badges at about 2:1. The lock icon, the
  * « Verrouillé » badge and a dashed border now say it is locked; only the icon is faded.
  */
@@ -48,12 +48,12 @@
 }
 
 /*
- * A26, dark mode: the elements the pupitre CSS leaves light. Their light background stays while
+ * Dark mode: the elements the pupitre CSS leaves light. Their light background stays while
  * the text switches to the light dark-mode ink, so the text disappears.
  */
 
 /* Every card is solid, like the module rows of the course page: a plain --color-paper
-   background, without transparency or backdrop blur (a decided change of spec 005). Only the
+   background, without transparency or backdrop blur. Only the
    background colour changes, so coloured borders, gradients and the variants below keep theirs. */
 :root.dark
   :is(

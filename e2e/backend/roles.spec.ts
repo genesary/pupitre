@@ -3,7 +3,7 @@ import { expect, test } from '@playwright/test';
 import { ACCOUNTS, expectLoaded, signIn } from './helpers';
 
 // Each role signs in through Keycloak and reaches its pages, served by the
-// real API (docs/specs/001, 002, 030, 040-047).
+// real API.
 
 test('a learner signs in and reaches the learner space', async ({ page }) => {
   await signIn(page, ACCOUNTS.learner, '/courses');

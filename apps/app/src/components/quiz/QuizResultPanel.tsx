@@ -2,9 +2,9 @@ import type { QuestionResult, QuizQuestion } from '@pupitre/core/lib/api-types';
 
 import { InlineText } from '@/components/quiz/QuizForm';
 
-// The « Correction » of a submitted quiz (docs/specs/013-quizzes.md).
+// The « Correction » of a submitted quiz.
 
-/** « Correction ». The API sends no correct answer (docs/specs/190-backend-defects.md B17). */
+/** « Correction ». The API sends no correct answer. */
 export function QuizReview({ questions, results }: { questions: QuizQuestion[]; results: QuestionResult[] }) {
   return (
     <>

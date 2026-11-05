@@ -14,7 +14,7 @@ import (
 	"github.com/genesary/pupitre/apps/api/internal/users/repository"
 )
 
-// Sessions that can be revoked (docs/specs/190-backend-defects.md B7). A
+// Sessions that can be revoked. A
 // token stays a signed JWT, but each request also checks the user's row: the
 // user must still exist and be active, and the token must have been issued
 // after the user's last revocation. The role comes from the row too, so a
@@ -38,8 +38,8 @@ func (s *State) CheckSession(ctx context.Context, subject string, issuedAt time.
 		return middleware.Session{}, fmt.Errorf("check session: %w", err)
 	}
 
-	// JWT times have a one-second resolution: a token issued in the second
-	// of the revocation is revoked too.
+	// Tokens carry their issue time to the microsecond, as the revocation
+	// date is stored: only a token issued after the revocation survives it.
 	revoked := state.SessionsValidAfter != nil && !issuedAt.After(*state.SessionsValidAfter)
 
 	return middleware.Session{Valid: state.IsActive && !revoked, Role: state.Role}, nil
@@ -47,7 +47,7 @@ func (s *State) CheckSession(ctx context.Context, subject string, issuedAt time.
 
 // revokeSessions ends every session of the user issued until now.
 func (s *State) revokeSessions(ctx context.Context, userID uuid.UUID) error {
-	err := s.Repos.Users.RevokeSessions(ctx, userID, time.Now().Truncate(time.Second))
+	err := s.Repos.Users.RevokeSessions(ctx, userID, time.Now().Truncate(time.Microsecond))
 	if err != nil {
 		return fmt.Errorf("revoke sessions of %s: %w", userID, err)
 	}

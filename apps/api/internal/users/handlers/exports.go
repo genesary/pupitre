@@ -107,8 +107,8 @@ func (s *State) ExportPreview(writer http.ResponseWriter, req *http.Request) {
 }
 
 // exportScope is what the caller may export: everything for an admin, the
-// members of their groups for a manager (docs/specs/190-backend-defects.md
-// B6). It writes the error response and returns ok=false on failure.
+// members of their groups for a manager. It writes the error response and
+// returns ok=false on failure.
 func (s *State) exportScope(writer http.ResponseWriter, req *http.Request) (repository.ExportScope, bool) {
 	claims := s.claims(req)
 	if claims.Role != groupsRoleManager {

@@ -1,5 +1,4 @@
-// French strings of the guided tour and the first lesson tip
-// (docs/specs/007-guided-tour.md).
+// French strings of the guided tour and the first lesson tip.
 
 export const TOUR_MESSAGES = {
   welcomeTitle: (username: string) => `Bonjour ${username} !`,

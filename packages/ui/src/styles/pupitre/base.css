@@ -1,5 +1,5 @@
 /* Ported unchanged from genesary/pupitre frontend/src/styles/base.css (commit 3cdf7b2):
-   the pupitre design is kept as is (docs/specs/005-ui-theme-navigation.md). */
+   the pupitre design is kept as is. */
 /* ── Base resets ────────────────────────────────────────────────────── */
 @layer base {
   *,

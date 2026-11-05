@@ -560,3 +560,50 @@ func TestVerifyToken_MissingIssuerAudience(t *testing.T) {
 		t.Error("expected error for token without iss/aud claims")
 	}
 }
+
+// testIssueTimeSecret signs the tokens of TestResolveSession_IssueTime.
+const testIssueTimeSecret = "a-test-signing-secret-of-enough-length-0123"
+
+// TestResolveSession_IssueTime hands the session check the microsecond issue
+// time of a token, and the whole-second iat of one issued before iat_us.
+func TestResolveSession_IssueTime(t *testing.T) {
+	t.Parallel()
+
+	token, err := CreateToken("user-1", "a@b.com", "student", "alice", testIssueTimeSecret, 1)
+	if err != nil {
+		t.Fatalf("create token: %v", err)
+	}
+
+	claims, err := VerifyToken(token, testIssueTimeSecret)
+	if err != nil {
+		t.Fatalf("verify token: %v", err)
+	}
+
+	var got time.Time
+
+	check := func(_ context.Context, _ string, issuedAt time.Time) (Session, error) {
+		got = issuedAt
+
+		return Session{Valid: true, Role: "student"}, nil
+	}
+
+	_, err = ResolveSession(t.Context(), claims, check)
+	if err != nil {
+		t.Fatalf("resolve: %v", err)
+	}
+
+	if claims.IssuedAtMicro == 0 || got.UnixMicro() != claims.IssuedAtMicro {
+		t.Errorf("issued at %d, want the token's iat_us %d", got.UnixMicro(), claims.IssuedAtMicro)
+	}
+
+	claims.IssuedAtMicro = 0
+
+	_, err = ResolveSession(t.Context(), claims, check)
+	if err != nil {
+		t.Fatalf("resolve without iat_us: %v", err)
+	}
+
+	if !got.Equal(claims.IssuedAt.Time) {
+		t.Errorf("issued at %v, want iat %v", got, claims.IssuedAt.Time)
+	}
+}

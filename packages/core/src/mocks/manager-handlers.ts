@@ -8,7 +8,7 @@ import { bucket, db, save, type MockGroup } from './db';
 import { apiError, currentAccount } from './http';
 import { groupDepth, pathMembers } from './space-handlers';
 
-// Routes of batch 3 (docs/specs/030, 022 attendance, 047 exports), mirroring
+// Routes of the manager space, mirroring
 // user-service manager.go, paths.go, sessions.go, exports.go and the lab-check
 // exports of course-service. The scope of a manager is the members of the
 // groups they belong to, « everyone » excepted (manager.go — managerScopeIDs).
@@ -230,7 +230,7 @@ function exportHandlers(base: string, defs: ExportDef[], roles: string[]) {
       const result = await resolve(request);
       if ('error' in result) return result.error;
       const cell = (value: string) => (/[;"\n]/.test(value) ? `"${value.replace(/"/g, '""')}"` : value);
-      // A value that starts like a formula is exported as text (platform/csvsafe, defect B8).
+      // A value that starts like a formula is exported as text (platform/csvsafe).
       const safe = (value: string) => (/^[=+\-@\t\r]/.test(value) ? `'${value}` : value);
       const lines = [
         result.fields.map((f) => cell(result.def.fields.find((d) => d.id === f)?.label ?? f)).join(';'),
@@ -284,7 +284,7 @@ export const managerHandlers = [
     return HttpResponse.json({ enrollments });
   }),
 
-  // PathEnrollmentRow has no json tags: the keys are « Slug » and « EnrolledAt » (defect A22).
+  // PathEnrollmentRow has no json tags: the keys are « Slug » and « EnrolledAt ».
   http.get('/api/manager/users/:userId/path-enrollments', ({ request, params }) => {
     const guard = requireRole(request, ['manager']);
     if ('error' in guard) return guard.error;
@@ -338,7 +338,7 @@ export const managerHandlers = [
     return HttpResponse.json({ id, message: 'Group created' }, { status: 201 });
   }),
 
-  // The manager joins the subgroup, so it stays in their scope (docs/specs/190-backend-defects.md B1).
+  // The manager joins the subgroup, so it stays in their scope.
   http.post('/api/manager/groups/:groupId/subgroups', async ({ request, params }) => {
     const guard = requireRole(request, ['manager']);
     if ('error' in guard) return guard.error;

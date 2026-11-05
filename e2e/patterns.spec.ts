@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 
 import { ACCOUNTS, createCourse, signIn } from './helpers';
 
-// Markdown patterns: live preview, then rendering in a lesson (docs/specs/045, 012).
+// Markdown patterns: live preview, then rendering in a lesson.
 
 test('an admin creates a pattern with a live preview; a lesson renders it with its CSS', async ({ page }) => {
   await signIn(page, ACCOUNTS.admin, '/admin/patterns');

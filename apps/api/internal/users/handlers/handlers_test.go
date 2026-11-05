@@ -173,27 +173,6 @@ func htMapField(t *testing.T, v any) map[string]any {
 	return m
 }
 
-// ── Health ────────────────────────────────────────────────────────────────────
-
-// TestHealth verifies health behavior.
-func TestHealth(t *testing.T) {
-	t.Parallel()
-
-	r := newTestRouter()
-
-	rec := htDo(t, r, "GET", "/health", "", "")
-	if rec.Code != http.StatusOK {
-		t.Errorf("Health: want 200, got %d", rec.Code)
-	}
-
-	var resp map[string]string
-	json.NewDecoder(rec.Body).Decode(&resp)
-
-	if resp["status"] != "ok" {
-		t.Errorf("expected status=ok, got %q", resp["status"])
-	}
-}
-
 // ── PublicSettings ────────────────────────────────────────────────────────────
 
 // TestPublicSettings verifies public settings behavior.

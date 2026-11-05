@@ -22,7 +22,7 @@ import { ConfirmDialog } from '@pupitre/core/components/ConfirmDialog';
 import { DefinitionModal } from '@/components/admin/DefinitionModal';
 import { SortableList } from '@/components/admin/SortableList';
 
-// /admin/paths (docs/specs/043-admin-paths.md), markup of pupitre's
+// /admin/paths, markup of pupitre's
 // admin/paths/index.astro. Definitions are read through the admin route only.
 
 const LEVELS: Record<string, { label: string; badge: string }> = {

@@ -59,7 +59,7 @@ async function start() {
     void router.navigate(loginPath(window.location));
   });
 
-  // Refresh role, avatar and username of a restored session (spec 001). A 401
+  // Refresh role, avatar and username of a restored session. A 401
   // ends the session through the client's handler.
   if (getSession()) {
     getMe().then(updateUser).catch(() => {});

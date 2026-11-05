@@ -15,7 +15,7 @@ type UserAvatarProps = {
 };
 
 /**
- * Renders an avatar from an untrusted `avatarUrl` (spec 003 S3): an https image,
+ * Renders an avatar from an untrusted `avatarUrl`: an https image,
  * a single emoji as text, or the username's initial. A value is never parsed as
  * HTML, which closes audit finding C4. Defaults to the top bar look.
  */

@@ -2,7 +2,7 @@ package handlers
 
 // The standalone user-service is gone: the monolith mounts RegisterRoutes
 // on its own router, and the courses domain calls the progress methods of
-// progress_service.go directly (docs/specs/104-backend-in-process-calls.md).
+// progress_service.go directly.
 //
 // This file keeps, for the tests only, what the standalone service had: its
 // router with the /internal/* routes, as thin HTTP shims over those methods,
@@ -50,7 +50,6 @@ func BuildRouter(state *State, cfg *config.Config, withLogger bool) *chi.Mux {
 	router.Use(chiMiddleware.RequestSize(maxRequestBodyBytes))
 	router.Use(corsHandler(cfg).Handler)
 
-	router.Get("/health", state.Health)
 	router.Get("/metrics", metrics.Handler())
 	RegisterRoutes(router, state, cfg)
 	registerInternalRoutes(router, state)

@@ -1,6 +1,5 @@
 // Package config loads the checker's configuration from env vars: the GitLab
-// instance it reads learners' projects from, and its rate limit
-// (docs/specs/101-backend-configuration.md).
+// instance it reads learners' projects from, and its rate limit.
 package config
 
 import (

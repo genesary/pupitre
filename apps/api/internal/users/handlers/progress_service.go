@@ -14,7 +14,7 @@ import (
 // The methods below are what the courses domain asks of this one: a
 // learner's enrollments and progress, read and written. The /internal/*
 // handlers of the standalone user-service decode a request and call them;
-// the monolith calls them directly (docs/specs/104-backend-in-process-calls.md).
+// the monolith calls them directly.
 
 // errMissingProgressKeys is returned when a progress read names no user or
 // no course.
@@ -173,8 +173,7 @@ func (s *State) MarkCourseComplete(ctx context.Context, body CourseCompletion) e
 
 // LabIdentity returns the login the identity provider gave the user, which
 // the courses domain uses to find the learner's GitLab project; "" when the
-// user never signed in through the identity provider
-// (docs/specs/190-backend-defects.md B11).
+// user never signed in through the identity provider.
 func (s *State) LabIdentity(ctx context.Context, userID string) (string, error) {
 	id, err := uuid.Parse(userID)
 	if err != nil {

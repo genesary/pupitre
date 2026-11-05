@@ -4,7 +4,7 @@ import { Link } from 'react-router';
 import { listCourses, myBadges } from '@pupitre/core/lib/api';
 import { LoadError, LoadingState } from '@pupitre/core/components/PageStates';
 
-// /my-badges (docs/specs/020-learner-space.md), markup of pupitre's my-badges.astro.
+// /my-badges, markup of pupitre's my-badges.astro.
 // The possible badges are those of the courses.
 
 const plural = (count: number, word: string) => `${word}${count !== 1 ? 's' : ''}`;

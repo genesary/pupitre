@@ -5,9 +5,9 @@ import { adminCourses, adminLeaderboard } from '@pupitre/core/lib/api';
 import { AdminStatCards } from '@/components/admin/AdminStatCards';
 import { ScoreLeaderboardRows } from '@/components/admin/ScoreLeaderboard';
 
-// /admin/monitoring (docs/specs/040-admin-dashboard.md), markup of pupitre's
+// /admin/monitoring, markup of pupitre's
 // admin/monitoring/index.astro. Its « Recalculer la progression » button is not
-// carried over: the route it calls marks one lesson for one user (defect A23).
+// carried over: the route it calls marks one lesson for one user.
 
 export function Monitoring() {
   const courses = useQuery({ queryKey: ['admin', 'courses'], queryFn: adminCourses });

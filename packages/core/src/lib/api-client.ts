@@ -1,6 +1,6 @@
 import type { ApiErrorBody } from './api-types';
 
-// The single HTTP client of docs/specs/004-api-and-routing.md. No page calls
+// The single HTTP client. No page calls
 // fetch() directly: everything goes through request() so that the token, the
 // error envelope and the 401 handling behave the same everywhere.
 

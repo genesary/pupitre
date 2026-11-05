@@ -8,9 +8,9 @@ import { useCurrentUser } from '@pupitre/core/lib/session';
 import { LoadError } from '@pupitre/core/components/PageStates';
 import { SiteLink } from '@pupitre/core/components/SiteLink';
 
-// /admin/courses/sessions/:slug/:sessionId (docs/specs/022-agenda-and-sessions.md),
+// /admin/courses/sessions/:slug/:sessionId,
 // markup of pupitre's admin/courses/sessions/[slug]/[sessionId].astro. An admin
-// reads /api/admin/…, a manager /api/manager/… (spec 002).
+// reads /api/admin/…, a manager /api/manager/….
 
 type Participants = { participants: SessionParticipant[] | null };
 

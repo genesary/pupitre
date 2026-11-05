@@ -25,13 +25,12 @@ type User struct {
 	UpdatedAt      time.Time  `gorm:"column:updatedat;not null;default:now()"`
 	LastLoginAt    *time.Time `gorm:"column:lastloginat"`
 	// SessionsValidAfter revokes every token issued before it: set on a
-	// password change, a role change, a deactivation and a sign-out
-	// (docs/specs/190-backend-defects.md B7). Nil revokes nothing.
+	// password change, a role change, a deactivation and a sign-out.
+	// Nil revokes nothing.
 	SessionsValidAfter *time.Time `gorm:"column:sessionsvalidafter"`
 	// IdentityName is the login the identity provider gave at the last
 	// sign-in (OIDC preferred_username). Unlike Username, the user cannot
-	// change it: lab checks find the learner's GitLab project with it
-	// (docs/specs/190-backend-defects.md B11).
+	// change it: lab checks find the learner's GitLab project with it.
 	IdentityName *string `gorm:"column:identityname;size:255"`
 }
 

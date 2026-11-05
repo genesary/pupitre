@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 
 import { ACCOUNTS, signIn } from './helpers';
 
-// Light and dark mode, and the phone navigation (docs/specs/005-ui-theme-navigation.md).
+// Light and dark mode, and the phone navigation.
 
 test('the theme toggle switches to dark mode, which survives a reload', async ({ page }) => {
   await page.goto('/courses');

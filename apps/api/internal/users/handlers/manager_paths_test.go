@@ -188,8 +188,7 @@ func TestManagerCreateSubgroup_OwnedParent(t *testing.T) {
 		t.Fatal("expected an id in the response")
 	}
 
-	// Regression test of defect B1 (docs/specs/190-backend-defects.md): the
-	// manager is a member of the new subgroup, so it stays in their scope.
+	// The manager is a member of the new subgroup, so it stays in their scope.
 	rec = htDo(t, r, http.MethodGet, "/api/manager/groups", "", htAuthHeaderForSubject(t, "manager", htManagerID))
 	if !strings.Contains(rec.Body.String(), resp["id"]) {
 		t.Errorf("the new subgroup is not in the manager's groups: %s", rec.Body.String())

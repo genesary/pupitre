@@ -1,4 +1,4 @@
-// Platform settings of docs/specs/046-admin-settings.md: sections, fields and
+// Platform settings: sections, fields and
 // the rules that keep a Keycloak-only platform safe.
 
 export const SECRET_MASK = '********';
@@ -144,7 +144,7 @@ export function toValues(rows: { key: string; value: string }[]): SettingValues 
 
 /**
  * The keys of a section that changed. A secret is sent only when a new value
- * was typed: sending the mask back would overwrite the real secret (defect A24).
+ * was typed: sending the mask back would overwrite the real secret.
  */
 export function changedValues(section: SettingSection, initial: SettingValues, edited: SettingValues): SettingValues {
   const out: SettingValues = {};
@@ -159,7 +159,7 @@ export function changedValues(section: SettingSection, initial: SettingValues, e
 
 export type SettingWarning = { key: string; message: string; fix: string };
 
-/** Settings that are dangerous for a Keycloak-only platform (finding H7). */
+/** Settings that are dangerous for a Keycloak-only platform. */
 export function settingWarnings(values: SettingValues): SettingWarning[] {
   const warnings: SettingWarning[] = [];
   if (values.registration_enabled !== 'false') {

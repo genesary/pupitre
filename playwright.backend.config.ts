@@ -1,6 +1,6 @@
 import { defineConfig, devices } from '@playwright/test';
 
-// End-to-end tests against the real backend (docs/specs/108-backend-operations-and-testing.md):
+// End-to-end tests against the real backend:
 // both apps on port 3000, pupitre-api on port 8080, PostgreSQL and Keycloak
 // from apps/api/compose.yaml (`pnpm api:up`). Sign-in goes through the real
 // Keycloak page of the test realm. The database outlives a run, so every test

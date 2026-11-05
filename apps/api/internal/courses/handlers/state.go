@@ -50,9 +50,6 @@ const reposClearedJSONKey = "reposCleared"
 // roleAdmin is the claims role value granting administrative access.
 const roleAdmin = "admin"
 
-// courseServiceName identifies this service in health check responses.
-const courseServiceName = "course-service"
-
 // moduleTypeLab identifies a module whose content is an interactive lab.
 const moduleTypeLab = "lab"
 
@@ -144,12 +141,12 @@ type State struct {
 	GitCache *content.GitCache
 
 	// Users and Checker are the other domains this one calls, wired in by
-	// the monolith (docs/specs/104-backend-in-process-calls.md).
+	// the monolith.
 	Users   UserProgress
 	Checker LabChecker
 
-	// Sessions, when set, is checked by every guard on every request
-	// (docs/specs/190-backend-defects.md B7): the monolith sets it to the
+	// Sessions, when set, is checked by every guard on every request:
+	// the monolith sets it to the
 	// users domain's CheckSession.
 	Sessions middleware.SessionCheck
 }

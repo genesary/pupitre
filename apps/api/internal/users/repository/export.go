@@ -408,8 +408,7 @@ var exportCategoryOrder = []string{
 }
 
 // ExportScope limits an export to the users of some groups: a manager
-// exports the members of the groups they manage, an admin everything
-// (docs/specs/190-backend-defects.md B6).
+// exports the members of the groups they manage, an admin everything.
 type ExportScope struct {
 	// Restricted turns the limit on; GroupIDs may then be empty, which
 	// exports nothing.

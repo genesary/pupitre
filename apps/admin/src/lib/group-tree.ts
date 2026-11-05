@@ -1,7 +1,7 @@
 import type { ManagerGroup } from '@pupitre/core/lib/api-types';
 
-// Group hierarchies of the manager space and the admin groups page
-// (docs/specs/030, 044), built from a flat list with parentId.
+// Group hierarchies of the manager space and the admin groups page,
+// built from a flat list with parentId.
 
 type Flat = { id: string; parentId?: string | null };
 

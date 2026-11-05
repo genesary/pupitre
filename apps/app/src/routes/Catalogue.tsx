@@ -24,7 +24,7 @@ import {
   LEVEL_ORDER,
 } from '@pupitre/core/lib/course-meta';
 
-// /courses (docs/specs/010-catalogue.md), markup of pupitre's pages/courses/index.astro.
+// /courses, markup of pupitre's pages/courses/index.astro.
 
 function SearchIcon() {
   return (
@@ -202,7 +202,7 @@ export function Catalogue() {
             </button>
           </div>
         ) : (
-          // Marks the end of loading for the guided tour (docs/specs/007-guided-tour.md).
+          // Marks the end of loading for the guided tour.
           <div data-tour={signedIn && mine.isPending ? undefined : 'catalogue-loaded'}>
             {heroCourse && <ContinueHero course={heroCourse} />}
             {visible.length === 0 ? (

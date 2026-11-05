@@ -171,7 +171,7 @@
 }
 
 /* The other learner pages get the catalogue's white panel too, in light mode: their content
-   sits on it instead of on the drawing (spec 005). The course page's left column is solid white
+   sits on it instead of on the drawing. The course page's left column is solid white
    instead of pupitre's blurred, translucent white. */
 :root:not(.dark) :is(.page-outer, .skill-outer, .up-outer) > .page-inner,
 :root:not(.dark) .page-content {
@@ -297,7 +297,7 @@
 }
 
 /* « XP de ce cours » on the course page is a link: pupitre's `.course-xp-card` sets no display,
-   so the card stayed inline and its background, border and bar broke apart (spec 090, A28). */
+   so the card stayed inline and its background, border and bar broke apart. */
 .course-xp-card {
   display: block;
 }

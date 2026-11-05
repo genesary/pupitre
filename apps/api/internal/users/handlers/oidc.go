@@ -339,8 +339,8 @@ func (s *State) OIDCCallback(writer http.ResponseWriter, request *http.Request) 
 }
 
 // recordIdentityName stores the provider's login of the OIDC user sub, which
-// the user cannot change, for lab checks (docs/specs/190-backend-defects.md
-// B11). A failure is only logged: the sign-in already succeeded.
+// the user cannot change, for lab checks. A failure is only logged: the
+// sign-in already succeeded.
 func (s *State) recordIdentityName(ctx context.Context, sub string, claims map[string]any) {
 	login, ok := claims["preferred_username"].(string)
 	if !ok || login == "" {

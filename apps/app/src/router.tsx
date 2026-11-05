@@ -19,7 +19,7 @@ import { Profile } from '@/routes/Profile';
 import { Agenda } from '@/routes/Agenda';
 import { NotFound } from '@pupitre/core/components/NotFound';
 
-// Route table of the learner app (docs/specs/002-roles-and-guards.md). The
+// Route table of the learner app. The
 // administration and the manager space are the admin app (apps/admin).
 
 const learnerRoutes: RouteObject[] = [

@@ -7,7 +7,7 @@ const patterns = {
   callout: { html: '<div class="pattern-callout">{{content}}</div>', css: '' },
 };
 
-describe('admonitions (spec 012)', () => {
+describe('admonitions', () => {
   it('renders :::type Title blocks with their icon and markdown body', () => {
     const { html } = renderMarkdown(':::warning Attention\nDu **gras**.\n:::');
     expect(html).toContain('admonition admonition-warning');
@@ -31,7 +31,7 @@ describe('admonitions (spec 012)', () => {
   });
 });
 
-describe('patterns (spec 012, defect A1)', () => {
+describe('patterns', () => {
   it('replaces inline and block patterns', () => {
     const out = applyPatterns('|||note Bonjour|||\n\n|||callout\nUn **bloc**\n|||', patterns);
     expect(out).toContain('<span class="pattern-note">📌 Bonjour</span>');

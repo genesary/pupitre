@@ -6,7 +6,7 @@ import { COURSE_XP } from '@pupitre/core/lib/course-meta';
 import { XP_LEVELS, XP_SOURCE_ICONS, XP_SOURCE_LABELS, xpProgress } from '@/lib/xp';
 import { LoadError, LoadingState } from '@pupitre/core/components/PageStates';
 
-// /my-xp (docs/specs/020-learner-space.md), markup of pupitre's my-xp.astro.
+// /my-xp, markup of pupitre's my-xp.astro.
 
 const courseOf = (sourceSlug: string) => sourceSlug.split('/')[0] ?? '';
 

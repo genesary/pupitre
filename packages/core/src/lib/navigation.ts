@@ -2,7 +2,7 @@ import { Activity, Puzzle, Settings, type LucideIcon } from 'lucide-react';
 
 import type { AdminIconName } from '@pupitre/ui/components/icons';
 
-// Navigation entries of docs/specs/005-ui-theme-navigation.md, with the labels,
+// Navigation entries, with the labels,
 // emojis, icons and colours of the pupitre Astro frontend.
 
 export type NavItem = { to: string; label: string; icon: string };
@@ -44,7 +44,7 @@ export type AdminNavItem = {
 };
 
 /**
- * One list for every admin page (the Astro frontend had two, defect A4). The
+ * One list for every admin page (the Astro frontend had two). The
  * first eight entries are those of layouts/Admin.astro; Patterns, Paramètres and
  * Monitoring come from the old dashboard and get matching icons.
  */

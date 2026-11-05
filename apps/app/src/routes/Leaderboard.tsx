@@ -6,9 +6,9 @@ import type { LeaderboardEntry } from '@pupitre/core/lib/api-types';
 import { UserAvatar } from '@pupitre/ui/components/user-avatar';
 import { LoadError, LoadingState } from '@pupitre/core/components/PageStates';
 
-// /leaderboard (docs/specs/020-learner-space.md), markup of pupitre's leaderboard.astro.
+// /leaderboard, markup of pupitre's leaderboard.astro.
 // Usernames and avatars come from other users: rendered as text or through
-// <UserAvatar>, never as HTML (spec 003 S3).
+// <UserAvatar>, never as HTML.
 
 const MEDALS: Record<number, string> = { 1: '🥇', 2: '🥈', 3: '🥉' };
 

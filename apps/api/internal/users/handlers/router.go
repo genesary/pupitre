@@ -44,7 +44,7 @@ func remoteIP(r *http.Request) (string, error) {
 // RegisterRoutes mounts every public route of the users domain on router,
 // behind the 1 MB body limit, with each group's guard. It adds no global
 // middleware, no /health or /metrics and no internal route: the monolith's
-// router owns those (docs/specs/103-backend-http-api.md).
+// router owns those.
 func RegisterRoutes(router chi.Router, state *State, cfg *config.Config) {
 	sessions := apimiddleware.WithSessionCheck(state.Sessions)
 	authMW := apimiddleware.Auth(cfg.JWTSecret, sessions)
@@ -81,7 +81,7 @@ func registerPublicRoutes(router chi.Router, state *State, cfg *config.Config) {
 			window := time.Duration(cfg.AuthRateLimitWindowSeconds) * time.Second
 			group.Use(httprate.LimitBy(cfg.AuthRateLimitRequests, window, remoteIP))
 			// The same limit per email, whatever the address the attempts
-			// come from (docs/specs/190-backend-defects.md B12).
+			// come from.
 			group.Use(limitByEmail(cfg.AuthRateLimitRequests, window))
 		}
 

@@ -25,7 +25,7 @@ const spec = {
   sessions: { s1: { title: 'Paris' } },
 };
 
-describe('course definition (spec 042)', () => {
+describe('course definition', () => {
   afterEach(() => vi.clearAllMocks());
 
   it('compares specs whatever the key order', () => {

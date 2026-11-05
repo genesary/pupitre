@@ -466,7 +466,7 @@ func TestOIDCCallback_UserInfoEnrichment(t *testing.T) {
 	}
 }
 
-// TestOIDCCallback_RecordsIdentityName checks defect B11: an OIDC sign-in
+// TestOIDCCallback_RecordsIdentityName checks that an OIDC sign-in
 // records the provider's preferred_username, the lab identity, which the
 // user cannot change afterwards by editing their profile username.
 func TestOIDCCallback_RecordsIdentityName(t *testing.T) {

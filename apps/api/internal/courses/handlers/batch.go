@@ -72,8 +72,8 @@ func (s *State) ListCoursesBatch(writer http.ResponseWriter, req *http.Request) 
 		return
 	}
 
-	// The public route lists public courses only, like GET /api/courses
-	// (docs/specs/190-backend-defects.md B10); the in-process BatchCourses
+	// The public route lists public courses only, like GET /api/courses;
+	// the in-process BatchCourses
 	// of the users domain still sees every course.
 	out, err := s.batchCourses(req.Context(), slugs, true)
 	if err != nil {
@@ -88,7 +88,7 @@ func (s *State) ListCoursesBatch(writer http.ResponseWriter, req *http.Request) 
 
 // BatchCourses returns the courses among slugs, private ones included, as
 // GET /api/batch/courses reports them. The users domain reads its catalog
-// through it (docs/specs/104-backend-in-process-calls.md).
+// through it.
 func (s *State) BatchCourses(ctx context.Context, slugs []string) ([]CourseResponse, error) {
 	return s.batchCourses(ctx, slugs, false)
 }

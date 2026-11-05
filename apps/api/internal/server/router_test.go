@@ -29,13 +29,13 @@ const studentID = "00000000-0000-0000-0000-000000000001"
 // testJWTSecret signs the tokens of these tests.
 const testJWTSecret = "router-test-secret-long-enough-for-hs256"
 
-// inventoryRoute is one row of the route inventory of spec 103.
+// inventoryRoute is one row of the route inventory.
 type inventoryRoute struct {
 	method, path, access, limit string
 }
 
 // loadInventory reads testdata/routes.tsv, generated from the route table
-// of docs/specs/103-backend-http-api.md (every route but the removed ones).
+// of testdata/routes.tsv (every route but the removed ones).
 func loadInventory(t *testing.T) []inventoryRoute {
 	t.Helper()
 
@@ -88,7 +88,7 @@ func testRouter(t *testing.T) *chi.Mux {
 }
 
 // TestRouter_MatchesInventory checks that the monolith serves exactly the
-// kept routes of spec 103: none missing, none extra, no internal route.
+// kept routes of the inventory: none missing, none extra, no internal route.
 func TestRouter_MatchesInventory(t *testing.T) {
 	t.Parallel()
 
@@ -126,11 +126,11 @@ func TestRouter_MatchesInventory(t *testing.T) {
 	sort.Strings(extra)
 
 	if len(missing) > 0 {
-		t.Errorf("routes of spec 103 not served: %v", missing)
+		t.Errorf("routes of the inventory not served: %v", missing)
 	}
 
 	if len(extra) > 0 {
-		t.Errorf("routes served but not in spec 103: %v", extra)
+		t.Errorf("routes served but not in the inventory: %v", extra)
 	}
 }
 
@@ -146,7 +146,7 @@ func concretePath(pattern string) string {
 	return strings.Join(parts, "/")
 }
 
-// TestRouter_Guards checks the guard of every route against spec 103: a
+// TestRouter_Guards checks the guard of every route against the inventory: a
 // guarded route refuses an anonymous request with 401, and a role-guarded
 // route refuses a student with 403. Public routes are not requested.
 func TestRouter_Guards(t *testing.T) {

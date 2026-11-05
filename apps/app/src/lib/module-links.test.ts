@@ -15,7 +15,7 @@ const mod = (index: number, type: ModuleSummary['type'], extra: Partial<ModuleSu
   ...extra,
 });
 
-describe('module links (spec 011)', () => {
+describe('module links', () => {
   const modules = [mod(0, 'text'), mod(1, 'text'), mod(2, 'quiz', { inline: true }), mod(3, 'quiz')];
 
   it('sends quizzes to the quiz page and the rest to the lesson player', () => {

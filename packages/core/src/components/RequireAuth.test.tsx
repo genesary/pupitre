@@ -30,7 +30,7 @@ function renderAt(path: string) {
   return router;
 }
 
-describe('guards (spec 002)', () => {
+describe('guards', () => {
   afterEach(() => endSession('logout'));
 
   it('sends a visitor to /login with the page to come back to', () => {

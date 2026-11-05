@@ -6,13 +6,13 @@ import (
 	"testing"
 )
 
-// TestMiddleware covers the regression of defect B12: forwarding headers
+// TestMiddleware checks that forwarding headers
 // are believed only from trusted proxies, and only up to the first
 // untrusted hop from the right.
 func TestMiddleware(t *testing.T) {
 	t.Parallel()
 
-	trusted, err := ParsePrefixes(append([]string{"203.0.113.10"}, DefaultTrustedProxies...))
+	trusted, err := ParsePrefixes([]string{"203.0.113.10", "127.0.0.0/8", "10.0.0.0/8"})
 	if err != nil {
 		t.Fatalf("parse: %v", err)
 	}
@@ -49,6 +49,48 @@ func TestMiddleware(t *testing.T) {
 			if tc.realIP != "" {
 				req.Header.Set("X-Real-IP", tc.realIP)
 			}
+
+			handler.ServeHTTP(httptest.NewRecorder(), req)
+
+			if got != tc.want {
+				t.Errorf("RemoteAddr = %q, want %q", got, tc.want)
+			}
+		})
+	}
+}
+
+// TestMiddleware_DefaultTrustsLoopbackOnly keeps a client of a private
+// network from forging its address: with nothing configured, only a proxy on
+// loopback is believed.
+func TestMiddleware_DefaultTrustsLoopbackOnly(t *testing.T) {
+	t.Parallel()
+
+	trusted, err := ParsePrefixes(DefaultTrustedProxies)
+	if err != nil {
+		t.Fatalf("parse: %v", err)
+	}
+
+	cases := []struct {
+		name, peer, want string
+	}{
+		{"client on a private network", "10.1.2.3:4000", "10.1.2.3:4000"},
+		{"proxy on loopback", "127.0.0.1:4000", "8.8.8.8"},
+		{"proxy on IPv6 loopback", "[::1]:4000", "8.8.8.8"},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+
+			var got string
+
+			handler := Middleware(trusted)(http.HandlerFunc(func(_ http.ResponseWriter, req *http.Request) {
+				got = req.RemoteAddr
+			}))
+
+			req := httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/", http.NoBody)
+			req.RemoteAddr = tc.peer
+			req.Header.Set("X-Forwarded-For", "8.8.8.8")
 
 			handler.ServeHTTP(httptest.NewRecorder(), req)
 

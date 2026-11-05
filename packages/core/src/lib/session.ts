@@ -3,7 +3,7 @@ import { useSyncExternalStore } from 'react';
 import type { AuthResponse, UserPublic } from './api-types';
 import { readItem, removeItem, writeItem } from '@pupitre/ui/lib/storage';
 
-// The session of docs/specs/001-keycloak-authentication.md. This module is the
+// The session. This module is the
 // only code that knows where the token lives: moving to an HttpOnly cookie later
 // only changes this file.
 //

@@ -17,9 +17,9 @@ import type { ScopeUser } from '@pupitre/core/lib/api-types';
 import { ConfirmDialog } from '@pupitre/core/components/ConfirmDialog';
 import { Modal, ModalClose } from '@pupitre/core/components/Modal';
 
-// /manager/users (docs/specs/030-manager-space.md), markup of pupitre's
-// manager/users/index.astro. The group filter of the Astro page never worked
-// (defect A21); the search by name or e-mail is new.
+// /manager/users, markup of pupitre's
+// manager/users/index.astro. The group filter of the Astro page never worked;
+// the search by name or e-mail is new.
 
 type Removal = { kind: 'course' | 'path'; slug: string; label: string };
 

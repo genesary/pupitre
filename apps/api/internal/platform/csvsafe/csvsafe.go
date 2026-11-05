@@ -1,5 +1,5 @@
 // Package csvsafe neutralises the CSV cells that a spreadsheet would run as
-// a formula (docs/specs/190-backend-defects.md B8).
+// a formula.
 package csvsafe
 
 // Record returns record with every cell made safe by Cell. It changes record

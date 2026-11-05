@@ -7,7 +7,7 @@ import type { Course } from '@pupitre/core/lib/api-types';
 import { ConfirmDialog } from '@pupitre/core/components/ConfirmDialog';
 import { Modal, ModalClose } from '@pupitre/core/components/Modal';
 
-// « Importer depuis du markdown » of docs/specs/042-admin-courses.md, markup of
+// « Importer depuis du markdown », markup of
 // pupitre's admin/courses page. The server refuses documents above 10 MB.
 
 const MAX_BYTES = 10 * 1024 * 1024;

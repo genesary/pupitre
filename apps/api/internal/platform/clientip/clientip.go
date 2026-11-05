@@ -1,5 +1,5 @@
 // Package clientip finds the address of the client behind the reverse
-// proxies the API trusts (docs/specs/190-backend-defects.md B12).
+// proxies the API trusts.
 //
 // chi's RealIP middleware took X-Forwarded-For from anyone: a client could
 // pick its own address, and so a fresh rate-limit bucket for every request.
@@ -17,14 +17,13 @@ import (
 	"strings"
 )
 
-// DefaultTrustedProxies are the networks a reverse proxy of the platform
-// sits in: loopback and the private ranges of a cluster.
+// DefaultTrustedProxies is loopback alone. A range that holds clients must
+// not be trusted: such a client counts as a proxy hop, and the address it
+// forges in X-Forwarded-For is believed. A deployment behind an ingress lists
+// the ingress's own addresses in TRUSTED_PROXIES.
 //
 //nolint:gochecknoglobals // read-only defaults
-var DefaultTrustedProxies = []string{
-	"127.0.0.0/8", "::1/128",
-	"10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16", "fc00::/7",
-}
+var DefaultTrustedProxies = []string{"127.0.0.0/8", "::1/128"}
 
 // ParsePrefixes parses CIDR blocks, or single addresses, into prefixes.
 func ParsePrefixes(values []string) ([]netip.Prefix, error) {

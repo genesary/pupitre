@@ -7,7 +7,7 @@ import type { MyPath } from '@pupitre/core/lib/api-types';
 import { LoadError, LoadingState } from '@pupitre/core/components/PageStates';
 import { PathMap } from '@/components/paths/PathMap';
 
-// /my-paths (docs/specs/020-learner-space.md), markup of pupitre's my-paths.astro:
+// /my-paths, markup of pupitre's my-paths.astro:
 // the list of paths, then the detail of the one chosen. The chosen path is in
 // the URL (?path=), so the end of a course and the back button return to it.
 

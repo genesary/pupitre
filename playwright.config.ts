@@ -1,7 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
 
-// End-to-end tests of the main flows (docs/specs/099-migration-plan.md, batch 5),
-// run against the mock mode (docs/specs/006-mock-mode.md): no backend, no
+// End-to-end tests of the main flows,
+// run against the mock mode: no backend, no
 // Keycloak. Each test gets a fresh browser context, so the mock state starts
 // from its seed.
 

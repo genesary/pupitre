@@ -4,11 +4,11 @@ import type { MarkdownPattern } from './api-types';
 
 import { sanitizeHtml } from '@pupitre/ui/lib/security';
 
-// Markdown pipeline of docs/specs/012-lesson-player.md:
+// Markdown pipeline:
 //   normalise → admonitions → patterns → marked → DOMPurify → DOM pass.
 // The rules (admonition syntax, pattern syntax) are those of pupitre's
 // pages/courses/[slug]/lessons/[index].astro. Sanitisation runs on the final
-// HTML, after the patterns are inserted (spec 003 S2).
+// HTML, after the patterns are inserted.
 
 export type TocEntry = { id: string; text: string; level: 2 | 3 };
 export type RenderedMarkdown = { html: string; toc: TocEntry[] };

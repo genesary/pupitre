@@ -125,8 +125,8 @@ func TestExportRepository_WriteCSV(t *testing.T) { //nolint:paralleltest // shar
 	}
 }
 
-// TestExportRepository_WriteCSV_NoFormula is the regression test of defect
-// B8 (docs/specs/190-backend-defects.md): a cell that starts like a formula
+// TestExportRepository_WriteCSV_NoFormula is a regression test:
+// a cell that starts like a formula
 // is exported as text.
 func TestExportRepository_WriteCSV_NoFormula(t *testing.T) { //nolint:paralleltest // shared db
 	gdb := crudDB(t)
@@ -191,7 +191,7 @@ func TestExportRepository_FetchRowsWithFilters(t *testing.T) { //nolint:parallel
 	}
 }
 
-// TestExportRepository_ManagerScope checks defect B6: a restricted scope
+// TestExportRepository_ManagerScope checks that a restricted scope
 // exports only the members of its groups, and an empty one nothing.
 func TestExportRepository_ManagerScope(t *testing.T) { //nolint:paralleltest // shared db
 	gdb := crudDB(t)

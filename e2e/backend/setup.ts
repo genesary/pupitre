@@ -5,8 +5,7 @@ import { ACCOUNTS, adminCall, signIn } from './helpers';
 // Puts the platform in the state the other tests expect, and stays correct
 // when it already is: Keycloak's pupitre-admins group maps to the admin role,
 // and marc.manager has the manager role, given by hand as an admin does it.
-// OIDC_GROUP_ADMINS is not set, so the role survives the next sign-in
-// (docs/specs/105-backend-authentication.md).
+// OIDC_GROUP_ADMINS is not set, so the role survives the next sign-in.
 
 setup('the admin group maps to the admin role', async ({ request }) => {
   const response = await adminCall(request, 'POST', '/admin/groups/mappings', {

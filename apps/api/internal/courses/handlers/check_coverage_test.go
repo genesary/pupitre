@@ -64,7 +64,7 @@ func postCheck(t *testing.T, s *State) *httptest.ResponseRecorder {
 }
 
 // TestCheckModule_CheckerUnreachable maps a dial failure to checker-service
-// onto a 500 (callCheckerRoute transport-error branch).
+// onto a 500 (checkOutcome transport-error branch).
 func TestCheckModule_CheckerUnreachable(t *testing.T) {
 	t.Parallel()
 
@@ -78,7 +78,7 @@ func TestCheckModule_CheckerUnreachable(t *testing.T) {
 }
 
 // TestCheckModule_CheckerReturnsError surfaces checker-service's own error
-// body as a 502 (callCheckerRoute non-200 branch).
+// body as a 502 (checkOutcome non-200 branch).
 func TestCheckModule_CheckerReturnsError(t *testing.T) {
 	t.Parallel()
 
@@ -102,7 +102,7 @@ func TestCheckModule_CheckerReturnsError(t *testing.T) {
 }
 
 // TestCheckModule_CheckerBadJSON maps an undecodable 200 body to a 500
-// (callCheckerRoute decode branch).
+// (checkOutcome decode branch).
 func TestCheckModule_CheckerBadJSON(t *testing.T) {
 	t.Parallel()
 

@@ -1,8 +1,8 @@
 import { readItem, removeItem, writeItem } from '@pupitre/ui/lib/storage';
 
-// Where the end of a course leads back to, set by a learning path page
-// (docs/specs/012-lesson-player.md, 020-learner-space.md). Kept in
-// sessionStorage and cleared once used (defect A12).
+// Where the end of a course leads back to, set by a learning path page.
+// Kept in
+// sessionStorage and cleared once used.
 
 const RETURN_KEY = 'pupitre.courseReturnTo';
 

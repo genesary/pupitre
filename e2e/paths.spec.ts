@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 
 import { ACCOUNTS, createCourse, signIn, signOut } from './helpers';
 
-// Learning paths: created by an admin, followed by a learner (docs/specs/043, 020, 012).
+// Learning paths: created by an admin, followed by a learner.
 
 test('an admin builds a path and enrolls a learner; the end of a course opened from it leads back to it', async ({ page }) => {
   await signIn(page, ACCOUNTS.admin, '/admin/courses');

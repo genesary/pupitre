@@ -1,8 +1,7 @@
 name: Web
 
 # The two frontend apps and the shared packages: type check, lint, unit
-# tests, build, and the Playwright suite against the mock mode
-# (docs/specs/000-scope-and-stack.md).
+# tests, build, and the Playwright suite against the mock mode.
 
 on:
   push:

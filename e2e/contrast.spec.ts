@@ -2,8 +2,8 @@ import { expect, test, type Locator, type Page } from '@playwright/test';
 
 import { ACCOUNTS, signIn } from './helpers';
 
-// Contrast of the texts the pupitre CSS left unreadable (docs/specs/090-gaps-and-defects.md, A26:
-// dark mode; A27: locked modules): each must reach the WCAG AA ratio (4.5:1) against the
+// Contrast of the texts the pupitre CSS left unreadable: each must reach the
+// WCAG AA ratio (4.5:1) against the
 // background it really sits on, its ancestors' opacity included.
 
 /**

@@ -1,6 +1,5 @@
 # The frontend image: the learner app and the admin app, built once and
-# served as static files on one origin (docs/specs/000-scope-and-stack.md,
-# docs/specs/108-backend-operations-and-testing.md).
+# served as static files on one origin.
 #
 # The build context is the repository root:
 #   docker build -f docker/front/Dockerfile -t pupitre-front .

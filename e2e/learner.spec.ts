@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 
 import { ACCOUNTS, signIn } from './helpers';
 
-// Following a course: enrollment, lessons, quiz (docs/specs/011, 012, 013).
+// Following a course: enrollment, lessons, quiz.
 
 test('a learner enrolls in a course, then finds it in « Mes cours »', async ({ page }) => {
   await signIn(page, ACCOUNTS.alice, '/my-courses');

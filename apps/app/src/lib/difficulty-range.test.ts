@@ -4,7 +4,7 @@ import { ALL_LEVELS, matchesDifficulty, rangeLabel } from '@/lib/difficulty-rang
 
 const course = (difficulty: string) => ({ difficulty }) as Parameters<typeof matchesDifficulty>[0];
 
-describe('catalogue difficulty range (spec 010)', () => {
+describe('catalogue difficulty range', () => {
   it('keeps every course on the full range, those without a difficulty included', () => {
     expect(matchesDifficulty(course(''), ALL_LEVELS)).toBe(true);
     expect(matchesDifficulty(course('expert'), ALL_LEVELS)).toBe(true);

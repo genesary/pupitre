@@ -85,8 +85,8 @@ func stateCookie(t *testing.T, rec *httptest.ResponseRecorder) *http.Cookie {
 	return nil
 }
 
-// TestOAuthState_BoundToTheBrowser is the regression test of defect B13
-// (docs/specs/190-backend-defects.md): a callback accepts a state only from
+// TestOAuthState_BoundToTheBrowser is a regression test:
+// a callback accepts a state only from
 // the browser that started the flow.
 func TestOAuthState_BoundToTheBrowser(t *testing.T) {
 	t.Parallel()

@@ -8,12 +8,12 @@ import { expect, test, type Page } from '@playwright/test';
 
 import { ACCOUNTS, adminCall, signIn } from './helpers';
 
-// GitLab labs against the real API (docs/specs/014-labs.md, 107): the
+// GitLab labs against the real API: the
 // checker of pupitre-api reads the learner's project from the fake GitLab
 // of e2e/backend/fake-gitlab.mjs (GITLAB_BASE_URL), as ebuildy/pupitre2's
 // e2e/labs.spec.ts does. The lab's text comes from a local git repository,
 // since step checks need a lab with git content. The learner is alice, whose
-// GitLab username is her Keycloak login (190 B11).
+// GitLab username is her Keycloak login.
 
 const API = process.env.PUPITRE_API_URL ?? 'http://localhost:8080';
 const GITLAB = `http://localhost:${process.env.FAKE_GITLAB_PORT ?? 3103}`;

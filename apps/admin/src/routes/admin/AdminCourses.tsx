@@ -12,7 +12,7 @@ import { EnrollmentsTab } from '@/components/admin/courses/EnrollmentsTab';
 import { ImportDialog } from '@/components/admin/courses/ImportDialog';
 import { ModulesTab } from '@/components/admin/courses/ModulesTab';
 
-// /admin/courses (docs/specs/042-admin-courses.md), markup of pupitre's
+// /admin/courses, markup of pupitre's
 // admin/courses/index.astro. A course is edited through its whole definition,
 // read again and compared before every write.
 

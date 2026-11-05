@@ -2,7 +2,7 @@ package handlers
 
 // The standalone course-service is gone: the monolith mounts RegisterRoutes
 // on its own router and wires State.Users and State.Checker to the users
-// domain and the checker (docs/specs/104-backend-in-process-calls.md).
+// domain and the checker.
 //
 // This file keeps, for the tests only, what the standalone service had: its
 // router, and its HTTP clients of user-service and checker-service. The
@@ -42,7 +42,7 @@ func checkerAt(baseURL string) LabChecker { //nolint:ireturn // test helper
 // withPeers attaches the test servers standing in for the other domains to
 // a State; an empty URL leaves that domain unwired. With a checker, the
 // student of authHeader also gets the identity-provider login lab checks
-// need (docs/specs/190-backend-defects.md B11).
+// need.
 func withPeers(s *State, usersURL, checkerURL string) *State {
 	if usersURL != "" {
 		s.Users = usersAt(usersURL)
@@ -102,7 +102,6 @@ func BuildRouter(state *State, cfg *config.Config, withLogger bool) *chi.Mux {
 	router.Use(chiMiddleware.Recoverer)
 	router.Use(corsOptions.Handler)
 
-	router.Get("/health", state.Health)
 	router.Get("/metrics", metrics.Handler())
 	RegisterRoutes(router, state, cfg)
 
@@ -295,7 +294,7 @@ func (c *httpLabChecker) CheckStep(ctx context.Context, req StepCheckRequest) (C
 // post marshals body, POSTs it to checker-service at the given path, and
 // decodes the CheckResponse.
 func (c *httpLabChecker) post(ctx context.Context, route string, body any) (CheckResponse, error) {
-	buildErr := &CheckerError{Status: http.StatusInternalServerError, Message: buildCheckerRequestFailed}
+	buildErr := &CheckerError{Status: http.StatusInternalServerError, Message: "Failed to build checker request"}
 
 	payload, err := json.Marshal(body)
 	if err != nil {
@@ -321,7 +320,12 @@ func (c *httpLabChecker) post(ctx context.Context, route string, body any) (Chec
 
 		_ = json.NewDecoder(resp.Body).Decode(&errBody)
 
-		return CheckResponse{}, checkerRejected(errBody[errorJSONKey])
+		message := errBody[errorJSONKey]
+		if message == "" {
+			message = "checker-service error"
+		}
+
+		return CheckResponse{}, &CheckerError{Status: http.StatusBadGateway, Message: message}
 	}
 
 	var result CheckResponse

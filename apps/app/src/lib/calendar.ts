@@ -1,4 +1,4 @@
-// Month grid of the agenda (docs/specs/022-agenda-and-sessions.md), as built by
+// Month grid of the agenda, as built by
 // pupitre's agenda.astro: weeks run Monday to Sunday, padded with the days of
 // the previous and next months.
 

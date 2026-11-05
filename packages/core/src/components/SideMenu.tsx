@@ -14,7 +14,7 @@ import { SiteNavLink } from './SiteLink';
 type SideMenuProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  /** Shows « Visite guidée » (learner app, docs/specs/007-guided-tour.md). */
+  /** Shows « Visite guidée » (learner app). */
   onStartTour?: () => void;
 };
 

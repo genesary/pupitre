@@ -8,8 +8,7 @@ import { LESSON_TIP_STEPS } from '@/lib/tour-steps';
 import { useTour } from './tour-context';
 import { TourRunner } from './TourRunner';
 
-// The tip of the first lesson a user opens (docs/specs/007-guided-tour.md,
-// "First lesson tip"). Mounted by the lesson page once its content shows.
+// The tip of the first lesson a user opens. Mounted by the lesson page once its content shows.
 
 export function LessonTip() {
   const user = useCurrentUser();

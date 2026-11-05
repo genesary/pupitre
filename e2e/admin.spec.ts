@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 
 import { ACCOUNTS, signIn } from './helpers';
 
-// An admin creates a course with a module; learners then see it (docs/specs/042-admin-courses.md).
+// An admin creates a course with a module; learners then see it.
 
 test('an admin creates a public course with a module, shown in the catalogue', async ({ page }) => {
   await signIn(page, ACCOUNTS.admin, '/admin/courses');

@@ -1,4 +1,4 @@
-// Loading and error states shared by the pages (docs/specs/005-ui-theme-navigation.md),
+// Loading and error states shared by the pages,
 // with the markup of the Astro pages.
 
 export function LoadingState({ label = 'Chargement…' }: { label?: string }) {

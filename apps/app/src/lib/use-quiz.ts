@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { Cooldown, QuizAnswer, QuizQuestion, QuizResult } from '@pupitre/core/lib/api-types';
 import { readItem, removeItem, writeItem } from '@pupitre/ui/lib/storage';
 
-// Quiz state shared by the quiz page and the inline quiz (docs/specs/013-quizzes.md):
+// Quiz state shared by the quiz page and the inline quiz:
 // answers, the answered count, the submit payload, and the per-question
 // cooldowns that count down every second.
 

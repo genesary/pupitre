@@ -5,7 +5,7 @@ import { setCourseReturn } from '@/lib/course-return';
 import { MAP, nodePosition, roadPath, viewBox, wrapLabel } from '@/lib/path-map';
 import { useTheme } from '@pupitre/ui/lib/theme';
 
-// The SVG progress map of a learning path (docs/specs/020-learner-space.md),
+// The SVG progress map of a learning path,
 // drawn like pupitre's my-paths.astro, with its light and dark colours.
 
 type StepTheme = { fill: string; text: string; badge: string; badgeText: string; label: string };

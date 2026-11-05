@@ -107,11 +107,11 @@ type UserRepository interface {
 	LinkProviderIdentity(ctx context.Context, id uuid.UUID, provider, providerUserID string, avatarURL, bio *string) (*models.User, error)
 	UpdateSSORole(ctx context.Context, id uuid.UUID, role string) (*models.User, error)
 
-	// Sessions (docs/specs/190-backend-defects.md B7)
+	// Sessions
 	SessionState(ctx context.Context, id uuid.UUID) (*SessionState, error)
 	RevokeSessions(ctx context.Context, id uuid.UUID, validAfter time.Time) error
 
-	// Identity given by the identity provider (docs/specs/190-backend-defects.md B11)
+	// Identity given by the identity provider
 	SetIdentityName(ctx context.Context, provider, providerUserID, name string) error
 	IdentityName(ctx context.Context, id uuid.UUID) (string, error)
 

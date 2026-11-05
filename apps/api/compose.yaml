@@ -1,4 +1,4 @@
-# Local development dependencies of pupitre-api (docs/specs/108-backend-operations-and-testing.md):
+# Local development dependencies of pupitre-api:
 # PostgreSQL, and Keycloak with a test realm. The API itself runs on the host
 # with `pnpm api:dev`, so the browser and the API reach Keycloak at the same
 # address (http://localhost:8180).

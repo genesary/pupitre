@@ -656,7 +656,7 @@ func TestManagerAddGroupMember_Success(t *testing.T) {
 	}
 }
 
-// TestManagerAddGroupMember_OutOfScope is the regression test for defect B6:
+// TestManagerAddGroupMember_OutOfScope is a regression test:
 // a manager cannot pull a user from outside their scope into their group.
 func TestManagerAddGroupMember_OutOfScope(t *testing.T) {
 	t.Parallel()

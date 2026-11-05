@@ -12,13 +12,13 @@ import { defineConfig, loadEnv, type Plugin, type ProxyOptions } from 'vite';
 const ROOT = fileURLToPath(new URL('.', import.meta.url));
 
 // Only these request headers reach the backend. The Astro proxy forwarded every
-// client header, X-Forwarded-For and X-Internal-Secret included (audit H4).
+// client header, X-Forwarded-For and X-Internal-Secret included.
 const FORWARDED_HEADERS = new Set([
   'accept',
   'authorization',
   'content-type',
   'content-length',
-  // The OAuth state cookie, the API's only cookie (docs/specs/190-backend-defects.md B13).
+  // The OAuth state cookie, the API's only cookie.
   'cookie',
   'host',
 ]);
@@ -64,7 +64,7 @@ function target(url: string): ProxyOptions {
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, ROOT, 'VITE_');
-  // The backend is one application (docs/specs/004-api-and-routing.md): /api
+  // The backend is one application: /api
   // and /uploads go to the same target.
   const api = env.VITE_API_URL || 'http://localhost:8080';
 

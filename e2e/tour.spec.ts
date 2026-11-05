@@ -2,7 +2,7 @@ import { expect, test, type Page } from '@playwright/test';
 
 import { ACCOUNTS, forbidDialogs, signIn } from './helpers';
 
-// The guided tour and the first lesson tip (docs/specs/007-guided-tour.md).
+// The guided tour and the first lesson tip.
 
 const coach = (page: Page) => page.locator('.tour-coach');
 

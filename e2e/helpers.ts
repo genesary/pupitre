@@ -1,7 +1,7 @@
 import { expect, type Page } from '@playwright/test';
 
 // Shared steps of the end-to-end tests. Sign-in goes through the mock Keycloak
-// page (docs/specs/006-mock-mode.md), so the real login and callback code runs,
+// page, so the real login and callback code runs,
 // state check included. The mock state lives in the tab's sessionStorage: it
 // is kept across a sign-out and a sign-in as someone else in the same test.
 
@@ -17,8 +17,8 @@ export const TRAP_ID = '9c8b7a65-4d3e-4f21-b0a9-8e7d6c5b4a39';
 const escape = (text: string) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 /**
- * Marks the guided tour and the first lesson tip as seen for every account
- * (docs/specs/007-guided-tour.md), so they do not cover the pages under test.
+ * Marks the guided tour and the first lesson tip as seen for every account,
+ * so they do not cover the pages under test.
  */
 export async function skipTour(page: Page) {
   await page.addInitScript(() => {

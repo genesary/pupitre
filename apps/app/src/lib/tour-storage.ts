@@ -2,8 +2,8 @@ import { readItem, writeItem } from '@pupitre/ui/lib/storage';
 
 import { TOUR_VERSION } from '@/lib/tour-steps';
 
-// What the browser remembers of the guided tour, per user
-// (docs/specs/007-guided-tour.md, "Persistence"). No backend route stores it.
+// What the browser remembers of the guided tour, per user.
+// No backend route stores it.
 
 export type TourStatus = 'offered' | 'started' | 'completed' | 'dismissed';
 

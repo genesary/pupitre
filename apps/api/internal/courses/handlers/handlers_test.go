@@ -164,38 +164,6 @@ func adminAuthHeader(t *testing.T, secret string) string {
 	return "Bearer " + token
 }
 
-// TestHealth verifies health behavior.
-func TestHealth(t *testing.T) {
-	t.Parallel()
-
-	mock := newUserServiceMock()
-	defer mock.Close()
-
-	s := newTestState(t, mock)
-
-	cfg := &config.Config{}
-	r := BuildRouter(s, cfg, false)
-
-	req := httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/health", http.NoBody)
-	rec := httptest.NewRecorder()
-	r.ServeHTTP(rec, req)
-
-	if rec.Code != http.StatusOK {
-		t.Fatalf("expected 200, got %d", rec.Code)
-	}
-
-	var body map[string]string
-	json.NewDecoder(rec.Body).Decode(&body)
-
-	if body["status"] != "ok" {
-		t.Errorf("expected status=ok, got %s", body["status"])
-	}
-
-	if body["service"] != "course-service" {
-		t.Errorf("expected service=course-service, got %s", body["service"])
-	}
-}
-
 // TestListCourses verifies list courses behavior.
 func TestListCourses(t *testing.T) {
 	t.Parallel()
@@ -625,7 +593,7 @@ func TestMetrics(t *testing.T) {
 
 	var lastBody string
 
-	for _, path := range []string{"/metrics", "/health", "/api/courses"} {
+	for _, path := range []string{"/metrics", "/api/courses"} {
 		req := httptest.NewRequestWithContext(t.Context(), http.MethodGet, path, http.NoBody)
 		rec := httptest.NewRecorder()
 		r.ServeHTTP(rec, req)

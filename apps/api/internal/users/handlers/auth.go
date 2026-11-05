@@ -341,7 +341,7 @@ func (s *State) Login(writer http.ResponseWriter, request *http.Request) {
 
 	// An unknown email, an SSO account and a wrong password get the same
 	// answer in about the same time, so that the sign-in does not tell
-	// which accounts exist (docs/specs/190-backend-defects.md B14).
+	// which accounts exist.
 	row, err := s.loginLookup(ctx, req.Email)
 	if err != nil || row.passwordHash == nil {
 		spendPasswordCheckTime(req.Password)
@@ -565,7 +565,7 @@ func (s *State) ChangePassword(writer http.ResponseWriter, request *http.Request
 	}
 
 	// A new password ends the sessions opened with the old one, this one
-	// included (docs/specs/190-backend-defects.md B7).
+	// included.
 	userID, _ := uuid.Parse(claims.Subject) // parsed by applyNewPassword already
 
 	err = s.revokeSessions(ctx, userID)

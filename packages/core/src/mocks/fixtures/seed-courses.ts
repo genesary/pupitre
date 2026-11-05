@@ -1,6 +1,6 @@
 // Generated from genesary/pupitre course-service/internal/db/seed/{courses,paths}/*.yaml
-// (commit 3cdf7b2): the demo catalogue of the Go backend, used by the mock mode
-// (docs/specs/006-mock-mode.md). Shapes follow definition.Course and definition.Path.
+// (commit 3cdf7b2): the demo catalogue of the Go backend, used by the mock mode.
+// Shapes follow definition.Course and definition.Path.
 
 
 import type { CourseDefinition, PathDefinition } from '../model';

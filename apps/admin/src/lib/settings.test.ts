@@ -4,7 +4,7 @@ import { changedValues, SECRET_MASK, SETTING_SECTIONS, settingWarnings, toValues
 
 const oidc = SETTING_SECTIONS.find((s) => s.id === 'oidc')!;
 
-describe('platform settings (spec 046)', () => {
+describe('platform settings', () => {
   it('does not send an untouched secret', () => {
     const initial = toValues([
       { key: 'oidc_client_secret', value: SECRET_MASK },

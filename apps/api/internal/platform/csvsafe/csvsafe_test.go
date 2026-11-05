@@ -2,7 +2,7 @@ package csvsafe
 
 import "testing"
 
-// TestCell is the regression test of defect B8.
+// TestCell neutralises the cells a spreadsheet would run as a formula.
 func TestCell(t *testing.T) {
 	t.Parallel()
 

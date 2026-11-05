@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 
 import { ACCOUNTS, signIn } from './helpers';
 
-// A manager enrolls a member of their scope in a course (docs/specs/030-manager-space.md).
+// A manager enrolls a member of their scope in a course.
 
 test('a manager enrolls a member in a course and sees the count change', async ({ page }) => {
   await signIn(page, ACCOUNTS.manager, '/manager/users');

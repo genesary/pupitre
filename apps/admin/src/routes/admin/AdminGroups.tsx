@@ -22,10 +22,10 @@ import { buildTree, subtreeIds, type TreeNode } from '@/lib/group-tree';
 import { ConfirmDialog } from '@pupitre/core/components/ConfirmDialog';
 import { Modal, ModalClose } from '@pupitre/core/components/Modal';
 
-// /admin/groups (docs/specs/044-admin-groups.md), markup of pupitre's
+// /admin/groups, markup of pupitre's
 // admin/groups/index.astro; its inline styles are written as Tailwind classes.
 // Descendants are computed from the group list: the descendants route returns
-// a struct without json tags (defect A22).
+// a struct without json tags.
 
 const ROLE_BADGES: Record<string, string> = { admin: 'badge-red', manager: 'badge-orange' };
 const roleBadge = (role: string) => ROLE_BADGES[role] ?? 'badge-blue';

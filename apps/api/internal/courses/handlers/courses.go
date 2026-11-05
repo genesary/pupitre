@@ -323,7 +323,7 @@ func (s *State) canViewPrivateCourse(req *http.Request, slug string) bool {
 // requesterClaims returns the claims of the signed-in requester, or nil. A
 // public route has no guard, so it reads the bearer token here and applies
 // the same session check as the guards: a revoked token, or the old role of
-// a demoted user, opens nothing (docs/specs/190-backend-defects.md B7).
+// a demoted user, opens nothing.
 func (s *State) requesterClaims(req *http.Request) *middleware.Claims {
 	claims := s.claims(req)
 	if claims != nil {
@@ -416,7 +416,7 @@ func (s *State) PathTitles(ctx context.Context) (map[string]string, error) {
 // private or not: repository.ErrNotFound for an unknown course. The users
 // domain reads session capacities through it. It used to refuse a private
 // course, like an anonymous read, so the capacity of a private course's
-// sessions was never enforced (docs/specs/190-backend-defects.md B24).
+// sessions was never enforced.
 func (s *State) CourseDetail(ctx context.Context, slug string) (CourseResponse, error) {
 	course, err := s.Repos.Courses.Get(ctx, slug)
 	if err != nil {

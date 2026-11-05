@@ -1,6 +1,6 @@
 import type { UserPublic } from './api-types';
 
-/** Default destination after sign-in (docs/specs/001). */
+/** Default destination after sign-in. */
 export function landingPath(user: Pick<UserPublic, 'role'>): string {
   return user.role === 'admin' ? '/admin' : '/courses';
 }

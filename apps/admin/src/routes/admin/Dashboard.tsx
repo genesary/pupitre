@@ -7,7 +7,7 @@ import { AdminIcon } from '@pupitre/ui/components/icons';
 import { UserAvatar } from '@pupitre/ui/components/user-avatar';
 import { AdminStatCards } from '@/components/admin/AdminStatCards';
 
-// /admin (docs/specs/040-admin-dashboard.md), markup of pupitre's admin/index.astro.
+// /admin, markup of pupitre's admin/index.astro.
 
 export function Dashboard() {
   const board = useQuery({ queryKey: ['admin', 'leaderboard'], queryFn: adminLeaderboard });

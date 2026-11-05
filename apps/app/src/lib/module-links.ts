@@ -1,7 +1,7 @@
 import type { ModuleSummary } from '@pupitre/core/lib/api-types';
 
 // Module navigation rules shared by the course page, the lesson player and the
-// quiz page (docs/specs/011, 012).
+// quiz page.
 
 /** Page of a module: quizzes have their own page, everything else is a lesson. */
 export function moduleHref(slug: string, module: Pick<ModuleSummary, 'type' | 'index'>): string {

@@ -3,9 +3,9 @@ import { useQuery } from '@tanstack/react-query';
 import { adminStats } from '@pupitre/core/lib/api';
 import type { AdminStats } from '@pupitre/core/lib/api-types';
 
-// The statistic cards of the admin dashboard and monitoring pages
-// (docs/specs/040-admin-dashboard.md). total_labs, total_submissions and
-// success_rate are always 0 on the server (defect A3): they are not shown.
+// The statistic cards of the admin dashboard and monitoring pages.
+// total_labs, total_submissions and
+// success_rate are always 0 on the server: they are not shown.
 
 const CARDS: { key: keyof AdminStats; label: string; className: string }[] = [
   { key: 'total_users', label: 'Utilisateurs', className: 'text-blue' },

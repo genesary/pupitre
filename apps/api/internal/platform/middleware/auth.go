@@ -48,6 +48,25 @@ type Claims struct {
 	Email             string `json:"email"`
 	Role              string `json:"role"`
 	PreferredUsername string `json:"preferred_username,omitempty"` //nolint:tagliatelle // preferred_username is the standard OIDC claim name
+	// IssuedAtMicro is the issue time in Unix microseconds. The iat claim
+	// only has a one-second resolution, too coarse to tell a token issued
+	// just after a revocation from one issued just before it.
+	IssuedAtMicro int64 `json:"iat_us,omitempty"` //nolint:tagliatelle // named after the iat claim it refines
+}
+
+// issuedAt returns the most precise issue time the token carries. A token
+// without iat_us falls back to iat, rounded down to the second, so it counts
+// as issued before any revocation in that second.
+func (c *Claims) issuedAt() time.Time {
+	if c.IssuedAtMicro != 0 {
+		return time.UnixMicro(c.IssuedAtMicro)
+	}
+
+	if c.IssuedAt != nil {
+		return c.IssuedAt.Time
+	}
+
+	return time.Time{}
 }
 
 // contextKey is the type used for context values set by this package.
@@ -58,14 +77,17 @@ const ClaimsKey contextKey = "claims"
 
 // CreateToken issues a signed JWT for the given user identity.
 func CreateToken(userID, email, role, username, secret string, expiryHours int) (string, error) {
+	now := time.Now()
+
 	claims := Claims{
 		Email:             email,
 		Role:              role,
 		PreferredUsername: username,
+		IssuedAtMicro:     now.UnixMicro(),
 		RegisteredClaims: jwt.RegisteredClaims{
 			Subject:   userID,
-			IssuedAt:  jwt.NewNumericDate(time.Now()),
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Duration(expiryHours) * time.Hour)),
+			IssuedAt:  jwt.NewNumericDate(now),
+			ExpiresAt: jwt.NewNumericDate(now.Add(time.Duration(expiryHours) * time.Hour)),
 			Issuer:    jwtIssuer,
 			Audience:  jwt.ClaimStrings{jwtAudience},
 		},
@@ -127,7 +149,7 @@ type Session struct {
 }
 
 // SessionCheck reads the session of the user subject for a token issued at
-// issuedAt (docs/specs/190-backend-defects.md B7).
+// issuedAt.
 type SessionCheck func(ctx context.Context, subject string, issuedAt time.Time) (Session, error)
 
 // Option tunes a guard.
@@ -229,12 +251,7 @@ func ResolveSession(ctx context.Context, claims *Claims, check SessionCheck) (bo
 		return true, nil
 	}
 
-	var issuedAt time.Time
-	if claims.IssuedAt != nil {
-		issuedAt = claims.IssuedAt.Time
-	}
-
-	session, err := check(ctx, claims.Subject, issuedAt)
+	session, err := check(ctx, claims.Subject, claims.issuedAt())
 	if err != nil {
 		return false, err
 	}

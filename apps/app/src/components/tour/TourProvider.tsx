@@ -11,7 +11,7 @@ import { TourContext } from './tour-context';
 import { TourBubble } from './TourBubble';
 import { TourRunner } from './TourRunner';
 
-// The guided tour of the learner app (docs/specs/007-guided-tour.md): the
+// The guided tour of the learner app: the
 // first-visit offer, `startTour()` for the side menu, and the running tour.
 
 function TourOffer({ username, onStart, onLater }: { username: string; onStart: () => void; onLater: () => void }) {

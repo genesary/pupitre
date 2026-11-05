@@ -11,7 +11,7 @@ import { CooldownBanner, InlineText, QuestionOptions } from '@/components/quiz/Q
 import { QuizReview } from '@/components/quiz/QuizResultPanel';
 import { useQuiz } from '@/lib/use-quiz';
 
-// The mini-quiz shown at the bottom of a lesson (docs/specs/013-quizzes.md),
+// The mini-quiz shown at the bottom of a lesson,
 // markup of the Astro lesson page's renderMiniQuiz().
 
 type InlineQuizProps = {

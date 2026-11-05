@@ -8,7 +8,7 @@ import { SiteNavigate } from './SiteLink';
 import { loginPath } from '../lib/auth-paths';
 import { useSession } from '../lib/session';
 
-// Route guards of docs/specs/002-roles-and-guards.md. They guide the user; the
+// Route guards. They guide the user; the
 // backend remains the only authority over data. The sign-in page belongs to the
 // learner app: from the admin app, going there is a page load.
 

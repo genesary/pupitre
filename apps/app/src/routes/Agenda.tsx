@@ -21,7 +21,7 @@ import {
 import { SessionDialog, type SessionEdit } from '@/components/agenda/SessionDialog';
 import { SiteLink } from '@pupitre/core/components/SiteLink';
 
-// /agenda (docs/specs/022-agenda-and-sessions.md), markup of pupitre's agenda.astro:
+// /agenda, markup of pupitre's agenda.astro:
 // a monthly calendar of the in-person sessions and a side panel to book them.
 // Admins and managers also create, edit and delete sessions.
 

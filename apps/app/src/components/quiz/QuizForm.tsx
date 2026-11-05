@@ -8,7 +8,7 @@ import type { AnswerValue } from '@/lib/use-quiz';
 
 // Question options, cooldown banner and review of the pupitre quiz screens
 // (pages/courses/[slug]/quiz/[index].astro and the lesson's mini-quiz), same
-// markup and classes. Texts are sanitised inline markdown (spec 013).
+// markup and classes. Texts are sanitised inline markdown.
 
 export function InlineText({ text, as = 'span', className }: { text: string; as?: 'span' | 'div' | 'p'; className?: string }) {
   return <SafeHtml as={as} html={renderInline(text)} className={className} />;

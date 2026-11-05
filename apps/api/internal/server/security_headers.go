@@ -6,7 +6,7 @@ import (
 )
 
 // securityHeaders sets the response headers that browsers use to contain
-// what the API serves (docs/specs/190-backend-defects.md B15). The API
+// what the API serves. The API
 // answers JSON, which no page should frame or run, so every response
 // forbids both. Uploaded files are shown by the frontend, from the same
 // origin: they may be framed by it, and a script inside one (an SVG or an

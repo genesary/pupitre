@@ -1,6 +1,5 @@
 // Course presentation rules of the pupitre Astro frontend (pages/courses/index.astro,
-// pages/courses/[slug]/index.astro), shared by every screen that shows a course
-// (docs/specs/010-catalogue.md).
+// pages/courses/[slug]/index.astro), shared by every screen that shows a course.
 
 type CourseLike = { category?: string; skills?: string[] };
 
@@ -43,7 +42,7 @@ const ICON_RULES: [RegExp, string][] = [
   [/go|golang/, '🦫'],
 ];
 
-/** Thumbnail icon derived from the category and skills (the API has no thumbnail, defect A2). */
+/** Thumbnail icon derived from the category and skills (the API has no thumbnail). */
 export function courseIcon(course: CourseLike, fallback = categoryIcon(course.category ?? '')): string {
   const tags = [course.category ?? '', ...(course.skills ?? [])].join(' ').toLowerCase();
   return ICON_RULES.find(([pattern]) => pattern.test(tags))?.[1] ?? fallback;
@@ -83,5 +82,5 @@ export function categoryColors(categories: string[]): (category: string) => Cate
   return (category) => CATEGORY_PALETTE[Math.max(order.indexOf(category), 0) % CATEGORY_PALETTE.length]!;
 }
 
-/** XP granted for completing a course; hard-coded in the frontend for now (defect A11). */
+/** XP granted for completing a course; hard-coded in the frontend for now. */
 export const COURSE_XP = 200;

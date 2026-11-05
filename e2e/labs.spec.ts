@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 
 import { ACCOUNTS, createCourse, signIn, signOut } from './helpers';
 
-// GitLab labs: a learner checks the steps, the admin tracks the checks (docs/specs/014, 047).
+// GitLab labs: a learner checks the steps, the admin tracks the checks.
 // The mock check of a step fails the first time and passes the second.
 
 test('a learner validates the steps of a lab; the admin sees the checks', async ({ page }) => {

@@ -3,7 +3,7 @@ import { Layout } from '@pupitre/core/components/Layout';
 import { useTour } from './tour-context';
 import { TourProvider } from './TourProvider';
 
-/** The shared layout, with the guided tour of docs/specs/007-guided-tour.md. */
+/** The shared layout, with the guided tour. */
 function LayoutWithTour() {
   return <Layout onStartTour={useTour().startTour} />;
 }

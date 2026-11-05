@@ -4,7 +4,7 @@ import { isReadingPage, LESSON_TIP_STEPS, stepPath, tourSteps } from '@/lib/tour
 
 const ids = (role: Parameters<typeof tourSteps>[0]) => tourSteps(role).map((step) => step.id);
 
-describe('guided tour steps (spec 007)', () => {
+describe('guided tour steps', () => {
   it('shows the manager and admin steps to their role only', () => {
     expect(ids('student')).not.toContain('manager');
     expect(ids('student')).not.toContain('admin');

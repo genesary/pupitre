@@ -1,7 +1,6 @@
 // Package config loads the configuration of the monolith: one set of
 // built-in defaults, one optional YAML file (CONFIG_PATH) and one set of
-// environment variables for the whole process
-// (docs/specs/101-backend-configuration.md).
+// environment variables for the whole process.
 //
 // Each domain keeps the configuration package it had as a service, so its
 // code reads the same fields as before. Load runs the three loaders on the
@@ -54,7 +53,7 @@ const (
 var errInvalidPort = errors.New("invalid port")
 
 // errWeakJWTSecret is returned when the signing secret is the public default
-// or too short (docs/specs/190-backend-defects.md B4).
+// or too short.
 var errWeakJWTSecret = fmt.Errorf("JWT_SECRET must be set to a random secret of at least %d characters", minJWTSecretLength)
 
 // Config is the configuration of the monolith.
@@ -62,8 +61,7 @@ type Config struct {
 	// Port is the single HTTP listen port.
 	Port int
 
-	// TrustedProxies are the networks whose forwarding headers are believed
-	// (docs/specs/190-backend-defects.md B12).
+	// TrustedProxies are the networks whose forwarding headers are believed.
 	TrustedProxies []netip.Prefix
 
 	// Users, Courses and Checker are the configurations each domain reads,
@@ -133,6 +131,7 @@ func Load() (*Config, []string, error) {
 
 	limitWarnings := applyLabCheckRateLimit(checker, file)
 	warnings = append(warnings, limitWarnings...)
+	warnings = append(warnings, trustedProxiesWarnings(file)...)
 
 	trusted, err := trustedProxies(file)
 	if err != nil {
@@ -142,8 +141,18 @@ func Load() (*Config, []string, error) {
 	return &Config{Port: port, TrustedProxies: trusted, Users: users, Courses: courses, Checker: checker}, warnings, nil
 }
 
+// trustedProxiesWarnings warns when no proxy is configured: behind an ingress
+// the API then sees every client at the ingress's address.
+func trustedProxiesWarnings(file fileConfig) []string {
+	if os.Getenv("TRUSTED_PROXIES") != "" || len(file.TrustedProxies) > 0 {
+		return nil
+	}
+
+	return []string{"TRUSTED_PROXIES is not set: only proxies on loopback are trusted, so behind an ingress all clients share one address and one rate limit"}
+}
+
 // trustedProxies resolves TRUSTED_PROXIES (comma-separated), then the
-// file's trustedProxies, then the private networks of a cluster.
+// file's trustedProxies, then loopback.
 func trustedProxies(file fileConfig) ([]netip.Prefix, error) {
 	values := clientip.DefaultTrustedProxies
 	if raw := os.Getenv("TRUSTED_PROXIES"); raw != "" {

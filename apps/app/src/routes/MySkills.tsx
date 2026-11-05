@@ -4,7 +4,7 @@ import { Link } from 'react-router';
 import { listCourses, myCourses, mySkills } from '@pupitre/core/lib/api';
 import { LoadError, LoadingState } from '@pupitre/core/components/PageStates';
 
-// /my-skills (docs/specs/020-learner-space.md), markup of pupitre's my-skills.astro.
+// /my-skills, markup of pupitre's my-skills.astro.
 
 const LEVELS: Record<string, { label: string; className: string }> = {
   beginner: { label: 'Débutant', className: 'level-beginner' },
@@ -14,7 +14,7 @@ const LEVELS: Record<string, { label: string; className: string }> = {
 };
 
 /**
- * The Astro page recomputed the level from the ratio (defect A10). The server
+ * The Astro page recomputed the level from the ratio. The server
  * value wins; this is only the fallback when it is missing.
  */
 function fallbackLevel(completed: number, total: number): string {

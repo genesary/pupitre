@@ -58,7 +58,7 @@ func managerScopeIDs(groups []repository.GroupRow) []string {
 
 // callerScope returns the users a caller may act on: nil, meaning
 // everyone, for an admin; for a manager, the set of members of the groups
-// they manage (docs/specs/190-backend-defects.md B6). One query whatever the
+// they manage. One query whatever the
 // number of groups.
 func (s *State) callerScope(ctx context.Context, claims *middleware.Claims) (map[string]bool, error) {
 	if claims.Role != groupsRoleManager {
@@ -378,7 +378,7 @@ func (s *State) ManagerCreateSubgroup(writer http.ResponseWriter, request *http.
 	}
 
 	// The manager becomes a member of the subgroup, so that it stays in
-	// their scope (docs/specs/190-backend-defects.md B1).
+	// their scope.
 	newID, err := s.Repos.Groups.CreateSubgroup(ctx, body.Name, parentID, claims.Subject)
 	if err != nil {
 		s.Error(writer, http.StatusConflict, err.Error())
@@ -510,8 +510,7 @@ func (s *State) ManagerAddGroupMember(writer http.ResponseWriter, request *http.
 	}
 
 	// A manager adds users already in their scope: the page offers no
-	// one else, and adding anyone would widen the scope at will
-	// (docs/specs/190-backend-defects.md B6).
+	// one else, and adding anyone would widen the scope at will.
 	scope, err := s.callerScope(ctx, claims)
 	if err != nil {
 		s.Error(writer, http.StatusInternalServerError, "Database error")

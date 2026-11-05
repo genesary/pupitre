@@ -20,7 +20,7 @@ import { hostOf, inlineQuizzesByHost, isModuleDone, moduleHref } from '@/lib/mod
 import { ModuleRow } from '@/components/ModuleList';
 import { SessionCard } from '@/components/sessions/SessionCard';
 
-// /courses/:slug (docs/specs/011-course-page-and-enrollment.md), markup of
+// /courses/:slug, markup of
 // pupitre's pages/courses/[slug]/index.astro.
 
 function EnrollArea({ course, enrolled, modules }: { course: Course; enrolled: boolean; modules: ModuleSummary[] }) {
@@ -35,7 +35,7 @@ function EnrollArea({ course, enrolled, modules }: { course: Course; enrolled: b
       void queryClient.invalidateQueries({ queryKey: ['my', 'courses'] });
       void queryClient.invalidateQueries({ queryKey: ['course', course.slug] });
     },
-    // The Astro page ignored this error and reloaded (defect A8).
+    // The Astro page ignored this error and reloaded.
     onError: (error) => toast.error(error.message),
   });
 

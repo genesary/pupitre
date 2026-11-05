@@ -34,29 +34,15 @@ type State struct {
 	Catalog *Catalog
 
 	// Courses is the courses domain this one reads from, wired in by the
-	// monolith (docs/specs/104-backend-in-process-calls.md).
+	// monolith.
 	Courses CourseSource
 
-	// Sessions, when set, is checked by every guard on every request
-	// (docs/specs/190-backend-defects.md B7). The monolith sets it to
+	// Sessions, when set, is checked by every guard on every request.
+	// The monolith sets it to
 	// CheckSession.
 	Sessions middleware.SessionCheck
 
 	catalogOnce sync.Once
-}
-
-// Health godoc
-// @Summary  Liveness check
-// @Tags     Health
-// @Produce  json
-// @Success  200  {object}  map[string]string
-// @Router   /health [get].
-func (s *State) Health(w http.ResponseWriter, r *http.Request) {
-	s.JSON(w, http.StatusOK, map[string]string{
-		"status":  "ok",
-		"service": "user-service",
-		"version": "1.0.0",
-	})
 }
 
 // JSON writes v to w as a JSON response with the given HTTP status.

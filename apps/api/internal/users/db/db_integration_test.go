@@ -151,8 +151,7 @@ func TestMigrate_CollapsesDuplicateXPEvents(t *testing.T) { //nolint:paralleltes
 
 // TestMigrate_GroupMappingsAllowManager reproduces a database whose
 // group_role_mappings check accepts admin and student only, and asserts the
-// migration lets a group map to manager (docs/specs/190-backend-defects.md
-// B20).
+// migration lets a group map to manager.
 func TestMigrate_GroupMappingsAllowManager(t *testing.T) { //nolint:paralleltest // owns the shared schema
 	url := dbURL(t)
 

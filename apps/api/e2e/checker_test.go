@@ -41,7 +41,7 @@ func TestLabCheckRequiresAuth(t *testing.T) {
 }
 
 // TestServiceRoutesAreGone checks that the routes the services used to call
-// each other are not served (docs/specs/103-backend-http-api.md).
+// each other are not served.
 func TestServiceRoutesAreGone(t *testing.T) {
 	for _, path := range []string{"/evaluate", "/check-step", "/internal/progress/complete", "/internal/enrollments/auto"} {
 		resp := doJSON(t, http.MethodPost, globalCfg.APIURL+path, map[string]string{}, "")

@@ -37,8 +37,7 @@ func failure(status int, message string) *Failure {
 }
 
 // RunEvaluate runs one lab policy evaluation. POST /evaluate decodes its
-// body and calls it; the monolith calls it directly
-// (docs/specs/107-backend-labs-and-checker.md).
+// body and calls it; the monolith calls it directly.
 func (h *Handler) RunEvaluate(ctx context.Context, req checker.EvaluateRequest) (*checker.EvaluateResponse, *Failure) {
 	if fail := requireEvaluateFields(req); fail != nil {
 		return nil, fail

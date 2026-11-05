@@ -6,8 +6,8 @@ import (
 	"testing"
 )
 
-// TestSecurityHeaders is the regression test of defect B15
-// (docs/specs/190-backend-defects.md): every response carries the security
+// TestSecurityHeaders is a regression test:
+// every response carries the security
 // headers, and an uploaded file can be framed by the frontend but runs no
 // script.
 func TestSecurityHeaders(t *testing.T) {

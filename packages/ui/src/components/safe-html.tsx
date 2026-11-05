@@ -8,7 +8,7 @@ type SafeHtmlProps = {
 };
 
 /**
- * The only component allowed to render raw HTML (spec 003 S1). It sanitizes
+ * The only component allowed to render raw HTML. It sanitizes
  * its input itself, so a caller cannot forget to.
  */
 export function SafeHtml({ html, className, as: Tag = 'div' }: SafeHtmlProps) {

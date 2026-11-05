@@ -167,8 +167,8 @@ func (s *State) fetchCheckSpec(ctx context.Context, writer http.ResponseWriter, 
 }
 
 // labUsername is the learner's GitLab username: the login the identity
-// provider gave them, not the profile username, which they can change
-// (docs/specs/190-backend-defects.md B11). It writes the error response and
+// provider gave them, not the profile username, which they can change.
+// It writes the error response and
 // returns ok=false when there is none.
 func (s *State) labUsername(writer http.ResponseWriter, req *http.Request) (string, bool) {
 	name, err := s.users().LabIdentity(req.Context(), s.claims(req).Subject)
@@ -188,11 +188,12 @@ func (s *State) labUsername(writer http.ResponseWriter, req *http.Request) (stri
 	return name, true
 }
 
-// callChecker sends req to checker-service's /evaluate route and returns
-// the decoded response, writing an HTTP error and returning ok=false on
-// any failure.
+// callChecker evaluates a lab through the checker, writing an HTTP error and
+// returning ok=false on any failure.
 func (s *State) callChecker(writer http.ResponseWriter, req *http.Request, body EvaluateRequest) (CheckResponse, bool) {
-	return s.callCheckerRoute(writer, req, "/evaluate", body)
+	result, err := s.labChecker().Evaluate(req.Context(), body)
+
+	return s.checkOutcome(writer, "evaluate", result, err)
 }
 
 // storeLabCheck persists a lab check result for later review, logging a
@@ -299,31 +300,18 @@ func (s *State) CheckModuleStep(writer http.ResponseWriter, req *http.Request) {
 	s.JSON(writer, http.StatusOK, result)
 }
 
-// callCheckerStep sends a step check request to checker-service's /check-step
-// route and returns the decoded response.
+// callCheckerStep runs one step check through the checker, writing an HTTP
+// error and returning ok=false on any failure.
 func (s *State) callCheckerStep(writer http.ResponseWriter, req *http.Request, body StepCheckRequest) (CheckResponse, bool) {
-	return s.callCheckerRoute(writer, req, "/check-step", body)
+	result, err := s.labChecker().CheckStep(req.Context(), body)
+
+	return s.checkOutcome(writer, "check-step", result, err)
 }
 
-// callCheckerRoute runs one check through the checker and returns its
-// result. It writes an HTTP error and returns ok=false on any failure: the
-// status and message a CheckerError carries, or a 500 when the checker could
-// not be reached at all.
-func (s *State) callCheckerRoute(writer http.ResponseWriter, req *http.Request, route string, body any) (CheckResponse, bool) {
-	var (
-		result CheckResponse
-		err    error
-	)
-
-	switch typed := body.(type) {
-	case EvaluateRequest:
-		result, err = s.labChecker().Evaluate(req.Context(), typed)
-	case StepCheckRequest:
-		result, err = s.labChecker().CheckStep(req.Context(), typed)
-	default:
-		err = &CheckerError{Status: http.StatusInternalServerError, Message: buildCheckerRequestFailed}
-	}
-
+// checkOutcome returns the result of a check. On a failure it writes an HTTP
+// error and returns ok=false: the status and message a CheckerError carries,
+// or a 500 when the checker could not be reached at all.
+func (s *State) checkOutcome(writer http.ResponseWriter, check string, result CheckResponse, err error) (CheckResponse, bool) {
 	if err == nil {
 		return result, true
 	}
@@ -338,26 +326,20 @@ func (s *State) callCheckerRoute(writer http.ResponseWriter, req *http.Request, 
 		return CheckResponse{}, false
 	}
 
-	zap.L().Error("checker-service call failed", zap.String("route", route), zap.Error(err))
+	zap.L().Error("lab check failed", zap.String("check", check), zap.Error(err))
 	s.Error(writer, http.StatusInternalServerError, "error when reaching for checker service")
 
 	return CheckResponse{}, false
 }
 
-// LabChecker runs lab checks against a learner's GitLab project. In the
-// monolith it calls the checker package directly; the HTTP implementation
-// below serves the standalone course-service binary until it is removed
-// (docs/specs/107-backend-labs-and-checker.md).
+// LabChecker runs lab checks against a learner's GitLab project, through
+// direct calls into the checker package.
 type LabChecker interface {
 	// Evaluate runs a lab's OPA policy.
 	Evaluate(ctx context.Context, req EvaluateRequest) (CheckResponse, error)
 	// CheckStep runs one named step check.
 	CheckStep(ctx context.Context, req StepCheckRequest) (CheckResponse, error)
 }
-
-// buildCheckerRequestFailed is the message of a check request that could
-// not be built.
-const buildCheckerRequestFailed = "Failed to build checker request"
 
 // CheckerError is a check that the checker refused or could not complete,
 // with the status and message the learner receives.
@@ -372,16 +354,6 @@ type CheckerError struct {
 // Error implements error.
 func (e *CheckerError) Error() string {
 	return fmt.Sprintf("checker: %d %s", e.Status, e.Message)
-}
-
-// checkerRejected is the error of a check the checker answered with an
-// error: relayed as a 502 carrying the checker's message.
-func checkerRejected(message string) *CheckerError {
-	if message == "" {
-		message = "checker-service error"
-	}
-
-	return &CheckerError{Status: http.StatusBadGateway, Message: message}
 }
 
 // labChecker returns the checker wired in by the monolith; a State built

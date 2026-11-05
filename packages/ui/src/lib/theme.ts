@@ -2,7 +2,7 @@ import { useSyncExternalStore } from 'react';
 
 import { writeItem } from './storage';
 
-// Light / dark mode of docs/specs/005-ui-theme-navigation.md. The initial class
+// Light / dark mode. The initial class
 // is set before React starts by public/theme-init.js, which reads the same key.
 
 const STORAGE_KEY = 'theme';

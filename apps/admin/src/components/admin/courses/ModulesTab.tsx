@@ -9,7 +9,7 @@ import { ConfirmDialog } from '@pupitre/core/components/ConfirmDialog';
 import { ModuleForm } from '@/components/admin/courses/ModuleForm';
 import { SortableList } from '@/components/admin/SortableList';
 
-// Modules tab of a course (docs/specs/042-admin-courses.md). The list is the
+// Modules tab of a course. The list is the
 // definition's modules, hidden ones and git sources included; every change goes
 // through saveDefinition (read again, compare, write whole).
 

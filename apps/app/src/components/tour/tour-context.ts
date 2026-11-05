@@ -1,7 +1,7 @@
 import { createContext, useContext } from 'react';
 
-// What the learner app's pages and layout reach of the guided tour
-// (docs/specs/007-guided-tour.md). Provided by TourProvider.
+// What the learner app's pages and layout reach of the guided tour.
+// Provided by TourProvider.
 
 export type TourContextValue = { startTour: () => void; running: boolean };
 

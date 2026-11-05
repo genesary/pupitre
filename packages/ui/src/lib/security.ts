@@ -1,6 +1,6 @@
 import DOMPurify from 'dompurify';
 
-// Security helpers of docs/specs/003-security.md. Every redirect driven by a
+// Security helpers. Every redirect driven by a
 // parameter, every dynamic href/src and every piece of HTML built from course
 // content goes through one of these functions.
 
@@ -106,8 +106,8 @@ function installHooks() {
 }
 
 /**
- * Sanitizes HTML produced from course markdown, patterns included
- * (spec 003 S2). The result is the only kind of HTML <SafeHtml> accepts.
+ * Sanitizes HTML produced from course markdown, patterns included.
+ * The result is the only kind of HTML <SafeHtml> accepts.
  */
 export function sanitizeHtml(html: string): string {
   installHooks();
@@ -119,7 +119,7 @@ export function sanitizeHtml(html: string): string {
   });
 }
 
-/** True for a single emoji, the only non-URL avatar value we render (spec 003 S3). */
+/** True for a single emoji, the only non-URL avatar value we render. */
 export function isEmoji(value: string): boolean {
   return /^\p{Extended_Pictographic}(️|‍\p{Extended_Pictographic})*️?$/u.test(value);
 }

@@ -10,7 +10,7 @@ vi.mock('@pupitre/core/lib/api', () => ({ leaderboard: vi.fn() }));
 
 const TRAP_NAME = '<img src=x onerror=alert("xss-username")>';
 
-describe('leaderboard (spec 020)', () => {
+describe('leaderboard', () => {
   it('shows a malicious username and avatar as text, never as HTML', async () => {
     vi.mocked(leaderboard).mockResolvedValue({
       leaderboard: [

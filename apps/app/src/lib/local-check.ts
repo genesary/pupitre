@@ -1,6 +1,6 @@
 import type { CheckResult } from '@pupitre/core/lib/api-types';
 
-// Local lab checks of the pupitre-desktop app (docs/specs/014-labs.md). Same
+// Local lab checks of the pupitre-desktop app. Same
 // behaviour and signature as pupitre's frontend/src/lib/local-check.ts, so the
 // desktop app keeps working with the new frontend.
 

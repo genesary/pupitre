@@ -4,8 +4,8 @@ import { SafeHtml } from '@pupitre/ui/components/safe-html';
 import { useTheme } from '@pupitre/ui/lib/theme';
 
 // Sanitised lesson HTML plus the two enhancements of the Astro lesson page:
-// « Copier » buttons on code blocks and mermaid diagrams that follow the theme
-// (docs/specs/012-lesson-player.md). Both build DOM nodes with text only.
+// « Copier » buttons on code blocks and mermaid diagrams that follow the theme.
+// Both build DOM nodes with text only.
 
 function addCopyButtons(root: HTMLElement) {
   root.querySelectorAll('pre').forEach((pre) => {

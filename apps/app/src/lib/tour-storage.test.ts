@@ -12,7 +12,7 @@ import { TOUR_VERSION } from '@/lib/tour-steps';
 const USER = 'u1';
 const KEY = `pupitre.tour.${USER}`;
 
-describe('guided tour persistence (spec 007)', () => {
+describe('guided tour persistence', () => {
   it('offers the tour when nothing is stored', () => {
     expect(readTourState(USER)).toBeNull();
     expect(shouldOfferTour(readTourState(USER))).toBe(true);

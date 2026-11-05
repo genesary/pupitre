@@ -4,10 +4,10 @@ import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
 
-// The admin app (docs/specs/000-scope-and-stack.md): the administration and the
+// The admin app: the administration and the
 // manager space. It is served under /admin/ on the learner app's origin, which
 // routes /admin/* and /manager/* to it (apps/app/vite.config.ts in development,
-// the reverse proxy in production, docs/specs/004-api-and-routing.md). Open it
+// the reverse proxy in production). Open it
 // through the learner app's dev server, not on its own port.
 
 export default defineConfig(() => ({

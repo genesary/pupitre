@@ -9,10 +9,10 @@ import { updateUser } from '@pupitre/core/lib/session';
 import { UserAvatar } from '@pupitre/ui/components/user-avatar';
 import { LoadError, LoadingState } from '@pupitre/core/components/PageStates';
 
-// /profile (docs/specs/021-profile.md), markup of pupitre's profile.astro.
+// /profile, markup of pupitre's profile.astro.
 // Keycloak owns the username, the e-mail and the password: only the bio and an
 // emoji avatar (from an earned badge) can be changed. No avatar URL can be
-// entered (spec 003 S3, issue genesary/pupitre#187).
+// entered (issue genesary/pupitre#187).
 
 const PROVIDERS: Record<string, string> = {
   oidc: 'Keycloak',
