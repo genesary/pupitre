@@ -91,6 +91,30 @@ func TestLoad_EnvWinsOverFile(t *testing.T) {
 	}
 }
 
+// TestLoad_MistypedKeyWarns checks that a key of the monolith's own with the
+// wrong type is reported: the domain loaders do not know it.
+func TestLoad_MistypedKeyWarns(t *testing.T) {
+	clearEnv(t)
+
+	path := filepath.Join(t.TempDir(), "config.yaml")
+
+	err := os.WriteFile(path, []byte("trustedProxies: 10.0.0.0/8\n"), 0o600)
+	if err != nil {
+		t.Fatalf("write config: %v", err)
+	}
+
+	t.Setenv("CONFIG_PATH", path)
+
+	_, warnings, err := Load()
+	if err != nil {
+		t.Fatalf("Load: %v", err)
+	}
+
+	if !strings.Contains(strings.Join(warnings, "\n"), "ignored for the shared settings") {
+		t.Errorf("warnings = %q, want one about the file", warnings)
+	}
+}
+
 // TestLoad_RemovedKeysWarn checks that the removed service URLs and secret
 // are ignored with a warning naming them.
 func TestLoad_RemovedKeysWarn(t *testing.T) {

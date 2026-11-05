@@ -45,7 +45,7 @@ func RegisterRoutes(router chi.Router, state *State, cfg *config.Config) {
 	})
 }
 
-// registerPublicRoutes wires the unauthenticated course-service endpoints.
+// registerPublicRoutes wires the unauthenticated endpoints of the domain.
 func registerPublicRoutes(router chi.Router, state *State) {
 	router.Get("/api/courses", state.ListCourses)
 	router.Get("/api/courses/{slug}", state.GetCourse)
@@ -65,9 +65,8 @@ func registerPublicRoutes(router chi.Router, state *State) {
 	router.Get("/uploads/{filename}", state.ServeUpload)
 }
 
-// registerBatchRoutes wires the batch lookups. They are server-to-server
-// reads: user-service resolves whole sets of slugs through them instead of
-// issuing one request per slug.
+// registerBatchRoutes wires the batch lookups, which resolve whole sets of
+// slugs in one request. The users domain calls the same code in-process.
 func registerBatchRoutes(router chi.Router, state *State) {
 	router.Get("/api/batch/courses", state.ListCoursesBatch)
 	router.Get("/api/batch/paths", state.ListPathsBatch)

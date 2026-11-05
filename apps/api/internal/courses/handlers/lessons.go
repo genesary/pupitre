@@ -9,9 +9,9 @@ import (
 	"github.com/genesary/pupitre/apps/api/internal/courses/content"
 )
 
-// CourseCompletion is the request body sent to the user-service when a
-// course is completed. Skills, Difficulty and SkillTotalCourses are forwarded
-// so user-service can update the learner's per-skill expertise level.
+// CourseCompletion is what the users domain receives when a course is
+// completed. Skills, Difficulty and SkillTotalCourses let it update the
+// learner's per-skill expertise level.
 type CourseCompletion struct {
 	UserID            string              `json:"userId"`
 	CourseSlug        string              `json:"courseSlug"`
@@ -174,7 +174,7 @@ func (s *State) postLessonComplete(
 	return true
 }
 
-// notifyCourseComplete notifies the user-service that userID completed
+// notifyCourseComplete tells the users domain that userID completed
 // course. Failures are only logged: the lesson itself was already
 // recorded as complete, so they must not affect the HTTP response.
 func (s *State) notifyCourseComplete(ctx context.Context, course *content.Course, userID string) {

@@ -24,22 +24,12 @@ func remoteIP(r *http.Request) (string, error) {
 	return ip, nil
 }
 
-// Routing invariant: no path registered here may sit under a prefix that
-// course-service owns (/api/courses, /api/admin/courses).
-//
-// The two services are one hostname behind a shared proxy, so whichever
-// segment decides who owns a request has to come *before* any variable
-// segment. Enrolling used to be POST /api/courses/{slug}/enroll — the owner
-// was only decided after the slug, which no prefix match can express. Every
-// front door then needed its own workaround: a Traefik-specific CRD, an
-// nginx regex annotation, and an implementation-specific Gateway API match.
-// Keying those endpoints by their own resource instead (/api/enrollments,
-// /api/session-bookings) makes plain longest-prefix routing sufficient
-// everywhere, so the platform no longer depends on what its ingress can
-// express.
-//
-// Adding a route under /api/courses or /api/admin/courses reintroduces that
-// coupling; TestRouter_NoCourseServicePrefixOverlap fails if you do.
+// Routing invariant: no path registered here may sit under a prefix that the
+// courses domain owns (/api/courses, /api/admin/courses). Whatever decides who
+// owns a request has to come before any variable segment, so these endpoints
+// are keyed by their own resource (/api/enrollments, /api/session-bookings)
+// rather than hung off a course slug;
+// TestRouter_NoCourseServicePrefixOverlap fails if a route breaks that.
 
 // RegisterRoutes mounts every public route of the users domain on router,
 // behind the 1 MB body limit, with each group's guard. It adds no global

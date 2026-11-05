@@ -14,7 +14,6 @@ import (
 
 	"golang.org/x/crypto/bcrypt"
 
-	"github.com/genesary/pupitre/apps/api/internal/users/models"
 	"github.com/genesary/pupitre/apps/api/internal/users/repository"
 )
 
@@ -115,10 +114,10 @@ func randomPasswordHash() (string, error) {
 //     opened every unconfigured instance.
 //
 // Behaviour on conflict (admin email already exists):
-//   - If a custom password was provided (cases 1 or 2) the hash is always
-//     updated so deployers can rotate the credential by restarting the pod.
-//     When that changes the password, the sessions opened with the old one
-//     end, as they do on a password change through the API.
+//   - If a custom password was provided (cases 1 or 2) and it is not the stored
+//     one, the hash is updated so deployers can rotate the credential by
+//     restarting the pod, and the sessions opened with the old password end,
+//     as they do on a password change through the API.
 //   - If no password was provided (case 3) the existing row is left untouched
 //     so a previously set password is not overwritten.
 func SeedAdmin(ctx context.Context, users repository.UserRepository, adminPassword string) error {
@@ -173,51 +172,41 @@ func SeedAdmin(ctx context.Context, users repository.UserRepository, adminPasswo
 	return storeAdminPassword(ctx, users, adminPassword, hash)
 }
 
-// storeAdminPassword upserts hash, the hash of adminPassword, so that it is
-// refreshed on every restart: operators rotate the password by updating the
-// secret and rolling the pod, with no manual SQL. A new password ends the
-// sessions opened with the old one.
+// storeAdminPassword stores hash, the hash of adminPassword, so that operators
+// rotate the password by updating the secret and rolling the pod, with no
+// manual SQL. A new password ends the sessions opened with the old one, in the
+// same statement: revoking apart could fail after the write, and the next start
+// would then find the password current and leave those sessions open.
 func storeAdminPassword(ctx context.Context, users repository.UserRepository, adminPassword, hash string) error {
-	// Read before the upsert, which replaces the hash it compares with.
-	rotatedAdmin := adminToRevoke(ctx, users, adminPassword)
+	admin, err := users.FindByEmail(ctx, defaultAdminEmail)
+	if err != nil || admin.PasswordHash == nil {
+		err = users.UpsertAdminPassword(ctx, defaultAdminUsername, defaultAdminEmail, hash)
+		if err != nil {
+			return fmt.Errorf("upsert admin password: %w", err)
+		}
 
-	err := users.UpsertAdminPassword(ctx, defaultAdminUsername, defaultAdminEmail, hash)
-	if err != nil {
-		return fmt.Errorf("upsert admin password: %w", err)
-	}
-
-	if rotatedAdmin == nil {
 		return nil
 	}
 
-	err = users.RevokeSessions(ctx, rotatedAdmin.ID, time.Now().Truncate(time.Microsecond))
+	// A restart with the same password must not sign the admin out.
+	if isCurrentPassword(*admin.PasswordHash, adminPassword) {
+		return nil
+	}
+
+	err = users.ChangePassword(ctx, admin.ID, hash, time.Now().Truncate(time.Microsecond))
 	if err != nil {
-		return fmt.Errorf("revoke admin sessions: %w", err)
+		return fmt.Errorf("change admin password: %w", err)
 	}
 
 	return nil
 }
 
-// adminToRevoke returns the stored admin account when adminPassword, a
-// cleartext password or a bcrypt hash, is not its current password, and nil
-// otherwise: a restart with the same password must not sign the admin out.
-func adminToRevoke(ctx context.Context, users repository.UserRepository, adminPassword string) *models.User {
-	admin, err := users.FindByEmail(ctx, defaultAdminEmail)
-	if err != nil || admin.PasswordHash == nil {
-		return nil
-	}
-
+// isCurrentPassword reports whether adminPassword, a cleartext password or a
+// bcrypt hash, is the password stored as storedHash.
+func isCurrentPassword(storedHash, adminPassword string) bool {
 	if strings.HasPrefix(adminPassword, "$2") {
-		if *admin.PasswordHash == adminPassword {
-			return nil
-		}
-
-		return admin
+		return storedHash == adminPassword
 	}
 
-	if bcrypt.CompareHashAndPassword([]byte(*admin.PasswordHash), []byte(adminPassword)) == nil {
-		return nil
-	}
-
-	return admin
+	return bcrypt.CompareHashAndPassword([]byte(storedHash), []byte(adminPassword)) == nil
 }

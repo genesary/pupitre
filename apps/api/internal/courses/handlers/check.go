@@ -28,9 +28,9 @@ type checkSpec struct {
 	Policy   string   `yaml:"policy"` // relative path to .rego file
 }
 
-// EvaluateRequest is the payload sent to checker-service's /evaluate route.
-// Raw Rego text is no longer included: checker-service fetches the policy
-// directly from the course git repository using the reference fields below.
+// EvaluateRequest is one lab policy evaluation asked of the checker. Raw Rego
+// text is not included: the checker fetches the policy directly from the course
+// git repository using the reference fields below.
 type EvaluateRequest struct {
 	Username    string   `json:"username"`
 	Project     string   `json:"project"`
@@ -141,8 +141,8 @@ func (s *State) resolveLabModule(
 }
 
 // fetchCheckSpec fetches and parses check.yaml from the same git directory
-// as the module content. The Rego policy itself is not fetched here:
-// checker-service retrieves it from git via the reference in EvaluateRequest.
+// as the module content. The Rego policy itself is not fetched here: the
+// checker retrieves it from git via the reference in EvaluateRequest.
 func (s *State) fetchCheckSpec(ctx context.Context, writer http.ResponseWriter, mod content.Module) (checkSpec, bool) {
 	token := s.tokenForRepo(mod.Src)
 	checkDir := path.Dir(mod.Path)
@@ -224,7 +224,7 @@ func (s *State) storeLabCheck(
 	}
 }
 
-// StepCheckRequest is sent to checker-service's /check-step route.
+// StepCheckRequest is one step check asked of the checker.
 type StepCheckRequest struct {
 	Username    string         `json:"username"`
 	Project     string         `json:"project"`

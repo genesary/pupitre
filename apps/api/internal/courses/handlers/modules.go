@@ -167,7 +167,7 @@ type questionResultAPI struct {
 	SourceRefs   []content.SourceRef `json:"sourceRefs,omitempty"`
 }
 
-// moduleProgressData holds per-module quiz progress fetched from user-service.
+// moduleProgressData holds per-module quiz progress read from the users domain.
 type moduleProgressData struct {
 	BestScore int
 	MaxScore  int
@@ -175,9 +175,7 @@ type moduleProgressData struct {
 	Attempts  int
 }
 
-// ModuleResult is the payload sent to user-service to record a quiz
-// module's score. Field names mirror user-service's internal API contract
-// (user-service/internal/handlers/internal.go).
+// ModuleResult is a quiz module's score, as the users domain records it.
 type ModuleResult struct {
 	UserID      string `json:"userId"`
 	CourseSlug  string `json:"courseSlug"`
@@ -189,14 +187,16 @@ type ModuleResult struct {
 	Passed      bool   `json:"passed"`
 }
 
-// recordModuleProgress sends quiz results to user-service asynchronously.
-//
-// The call is detached from the request lifecycle on purpose: the HTTP
-// response has already been (or is about to be) sent, so it runs on a
-// fresh, independently-timed context rather than the request's, which may
-// already be canceled by the time the goroutine runs.
-func (s *State) recordModuleProgress(courseSlug, userID, moduleSlug, moduleType string, idx, score, maxScore int, passed bool) {
-	result := ModuleResult{
+// recordModuleProgress stores a quiz result in the users domain before the
+// response is sent, so the module list the client reads next already shows it,
+// and a shutdown, which waits for requests but not for goroutines, cannot lose
+// it. A client that hangs up does not stop the write: the quiz was scored. A
+// failure is only logged, the learner keeps their result.
+func (s *State) recordModuleProgress(ctx context.Context, courseSlug, userID, moduleSlug, moduleType string, idx, score, maxScore int, passed bool) {
+	ctx, cancel := context.WithTimeout(context.WithoutCancel(ctx), usersWriteTimeout)
+	defer cancel()
+
+	err := s.users().RecordModule(ctx, ModuleResult{
 		UserID:      userID,
 		CourseSlug:  courseSlug,
 		ModuleIndex: idx,
@@ -205,11 +205,11 @@ func (s *State) recordModuleProgress(courseSlug, userID, moduleSlug, moduleType 
 		Score:       score,
 		MaxScore:    maxScore,
 		Passed:      passed,
+	})
+	if err != nil {
+		zap.L().Warn("failed to record module progress",
+			zap.String("courseSlug", courseSlug), zap.String("moduleSlug", moduleSlug), zap.Error(err))
 	}
-
-	s.detached("record-module", func(ctx context.Context, users UserProgress) error {
-		return users.RecordModule(ctx, result)
-	}, zap.String("courseSlug", courseSlug), zap.String("moduleSlug", moduleSlug))
 }
 
 // completedSlugs builds a set of module slugs the user has completed
@@ -858,7 +858,7 @@ func (s *State) finalizeSubmission(writer http.ResponseWriter, req *http.Request
 	respCooldowns := s.recordQuestionCooldowns(req.Context(), userID, courseSlug, idx,
 		result.QuestionResults, cooldownSpec, mod.MaxAttemptsPerQuestion, mod.LockOnMaxAttempts)
 
-	s.recordModuleProgress(courseSlug, userID, mod.Slug(), mod.Type, idx, result.TotalScore, result.MaxScore, result.Passed) //nolint:contextcheck // fire-and-forget async POST detached from the request context by design
+	s.recordModuleProgress(req.Context(), courseSlug, userID, mod.Slug(), mod.Type, idx, result.TotalScore, result.MaxScore, result.Passed)
 
 	if result.Passed && courseCompleted(view, mod.Slug(), "") {
 		s.notifyCourseComplete(req.Context(), view.course, userID)
@@ -1039,9 +1039,9 @@ func (s *State) recordQuestionCooldowns(
 // last lesson nor the quiz is special-cased.
 //
 // justPassedQuiz and justViewedLesson name the module completed by the
-// current request. Its progress write is either fire-and-forget
-// (recordModuleProgress) or racing this read, so it is credited here without
-// a round-trip. Pass an empty string for the kind the request did not touch.
+// current request: the progress the request loaded predates it, so it is
+// credited here without reading it back. Pass an empty string for the kind the
+// request did not touch.
 //
 // It reads the progress the request already loaded rather than fetching it
 // again — which is what makes the two writes that call it (marking a lesson

@@ -2,6 +2,7 @@ package db_test
 
 import (
 	"context"
+	"errors"
 	"testing"
 
 	"github.com/google/uuid"
@@ -139,5 +140,72 @@ func TestSeedAdmin_NoAdminYet(t *testing.T) {
 	_, err = users.FindByEmail(context.Background(), adminEmail)
 	if err != nil {
 		t.Errorf("admin not created: %v", err)
+	}
+}
+
+// TestSeedAdmin_FailedRotationIsRetried verifies that a rotation that fails
+// leaves the old password in place, so the next start tries it again and ends
+// the old sessions: a password stored apart from its revocation would look
+// current then, and they would stay open.
+func TestSeedAdmin_FailedRotationIsRetried(t *testing.T) {
+	t.Parallel()
+
+	users, id := seededAdmin(t, "old-password")
+	users.ChangePasswordErr = errors.New("database down")
+
+	err := db.SeedAdmin(context.Background(), users, "new-password")
+	if err == nil {
+		t.Fatal("SeedAdmin succeeded while the password could not be stored")
+	}
+
+	if adminSessionsRevoked(t, users, id) {
+		t.Error("sessions revoked by a rotation that failed")
+	}
+
+	users.ChangePasswordErr = nil
+
+	err = db.SeedAdmin(context.Background(), users, "new-password")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !adminSessionsRevoked(t, users, id) {
+		t.Error("the retried rotation left the old sessions open")
+	}
+}
+
+// TestSeedAdmin_RenamedAdmin verifies that an admin whose username was changed
+// is found by email: inserting a second "admin" would hit the unique email and
+// stop the API from starting.
+func TestSeedAdmin_RenamedAdmin(t *testing.T) {
+	t.Parallel()
+
+	hash, err := bcrypt.GenerateFromPassword([]byte("old-password"), bcrypt.MinCost)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	stored := string(hash)
+	id := uuid.New()
+	users := fake.NewUserRepository(models.User{
+		ID: id, Username: "root", Email: adminEmail, Role: "admin", IsActive: true, PasswordHash: &stored,
+	})
+
+	err = db.SeedAdmin(context.Background(), users, "new-password")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	admin, err := users.FindByEmail(context.Background(), adminEmail)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if admin.ID != id || admin.Username != "root" {
+		t.Errorf("admin = %s %q, want the existing account", admin.ID, admin.Username)
+	}
+
+	if bcrypt.CompareHashAndPassword([]byte(*admin.PasswordHash), []byte("new-password")) != nil {
+		t.Error("the new password was not stored")
 	}
 }

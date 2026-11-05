@@ -10,7 +10,7 @@ import (
 	"github.com/genesary/pupitre/apps/api/internal/courses/content"
 )
 
-// courseProgress is one learner's state in one course, as course-service
+// courseProgress is one learner's state in one course, as the courses domain
 // needs it while rendering: which lessons are viewed, what each quiz module
 // scored, and the aggregates used to evaluate prerequisites.
 //
@@ -64,8 +64,7 @@ type UserProgress interface {
 	LabIdentity(ctx context.Context, userID string) (string, error)
 }
 
-// ProgressOverview is one learner's progress in one course, as
-// GET /internal/progress/overview reports it.
+// ProgressOverview is one learner's progress in one course.
 type ProgressOverview struct {
 	Enrolled      bool             `json:"enrolled"`
 	Viewed        []string         `json:"viewed"`
@@ -140,14 +139,14 @@ func (noUsers) RecordModule(context.Context, ModuleResult) error { return errNoU
 // LabIdentity implements UserProgress.
 func (noUsers) LabIdentity(context.Context, string) (string, error) { return "", errNoUsers }
 
-// postInternalTimeout bounds a detached write to user-service, so a slow or
-// unreachable dependency cannot leak goroutines indefinitely.
-const postInternalTimeout = 10 * time.Second
+// usersWriteTimeout bounds a write to the users domain that outlives the
+// request's context, so a stalled database cannot hold it indefinitely.
+const usersWriteTimeout = 10 * time.Second
 
 // courseProgress fetches userID's full progress in courseSlug in one call.
 //
 // A failure is reported as empty progress rather than an error: every
-// caller renders the course either way, and treating a user-service blip as
+// caller renders the course either way, and treating a users domain failure as
 // "nothing completed yet" is what the per-call helpers did before.
 func (s *State) courseProgress(ctx context.Context, courseSlug, userID string) *courseProgress {
 	body, err := s.users().CourseOverview(ctx, userID, courseSlug)
@@ -268,7 +267,7 @@ func (s *State) detached(call string, write func(ctx context.Context, users User
 	users := s.users()
 
 	go func() {
-		ctx, cancel := context.WithTimeout(context.Background(), postInternalTimeout)
+		ctx, cancel := context.WithTimeout(context.Background(), usersWriteTimeout)
 		defer cancel()
 
 		err := write(ctx, users)

@@ -20,6 +20,7 @@ import (
 	"gorm.io/gorm"
 
 	coursesdb "github.com/genesary/pupitre/apps/api/internal/courses/db"
+	"github.com/genesary/pupitre/apps/api/internal/platform/database"
 	usersdb "github.com/genesary/pupitre/apps/api/internal/users/db"
 )
 
@@ -40,7 +41,7 @@ func scratchDatabase(t *testing.T, admin *gorm.DB, baseURL, name string) *gorm.D
 
 	parsed.Path = "/" + name
 
-	gdb, err := coursesdb.Connect(t.Context(), parsed.String(), 2, 2)
+	gdb, err := database.Connect(t.Context(), parsed.String(), 2, 2)
 	if err != nil {
 		t.Fatalf("connect to %s: %v", name, err)
 	}
@@ -99,7 +100,7 @@ func TestMigrate_SameSchemaAsTheServices(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
 	defer cancel()
 
-	admin, err := coursesdb.Connect(ctx, baseURL, 2, 2)
+	admin, err := database.Connect(ctx, baseURL, 2, 2)
 	if err != nil {
 		t.Fatalf("connect: %v", err)
 	}

@@ -18,6 +18,7 @@ import (
 	courseshandlers "github.com/genesary/pupitre/apps/api/internal/courses/handlers"
 	coursesrepo "github.com/genesary/pupitre/apps/api/internal/courses/repository"
 	"github.com/genesary/pupitre/apps/api/internal/platform/config"
+	"github.com/genesary/pupitre/apps/api/internal/platform/database"
 	usersdb "github.com/genesary/pupitre/apps/api/internal/users/db"
 	usershandlers "github.com/genesary/pupitre/apps/api/internal/users/handlers"
 	usersrepo "github.com/genesary/pupitre/apps/api/internal/users/repository"
@@ -207,7 +208,7 @@ func connectWithRetry(ctx context.Context, cfg *config.Config) (*gorm.DB, error)
 	var lastErr error
 
 	for attempt := 1; attempt <= dbConnectAttempts; attempt++ {
-		gdb, err := coursesdb.Connect(ctx, cfg.Users.DatabaseURL, cfg.Users.DBMaxOpenConns, cfg.Users.DBMaxIdleConns)
+		gdb, err := database.Connect(ctx, cfg.Users.DatabaseURL, cfg.Users.DBMaxOpenConns, cfg.Users.DBMaxIdleConns)
 		if err == nil {
 			zap.L().Info("database connected")
 

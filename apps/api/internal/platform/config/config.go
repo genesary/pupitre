@@ -104,7 +104,8 @@ func Load() (*Config, []string, error) {
 	courses, _ := coursesconfig.Load() // same file: its warnings repeat the users ones
 	checker := checkerconfig.Load()
 
-	file := loadFile()
+	file, fileWarnings := loadFile()
+	warnings = append(warnings, fileWarnings...)
 	warnings = append(warnings, removedKeyWarnings(file)...)
 
 	port := intSetting("PORT", file.Port, defaultPort, false)
@@ -169,27 +170,32 @@ func trustedProxies(file fileConfig) ([]netip.Prefix, error) {
 	return prefixes, nil
 }
 
-// loadFile reads the monolith's own keys from the CONFIG_PATH file. The
-// domain loaders already warn about an unreadable or invalid file.
-func loadFile() fileConfig {
+// loadFile reads the monolith's own keys from the CONFIG_PATH file. The domain
+// loaders already warn about an unreadable file. A key of the wrong type does
+// get a warning here: the keys below are not in their structs, so a
+// trustedProxies written as a string would otherwise drop every one of them
+// without a word.
+//
+//nolint:gocritic // named results here would trip nonamedreturns instead
+func loadFile() (fileConfig, []string) {
 	var file fileConfig
 
 	path := os.Getenv("CONFIG_PATH")
 	if path == "" {
-		return file
+		return file, nil
 	}
 
 	data, err := os.ReadFile(path) //nolint:gosec // path is operator-controlled via the CONFIG_PATH env var, not user input
 	if err != nil {
-		return file
+		return file, nil
 	}
 
 	err = yaml.Unmarshal(data, &file)
 	if err != nil {
-		return fileConfig{}
+		return fileConfig{}, []string{"configuration file " + path + " ignored for the shared settings: " + err.Error()}
 	}
 
-	return file
+	return file, nil
 }
 
 // removedKeyWarnings names every removed key that is still set, in the

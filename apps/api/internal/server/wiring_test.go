@@ -39,7 +39,7 @@ type wiredApp struct {
 }
 
 // newWiredApp wires both domains on fakes, with one public course of two
-// lessons and one private course.
+// lessons, one public course of one quiz and one private course.
 func newWiredApp(t *testing.T) *wiredApp {
 	t.Helper()
 
@@ -65,7 +65,18 @@ func newWiredApp(t *testing.T) *wiredApp {
 				{Name: "Intro", Type: "text", InlineContent: "Hello", Skills: []string{"kubernetes"}},
 				{Name: "Next", Type: "text", InlineContent: "More"},
 			},
-		}, &content.Course{Slug: "private", Title: "Private", Difficulty: "beginner"}),
+		}, &content.Course{Slug: "private", Title: "Private", Difficulty: "beginner"}, &content.Course{
+			Slug:       "assessed",
+			Title:      "Assessed",
+			Difficulty: "beginner",
+			IsPublic:   true,
+			Modules: []content.Module{{
+				Name: "Final", Type: "quiz", PassingScore: 100,
+				Questions: []content.Question{{
+					ID: "q1", Type: "boolean", Points: 1, Question: "True?", CorrectAnswer: new(true),
+				}},
+			}},
+		}),
 		Paths:        coursesfake.NewPathRepository(),
 		QuizAttempts: coursesfake.NewQuizAttemptRepository(),
 		LabChecks:    coursesfake.NewLabCheckRepository(),
@@ -173,6 +184,39 @@ func TestWiring_LearnerFlow(t *testing.T) {
 	rec = app.do(t, http.MethodGet, "/api/my/courses")
 	if rec.Code != http.StatusOK || !strings.Contains(rec.Body.String(), "Kubernetes") {
 		t.Fatalf("my courses: %d %s", rec.Code, rec.Body.String())
+	}
+}
+
+// TestWiring_QuizResultStoredBeforeResponse checks that a submitted quiz is in
+// the users domain when the response arrives, even if the client hung up: the
+// page reads it right away, and a shutdown waits for requests, not goroutines.
+func TestWiring_QuizResultStoredBeforeResponse(t *testing.T) {
+	t.Parallel()
+
+	app := newWiredApp(t)
+
+	// A context already cancelled, as the request of a client that hung up.
+	ctx, cancel := context.WithCancel(t.Context())
+	cancel()
+
+	req := httptest.NewRequestWithContext(ctx, http.MethodPost, "/api/courses/assessed/modules/0/submit",
+		strings.NewReader(`{"answers":{"q1":{"boolean":true}}}`))
+	req.Header.Set("Authorization", "Bearer "+app.token)
+
+	rec := httptest.NewRecorder()
+	app.router.ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusOK {
+		t.Fatalf("submit quiz: %d %s", rec.Code, rec.Body.String())
+	}
+
+	overview, err := app.domains.Users.ProgressOverview(t.Context(), learnerID, "assessed")
+	if err != nil {
+		t.Fatalf("progress overview: %v", err)
+	}
+
+	if len(overview.Modules) != 1 || !overview.Modules[0].Passed {
+		t.Fatalf("modules right after the response = %+v, want the passed quiz", overview.Modules)
 	}
 }
 

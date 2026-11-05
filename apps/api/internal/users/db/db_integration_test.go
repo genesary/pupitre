@@ -9,6 +9,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/genesary/pupitre/apps/api/internal/platform/database"
 	"github.com/genesary/pupitre/apps/api/internal/users/db"
 )
 
@@ -29,7 +30,7 @@ func dbURL(t *testing.T) string {
 func TestConnectAndMigrate(t *testing.T) { //nolint:paralleltest // owns the shared schema
 	url := dbURL(t)
 
-	gdb, err := db.Connect(t.Context(), url, 5, 2)
+	gdb, err := database.Connect(t.Context(), url, 5, 2)
 	if err != nil {
 		t.Fatalf("Connect: %v", err)
 	}
@@ -54,7 +55,7 @@ func TestConnectAndMigrate(t *testing.T) { //nolint:paralleltest // owns the sha
 func TestConnect_BadURL(t *testing.T) { //nolint:paralleltest // consistent with the file
 	_ = dbURL(t) // still skip when no DB configured, to keep the suite hermetic-friendly
 
-	_, err := db.Connect(t.Context(), "postgres://127.0.0.1:1/nope?sslmode=disable&connect_timeout=1", 1, 1)
+	_, err := database.Connect(t.Context(), "postgres://127.0.0.1:1/nope?sslmode=disable&connect_timeout=1", 1, 1)
 	if err == nil {
 		t.Fatal("expected Connect to fail against an unreachable database")
 	}
@@ -72,7 +73,7 @@ func TestConnect_BadURL(t *testing.T) { //nolint:paralleltest // consistent with
 func TestMigrate_CollapsesDuplicateXPEvents(t *testing.T) { //nolint:paralleltest // owns the shared schema
 	url := dbURL(t)
 
-	gdb, err := db.Connect(t.Context(), url, 5, 2)
+	gdb, err := database.Connect(t.Context(), url, 5, 2)
 	if err != nil {
 		t.Fatalf("Connect: %v", err)
 	}
@@ -155,7 +156,7 @@ func TestMigrate_CollapsesDuplicateXPEvents(t *testing.T) { //nolint:paralleltes
 func TestMigrate_GroupMappingsAllowManager(t *testing.T) { //nolint:paralleltest // owns the shared schema
 	url := dbURL(t)
 
-	gdb, err := db.Connect(t.Context(), url, 5, 2)
+	gdb, err := database.Connect(t.Context(), url, 5, 2)
 	if err != nil {
 		t.Fatalf("Connect: %v", err)
 	}

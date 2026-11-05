@@ -101,11 +101,18 @@ function Lesson({ slug, courseTitle, module, modules }: LessonProps) {
     navigate(takeCourseReturn() ?? `/courses/${slug}`);
   }, [navigate, next, slug]);
 
+  // The list and the modules themselves: a module carries its own `viewed` and
+  // the state of its inline quiz, which a return to the page must not read stale.
+  const refreshProgress = useCallback(() => {
+    void queryClient.invalidateQueries({ queryKey: ['course', slug, 'module'] });
+    void queryClient.invalidateQueries({ queryKey: ['my'] });
+    return queryClient.invalidateQueries({ queryKey: ['course', slug, 'modules'] });
+  }, [queryClient, slug]);
+
   const complete = useMutation({
     mutationFn: () => completeLesson(slug, module.slug),
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['course', slug, 'modules'] });
-      void queryClient.invalidateQueries({ queryKey: ['my'] });
+      await refreshProgress();
       finish();
     },
     onError: () => toast.error('Erreur lors de la mise à jour'),
@@ -115,11 +122,10 @@ function Lesson({ slug, courseTitle, module, modules }: LessonProps) {
     completeLesson(slug, module.slug)
       .catch(() => {}) // already completed
       .finally(() => {
-        void queryClient.invalidateQueries({ queryKey: ['course', slug, 'modules'] });
-        void queryClient.invalidateQueries({ queryKey: ['my'] });
+        void refreshProgress();
         finish();
       });
-  }, [finish, module.slug, queryClient, slug]);
+  }, [finish, module.slug, refreshProgress, slug]);
 
   const nextLabel = next?.type === 'lab' ? 'Passer au Lab ▸' : 'Suivant ▸';
   const buttonLabel = next?.type === 'lab' ? 'Passer au Lab ▸' : next ? 'Suivant ▸' : quizPending ? 'Terminer la leçon ▸' : 'Terminer le cours ▸';
@@ -209,8 +215,7 @@ function Lesson({ slug, courseTitle, module, modules }: LessonProps) {
               quiz={module.inlineQuiz}
               onPassed={() => {
                 setQuizPassed(true);
-                void queryClient.invalidateQueries({ queryKey: ['course', slug, 'modules'] });
-                void queryClient.invalidateQueries({ queryKey: ['my'] });
+                void refreshProgress();
               }}
             />
           )}

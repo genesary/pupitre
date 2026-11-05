@@ -44,6 +44,8 @@ function QuizScreen({ slug, courseTitle, quiz, modules }: { slug: string; course
       state.startCooldowns(result.cooldowns);
       window.scrollTo({ top: 0 });
       void queryClient.invalidateQueries({ queryKey: ['course', slug, 'modules'] });
+      // The module itself carries the score and the cooldowns.
+      void queryClient.invalidateQueries({ queryKey: ['course', slug, 'module'] });
       void queryClient.invalidateQueries({ queryKey: ['my'] });
     },
     onError: (error) => {

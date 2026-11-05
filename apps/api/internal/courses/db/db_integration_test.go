@@ -16,6 +16,7 @@ import (
 
 	"github.com/genesary/pupitre/apps/api/internal/courses/db"
 	"github.com/genesary/pupitre/apps/api/internal/courses/repository"
+	"github.com/genesary/pupitre/apps/api/internal/platform/database"
 )
 
 // dbURL returns TEST_DATABASE_URL or skips the test.
@@ -35,7 +36,7 @@ func dbURL(t *testing.T) string {
 func TestConnectAndMigrate(t *testing.T) { //nolint:paralleltest // owns the shared schema
 	url := dbURL(t)
 
-	gdb, err := db.Connect(t.Context(), url, 5, 2)
+	gdb, err := database.Connect(t.Context(), url, 5, 2)
 	if err != nil {
 		t.Fatalf("Connect: %v", err)
 	}
@@ -157,7 +158,7 @@ func TestSeedDevCourses(t *testing.T) { //nolint:paralleltest // owns the shared
 func TestConnect_Unreachable(t *testing.T) { //nolint:paralleltest // consistent with the file
 	_ = dbURL(t) // keep the suite hermetic-friendly: skip when no DB configured
 
-	_, err := db.Connect(t.Context(),
+	_, err := database.Connect(t.Context(),
 		"postgres://127.0.0.1:1/nope?sslmode=disable&connect_timeout=1", 1, 1)
 	if err == nil {
 		t.Fatal("expected Connect to fail against an unreachable database")
