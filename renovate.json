@@ -38,7 +38,8 @@
     "source::bot"
   ],
   "postUpdateOptions": [
-    "gomodTidy"
+    "gomodTidy",
+    "pnpmDedupe"
   ],
   "packageRules": [
     {
