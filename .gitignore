@@ -1,24 +1,35 @@
-# Secrets — ne jamais commiter
+node_modules/
+dist/
+coverage/
+test-results/
+playwright-report/
+playwright-report-backend/
+*.tsbuildinfo
+.vite/
+
 .env
+.env.*
+!.env.example
+!.env.mock
 
-# Node / SvelteKit
-frontend/node_modules/
-frontend/.svelte-kit/
-frontend/build/
-frontend/dist/
-
-# Claude Code
-.claude/
-.kilo/
-
-# OS
+*.log
 .DS_Store
-Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
 
-# Go test coverage
+# Go (apps/api)
 coverage.out
 coverage.integration.out
-
-# Logs
-*.log
 local.mk
+
+# pupitre-api local files
+apps/api/uploads/
+apps/api/git-credentials.yaml
+apps/api/bin/
+# binaries built with a bare `go build` in apps/api
+apps/api/pupitre-api
+*.exe
+
+# Strix reports
+strix_runs/

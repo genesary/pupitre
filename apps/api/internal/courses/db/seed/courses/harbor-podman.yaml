@@ -1,0 +1,206 @@
+# Dev seed course — loaded by SEED_DEV_COURSES.
+slug: harbor-podman
+spec:
+  title: "Harbor Searching & Podman Running"
+  description: Recherche une image sur Harbor et exécute un conteneur nginx avec Podman.
+  category: devops
+  difficulty: beginner
+  public: true
+  badge:
+    name: "Gardien du Registre"
+    icon: "⚓"
+  modules:
+    - name: "Harbor Searching & Podman Running"
+      type: lab
+      checkProvider: local
+      steps:
+        - title: "Image nginx téléchargée"
+          checkType: podman_images
+          checkParams:
+            image: nginx
+        - title: "Conteneur my-nginx démarré"
+          checkType: podman_lab2
+          checkParams:
+            image: nginx
+            container_name: my-nginx
+      skills:
+        - docker
+        - containers
+      content: |
+        ## Objectifs
+
+        Apprendre à :
+
+        - Rechercher des images Docker sur Harbor (interface web du registre)
+        - Tirer (pull) une image avec Podman (CLI conteneurs)
+        - Exécuter un conteneur avec des options spécifiques :
+          - `-it` → Mode Interactif Terminal
+          - `--name` → Donner un nom personnalisé
+          - `--rm` → Supprimer automatiquement à la sortie
+        - Valider que le conteneur est en cours d'exécution
+
+        > **Tips :** Besoin d'aide sur une commande Podman ? Utilise `man podman-run` (page de manuel en CLI)
+
+        ---
+
+        ## Contexte
+
+        | Composant | Rôle | Type |
+        |---|---|---|
+        | Harbor | Stocker et gérer les images de conteneurs | Interface Web |
+        | Podman | Gérer les conteneurs (compatible Docker) | CLI |
+
+        > **Pourquoi Podman ?** Il ne nécessite pas de privilèges root (`sudo`), ce qui le rend plus sûr pour les postes de travail.
+
+        ---
+
+        ## Étapes détaillées
+
+        ### 1. Accéder à Harbor DMZ
+
+        Ouvre ton navigateur et accède à l'instance Harbor.
+
+        > **Tips :** Trouve l'URL dans les favoris Firefox.
+
+        ### 2. Rechercher l'image nginx
+
+        Utilise la barre de recherche en haut de Harbor :
+
+        ```
+        docker.io/library/nginx
+        ```
+
+        Si l'image n'est pas sur la première page → utilise les boutons de pagination en bas.
+
+        ### 3. Tirer (pull) l'image
+
+        Clique sur l'image → copie la commande de pull via le bouton de copie.
+
+        Exécute dans le terminal :
+
+        ```bash
+        podman pull docker.io/library/nginx:latest
+        ```
+
+        Télécharge la dernière version de l'image nginx sur ta machine.
+
+        <!-- check:0 -->
+
+        ### 4. Exécuter le conteneur
+
+        Exécute avec ces options :
+
+        ```bash
+        podman run -it --name my-nginx --rm docker.io/library/nginx:latest
+        ```
+
+        | Option | Signification | Utilité |
+        |---|---|---|
+        | `-it` | Interactif Terminal | Ouvre un shell dans le conteneur |
+        | `--name my-nginx` | — | Assigne un nom lisible |
+        | `--rm` | supprimer | Supprime automatiquement le conteneur à la sortie |
+
+        Lance un conteneur interactif `my-nginx`. Sors avec **CTRL + C**.
+
+        <!-- check:1 -->
+
+        ### 5. Valider
+
+        Ouvre un nouveau terminal (**CTRL + MAJ + T**) et exécute :
+
+        ```bash
+        podman ps -a
+        ```
+
+        Liste tous les conteneurs (en cours + arrêtés). Cherche `my-nginx`.
+
+        ---
+
+        ## Bravo !
+
+        Tu as réussi à :
+
+        - Rechercher une image sur Harbor
+        - La tirer avec Podman
+        - L'exécuter avec des options personnalisées
+        - Vérifier que le conteneur fonctionne
+
+        ---
+
+        ## Ressources
+
+        | Ressource | Lien |
+        |---|---|
+        | Docs Podman | docs.podman.io |
+        | Manuel Podman | `man podman-run` dans le terminal |
+    - name: "Quiz Harbor & Podman"
+      type: "quiz"
+      inline: true
+      prerequisites:
+        - "harbor-searching---podman-running"
+      passingScore: 75
+      questions:
+        - id: q1
+          type: single
+          question: "Qu'est-ce que Harbor ?"
+          answers:
+            - id: a
+              text: "Un registre d'images de conteneurs open-source avec gestion de la sécurité et des accès"
+              correct: true
+            - id: b
+              text: "Un runtime de conteneurs alternatif à Docker"
+              correct: false
+            - id: c
+              text: "Un plugin réseau pour Kubernetes"
+              correct: false
+            - id: d
+              text: "Un outil de pipeline CI/CD"
+              correct: false
+        - id: q2
+          type: single
+          question: "Quelle commande Podman télécharge une image depuis un registre ?"
+          answers:
+            - id: a
+              text: "podman pull <image>"
+              correct: true
+            - id: b
+              text: "podman fetch <image>"
+              correct: false
+            - id: c
+              text: "podman get <image>"
+              correct: false
+            - id: d
+              text: "podman download <image>"
+              correct: false
+        - id: q3
+          type: single
+          question: "Quelle est la principale différence entre Podman et Docker par défaut ?"
+          answers:
+            - id: a
+              text: "Podman fonctionne sans daemon et est rootless par défaut"
+              correct: true
+            - id: b
+              text: "Podman ne supporte que les conteneurs Windows"
+              correct: false
+            - id: c
+              text: "Podman ne peut pas construire des images"
+              correct: false
+            - id: d
+              text: "Podman nécessite un cluster Kubernetes pour fonctionner"
+              correct: false
+        - id: q4
+          type: single
+          question: "Que montre la commande podman ps -a ?"
+          answers:
+            - id: a
+              text: "Tous les conteneurs, y compris ceux qui sont arrêtés"
+              correct: true
+            - id: b
+              text: "Uniquement les conteneurs en cours d'exécution"
+              correct: false
+            - id: c
+              text: "Toutes les images disponibles sur le système"
+              correct: false
+            - id: d
+              text: "Tous les volumes Podman"
+              correct: false

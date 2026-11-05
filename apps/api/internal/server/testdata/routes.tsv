@@ -1,0 +1,139 @@
+# Method, path, access, body limit.
+POST	/api/admin/cache/clear	admin	10 MB
+GET	/api/admin/courses	admin	10 MB
+POST	/api/admin/courses	admin	10 MB
+POST	/api/admin/courses/import	admin	10 MB
+POST	/api/admin/courses/import/preview	admin	10 MB
+POST	/api/admin/courses/paths	admin	10 MB
+GET	/api/admin/courses/paths/{slug}/definition	admin	10 MB
+PUT	/api/admin/courses/paths/{slug}/definition	admin	10 MB
+DELETE	/api/admin/courses/paths/{slug}/definition	admin	10 MB
+POST	/api/admin/courses/{slug}/cache/clear	admin	10 MB
+GET	/api/admin/courses/{slug}/definition	admin	10 MB
+PUT	/api/admin/courses/{slug}/definition	admin	10 MB
+DELETE	/api/admin/courses/{slug}/definition	admin	10 MB
+GET	/api/admin/courses/{slug}/export/markdown	admin	10 MB
+POST	/api/admin/courses/{slug}/modules/{index}/cache/clear	admin	10 MB
+POST	/api/admin/courses/{slug}/sessions	manager or admin	1 MB
+PUT	/api/admin/courses/{slug}/sessions/{sessionId}	manager or admin	1 MB
+DELETE	/api/admin/courses/{slug}/sessions/{sessionId}	manager or admin	1 MB
+GET	/api/admin/enrollments/{slug}	admin	1 MB
+POST	/api/admin/enrollments/{slug}	admin	1 MB
+GET	/api/admin/enrollments/{slug}/groups	admin	1 MB
+POST	/api/admin/enrollments/{slug}/groups	admin	1 MB
+DELETE	/api/admin/enrollments/{slug}/groups/{groupId}	admin	1 MB
+DELETE	/api/admin/enrollments/{slug}/users/{userId}	admin	1 MB
+GET	/api/admin/exports/categories	manager or admin	1 MB
+POST	/api/admin/exports/download	manager or admin	1 MB
+GET	/api/admin/exports/lab-checks/categories	admin	10 MB
+POST	/api/admin/exports/lab-checks/download	admin	10 MB
+POST	/api/admin/exports/lab-checks/preview	admin	10 MB
+POST	/api/admin/exports/preview	manager or admin	1 MB
+GET	/api/admin/groups	admin	1 MB
+POST	/api/admin/groups	admin	1 MB
+GET	/api/admin/groups/mappings	admin	1 MB
+POST	/api/admin/groups/mappings	admin	1 MB
+DELETE	/api/admin/groups/mappings/{groupName}	admin	1 MB
+PUT	/api/admin/groups/{groupId}	admin	1 MB
+DELETE	/api/admin/groups/{groupId}	admin	1 MB
+GET	/api/admin/groups/{groupId}/ancestors	admin	1 MB
+GET	/api/admin/groups/{groupId}/descendants	admin	1 MB
+GET	/api/admin/groups/{groupId}/members	admin	1 MB
+POST	/api/admin/groups/{groupId}/members	admin	1 MB
+DELETE	/api/admin/groups/{groupId}/members/{userId}	admin	1 MB
+PATCH	/api/admin/groups/{groupId}/parent	admin	1 MB
+GET	/api/admin/groups/{groupId}/subgroups	admin	1 MB
+POST	/api/admin/groups/{groupId}/subgroups	admin	1 MB
+GET	/api/admin/lab-checks	admin	10 MB
+GET	/api/admin/leaderboard	admin	1 MB
+GET	/api/admin/paths/{slug}/enrollments	admin	1 MB
+POST	/api/admin/paths/{slug}/enrollments	admin	1 MB
+DELETE	/api/admin/paths/{slug}/enrollments/{userId}	admin	1 MB
+POST	/api/admin/patterns	admin	1 MB
+PUT	/api/admin/patterns/{name}	admin	1 MB
+DELETE	/api/admin/patterns/{name}	admin	1 MB
+GET	/api/admin/session-bookings/{slug}/{sessionId}	admin	1 MB
+PATCH	/api/admin/session-bookings/{slug}/{sessionId}/{userId}/presence	admin	1 MB
+GET	/api/admin/settings	admin	1 MB
+PUT	/api/admin/settings	admin	1 MB
+GET	/api/admin/stats	admin	1 MB
+POST	/api/admin/sync-progress	admin	1 MB
+GET	/api/admin/users	admin	1 MB
+GET	/api/admin/users/providers	admin	1 MB
+GET	/api/admin/users/search	admin	1 MB
+GET	/api/admin/users/{userId}	admin	1 MB
+PUT	/api/admin/users/{userId}	admin	1 MB
+DELETE	/api/admin/users/{userId}	admin	1 MB
+POST	/api/auth/ldap/login	public, rate-limited	1 MB
+POST	/api/auth/login	public, rate-limited	1 MB
+GET	/api/auth/me	signed in	1 MB
+POST	/api/auth/logout	signed in	1 MB
+POST	/api/auth/oauth/callback	public, rate-limited	1 MB
+GET	/api/auth/oauth/providers	public	1 MB
+GET	/api/auth/oauth/{provider}/authorize	public	1 MB
+GET	/api/auth/oidc/authorize	public	1 MB
+POST	/api/auth/oidc/callback	public, rate-limited	1 MB
+PUT	/api/auth/password	signed in	1 MB
+PUT	/api/auth/profile	signed in	1 MB
+POST	/api/auth/register	public, rate-limited	1 MB
+GET	/api/badges/{slug}	public	1 MB
+GET	/api/batch/courses	public	1 MB
+GET	/api/batch/paths	public	1 MB
+GET	/api/batch/skills	public	1 MB
+GET	/api/courses	public	1 MB
+GET	/api/courses/{slug}	public	1 MB
+GET	/api/courses/{slug}/labs	signed in	1 MB
+GET	/api/courses/{slug}/labs/{lab_id}	signed in	1 MB
+GET	/api/courses/{slug}/lessons	signed in	1 MB
+GET	/api/courses/{slug}/lessons/{lessonSlug}	signed in	1 MB
+POST	/api/courses/{slug}/lessons/{lessonSlug}/complete	signed in	1 MB
+GET	/api/courses/{slug}/modules	signed in	1 MB
+GET	/api/courses/{slug}/modules/{index}	signed in	1 MB
+POST	/api/courses/{slug}/modules/{index}/check	signed in	1 MB
+POST	/api/courses/{slug}/modules/{index}/record	signed in	1 MB
+POST	/api/courses/{slug}/modules/{index}/steps/{stepIndex}/check	signed in	1 MB
+POST	/api/courses/{slug}/modules/{index}/submit	signed in	1 MB
+GET	/api/courses/{slug}/progress	signed in	1 MB
+POST	/api/enrollments/{slug}	signed in	1 MB
+DELETE	/api/enrollments/{slug}	signed in	1 MB
+GET	/api/leaderboard	public	1 MB
+POST	/api/manager/enrollments/{slug}	manager	1 MB
+DELETE	/api/manager/enrollments/{slug}/users/{userId}	manager	1 MB
+GET	/api/manager/groups	manager	1 MB
+POST	/api/manager/groups	manager	1 MB
+DELETE	/api/manager/groups/{groupId}	manager	1 MB
+GET	/api/manager/groups/{groupId}/members	manager	1 MB
+POST	/api/manager/groups/{groupId}/members	manager	1 MB
+DELETE	/api/manager/groups/{groupId}/members/{userId}	manager	1 MB
+POST	/api/manager/groups/{groupId}/subgroups	manager	1 MB
+GET	/api/manager/paths/{slug}/enrollments	manager	1 MB
+POST	/api/manager/paths/{slug}/enrollments	manager	1 MB
+DELETE	/api/manager/paths/{slug}/enrollments/{userId}	manager	1 MB
+GET	/api/manager/session-bookings/{slug}/{sessionId}	manager	1 MB
+PATCH	/api/manager/session-bookings/{slug}/{sessionId}/{userId}/presence	manager	1 MB
+GET	/api/manager/users	manager	1 MB
+GET	/api/manager/users/{userId}/enrollments	manager	1 MB
+GET	/api/manager/users/{userId}/path-enrollments	manager	1 MB
+GET	/api/my/badges	signed in	1 MB
+GET	/api/my/courses	signed in	1 MB
+GET	/api/my/groups	signed in	1 MB
+GET	/api/my/groups/{groupId}/members	signed in	1 MB
+GET	/api/my/paths	signed in	1 MB
+GET	/api/my/session-bookings	signed in	1 MB
+GET	/api/my/skills	signed in	1 MB
+GET	/api/my/skills/{slug}	signed in	1 MB
+GET	/api/my/xp	signed in	1 MB
+GET	/api/paths	public	1 MB
+GET	/api/paths/{slug}	public	1 MB
+GET	/api/patterns	signed in	1 MB
+GET	/api/patterns/{id}	signed in	1 MB
+POST	/api/session-bookings/{slug}/{sessionId}	signed in	1 MB
+DELETE	/api/session-bookings/{slug}/{sessionId}	signed in	1 MB
+GET	/api/session-bookings/{slug}/{sessionId}/count	signed in	1 MB
+GET	/api/settings/public	public	1 MB
+GET	/api/skills/{slug}/modules	public	1 MB
+GET	/api/users/{id}	public	1 MB
+GET	/api/users/{id}/badges	public	1 MB
+GET	/health	public	1 MB
+GET	/metrics	public	1 MB
+GET	/uploads/{filename}	public	1 MB

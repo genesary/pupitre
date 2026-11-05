@@ -1,0 +1,89 @@
+[tools]
+node = "24"
+# Same version as "packageManager" in package.json
+pnpm = "12.14.0"
+# Git hooks of .pre-commit-config.yaml
+prek = "0.5.6"
+# pupitre-api (apps/api): same version as apps/api/go.mod
+go = "1.26.10"
+# Same version as .github/workflows/api.yaml
+golangci-lint = "2.15.0"
+
+[tasks.install]
+description = "Install the workspace dependencies"
+run = "pnpm install"
+sources = ["package.json", "pnpm-lock.yaml", "pnpm-workspace.yaml", "apps/*/package.json", "packages/*/package.json"]
+outputs = ["node_modules/.modules.yaml"]
+
+[tasks."setup:prek"]
+description = "Install the Git hooks of .pre-commit-config.yaml (signing, lint, build, Conventional Commits) with prek"
+# Uninstalling first drops the hook types no longer in the config
+run = ["prek uninstall --all", "prek install"]
+
+[tasks.dev]
+description = "Run both apps against the Go services (http://localhost:3000, admin under /admin)"
+depends = ["install"]
+run = "pnpm dev"
+
+[tasks."dev:mock"]
+description = "Run both apps with the MSW mock backend (http://localhost:3000)"
+depends = ["install"]
+run = "pnpm dev:mock"
+
+[tasks.build]
+description = "Type check and build both apps"
+depends = ["install"]
+run = "pnpm build"
+
+[tasks."build:mock"]
+description = "Type check and build both apps in mock mode"
+depends = ["install"]
+run = "pnpm build:mock"
+
+[tasks.lint]
+description = "ESLint, including the security rules"
+depends = ["install"]
+run = "pnpm lint"
+
+[tasks.typecheck]
+description = "TypeScript, every package and the e2e tests"
+depends = ["install"]
+run = "pnpm typecheck"
+
+[tasks.test]
+description = "Unit and component tests (Vitest)"
+depends = ["install"]
+run = "pnpm test"
+
+[tasks."test:e2e"]
+description = "End-to-end tests (Playwright) against the mock mode"
+depends = ["install"]
+run = ["pnpm exec playwright install chromium", "pnpm test:e2e"]
+
+[tasks."api:dev"]
+description = "Build and run pupitre-api on http://localhost:8080 (needs PostgreSQL: mise run api:up)"
+run = "pnpm api:dev"
+
+[tasks."api:build"]
+description = "Build and vet pupitre-api"
+run = "pnpm api:build"
+
+[tasks."api:lint"]
+description = "golangci-lint on pupitre-api"
+run = "pnpm api:lint"
+
+[tasks."api:test"]
+description = "pupitre-api unit tests (race detector)"
+run = "pnpm api:test"
+
+[tasks."api:up"]
+description = "Start pupitre-api's local dependencies (Docker Compose)"
+run = "pnpm api:up"
+
+[tasks."api:down"]
+description = "Stop pupitre-api's local dependencies"
+run = "pnpm api:down"
+
+[tasks.check]
+description = "Frontend checks: typecheck, lint, test, build (the API has api:build, api:lint and api:test)"
+depends = ["typecheck", "lint", "test", "build"]

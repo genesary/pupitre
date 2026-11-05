@@ -1,0 +1,2 @@
+# Go tools expect LF line endings, also on Windows checkouts.
+* text=auto eol=lf

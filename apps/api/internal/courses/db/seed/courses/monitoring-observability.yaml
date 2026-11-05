@@ -1,0 +1,267 @@
+# Dev seed course — loaded by SEED_DEV_COURSES.
+slug: monitoring-observability
+spec:
+  title: "Monitoring & Observabilité"
+  description: "Comprendre ce qui se passe dans tes systèmes en production — métriques, logs, traces et alerting avec Prometheus, Grafana et Loki."
+  category: devops
+  difficulty: intermediate
+  public: true
+  badge:
+    name: "Sentinelle des systèmes"
+    icon: "📊"
+  modules:
+    - name: "Les trois piliers de l'observabilité"
+      type: text
+      skills:
+        - monitoring
+      content: |
+        ## Les trois piliers de l'observabilité
+
+        L'observabilité, c'est la capacité à comprendre l'état interne d'un système depuis ses sorties externes.
+
+        ### Métriques
+
+        Des valeurs numériques mesurées dans le temps.
+
+        ```
+        http_requests_total{method="GET", status="200"} 1842
+        http_requests_total{method="POST", status="500"} 3
+        go_goroutines 42
+        process_resident_memory_bytes 52428800
+        ```
+
+        Idéal pour : taux d'erreur, latence, saturation, trafic (les "Golden Signals").
+
+        ### Logs
+
+        Des événements textuels horodatés.
+
+        ```json
+        {"time":"2026-06-26T10:23:01Z","level":"ERROR","msg":"database connection failed","service":"api","err":"connection refused"}
+        {"time":"2026-06-26T10:23:02Z","level":"INFO","msg":"retrying connection","attempt":1}
+        ```
+
+        Idéal pour : debug post-mortem, audit trail, erreurs détaillées.
+
+        ### Traces
+
+        Le chemin d'une requête à travers les services (tracing distribué).
+
+        ```
+        Request 7f3a...
+        ├─ api-gateway        12ms
+        │  ├─ user-service     4ms
+        │  └─ course-service  31ms
+        │     └─ postgres      8ms
+        └─ total              47ms
+        ```
+
+        Idéal pour : identifier les goulots d'étranglement dans une architecture microservices.
+
+        ### Les Golden Signals (SRE Google)
+
+        | Signal | Question |
+        |---|---|
+        | **Traffic** | Combien de requêtes par seconde ? |
+        | **Errors** | Quel pourcentage échoue ? |
+        | **Latency** | Combien de temps chaque requête prend-elle ? |
+        | **Saturation** | À quel point le système est-il proche de ses limites ? |
+
+    - name: "Prometheus & Grafana"
+      type: text
+      skills:
+        - monitoring
+      content: |
+        ## Prometheus & Grafana
+
+        ### Prometheus — collecte des métriques
+
+        Prometheus scrape (tire) les métriques depuis tes services toutes les N secondes.
+
+        ```yaml
+        # prometheus.yml
+        scrape_configs:
+          - job_name: 'api'
+            scrape_interval: 15s
+            static_configs:
+              - targets: ['api:8080']
+        ```
+
+        Ton service expose une route `/metrics` :
+
+        ```go
+        // Go — avec le client Prometheus officiel
+        import "github.com/prometheus/client_golang/prometheus/promhttp"
+
+        http.Handle("/metrics", promhttp.Handler())
+        ```
+
+        ### PromQL — requêtes Prometheus
+
+        ```promql
+        # Taux de requêtes par seconde sur 5 min
+        rate(http_requests_total[5m])
+
+        # Taux d'erreurs (status 5xx) en %
+        100 * rate(http_requests_total{status=~"5.."}[5m])
+              / rate(http_requests_total[5m])
+
+        # P99 de latence
+        histogram_quantile(0.99, rate(http_request_duration_seconds_bucket[5m]))
+        ```
+
+        ### Grafana — dashboards
+
+        Grafana visualise les données de Prometheus (et d'autres sources).
+
+        ```yaml
+        # Kubernetes — kube-prometheus-stack (Helm)
+        helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+        helm install monitoring prometheus-community/kube-prometheus-stack \
+          --namespace monitoring \
+          --create-namespace
+        ```
+
+        Accès aux dashboards prédéfinis :
+        - Kubernetes cluster overview
+        - Node exporter (CPU, RAM, disque, réseau)
+        - Pods et déploiements
+        - Ingress (Nginx/Traefik)
+
+        ### Loki — logs centralisés
+
+        ```yaml
+        # Promtail collecte les logs des pods et les envoie à Loki
+        # LogQL — syntaxe similaire à PromQL
+        {namespace="production", app="api"} |= "ERROR"
+        | json
+        | line_format "{{.msg}} — {{.err}}"
+        ```
+
+    - name: "Alerting et SLOs"
+      type: text
+      skills:
+        - monitoring
+      content: |
+        ## Alerting et SLOs
+
+        ### SLI / SLO / SLA
+
+        | Terme | Définition | Exemple |
+        |---|---|---|
+        | **SLI** | Service Level Indicator — métrique mesurée | Taux de succès HTTP |
+        | **SLO** | Service Level Objective — cible interne | 99,9% de succès |
+        | **SLA** | Service Level Agreement — engagement contractuel | 99,5% garanti (pénalités si non atteint) |
+
+        ### Alertmanager
+
+        ```yaml
+        # Règle d'alerte Prometheus
+        groups:
+          - name: api.rules
+            rules:
+              - alert: HighErrorRate
+                expr: |
+                  rate(http_requests_total{status=~"5.."}[5m])
+                  / rate(http_requests_total[5m]) > 0.01
+                for: 5m
+                labels:
+                  severity: critical
+                annotations:
+                  summary: "Taux d'erreur > 1% depuis 5 minutes"
+                  runbook: "https://wiki.internal/runbooks/high-error-rate"
+        ```
+
+        ```yaml
+        # alertmanager.yml — routage des alertes
+        route:
+          receiver: slack-ops
+          group_wait: 30s
+          group_interval: 5m
+
+        receivers:
+          - name: slack-ops
+            slack_configs:
+              - api_url: "https://hooks.slack.com/services/..."
+                channel: "#ops-alerts"
+                title: "{{ .GroupLabels.alertname }}"
+                text: "{{ range .Alerts }}{{ .Annotations.summary }}{{ end }}"
+        ```
+
+        ### Runbooks
+
+        Un runbook est la procédure à suivre quand une alerte se déclenche.
+
+        ```markdown
+        # Runbook : HighErrorRate
+
+        ## Symptômes
+        Taux d'erreurs HTTP 5xx > 1% depuis 5 minutes.
+
+        ## Diagnostic
+        1. Vérifier les logs : `kubectl logs -n production -l app=api --tail=100`
+        2. Vérifier la base de données : `kubectl get pods -n data`
+        3. Vérifier les déploiements récents : `kubectl rollout history deployment/api`
+
+        ## Remédiation
+        - Si déploiement récent : `kubectl rollout undo deployment/api`
+        - Si base de données : escalader vers l'équipe data
+        ```
+
+    - name: "Quiz — Monitoring & Observabilité"
+      type: quiz
+      inline: true
+      passingScore: 75
+      prerequisites:
+        - les-trois-piliers-de-l-observabilité
+        - prometheus---grafana
+        - alerting-et-slos
+      questions:
+        - id: q1
+          type: single
+          question: "Parmi les Golden Signals, lequel mesure le pourcentage de requêtes qui échouent ?"
+          answers:
+            - id: a
+              text: "Errors"
+              correct: true
+            - id: b
+              text: "Latency"
+              correct: false
+            - id: c
+              text: "Saturation"
+              correct: false
+            - id: d
+              text: "Traffic"
+              correct: false
+        - id: q2
+          type: single
+          question: "Comment Prometheus collecte-t-il les métriques ?"
+          answers:
+            - id: a
+              text: "Il scrape (tire) les métriques depuis les services à intervalles réguliers"
+              correct: true
+            - id: b
+              text: "Les services poussent leurs métriques vers Prometheus"
+              correct: false
+            - id: c
+              text: "Il lit les fichiers de logs des services"
+              correct: false
+            - id: d
+              text: "Via des webhooks déclenchés à chaque événement"
+              correct: false
+        - id: q3
+          type: single
+          question: "Quelle est la différence entre un SLO et un SLA ?"
+          answers:
+            - id: a
+              text: "Le SLO est un objectif interne, le SLA est un engagement contractuel avec pénalités"
+              correct: true
+            - id: b
+              text: "Le SLO concerne la latence, le SLA concerne la disponibilité"
+              correct: false
+            - id: c
+              text: "Le SLA est toujours plus strict que le SLO"
+              correct: false
+            - id: d
+              text: "Il n'y a pas de différence, ce sont des synonymes"
+              correct: false

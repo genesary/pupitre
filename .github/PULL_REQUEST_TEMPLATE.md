@@ -1,27 +1,26 @@
 ### Description of your changes
 
 <!--
+Adapted from genesary/pupitre at 3cdf7b2 (.github/PULL_REQUEST_TEMPLATE.md).
+
 Briefly describe what this pull request does. Be sure to direct your reviewers'
 attention to anything that needs special consideration.
 
-We love pull requests that resolve an open issue. If yours does, you
-can uncomment the below line to indicate which issue your PR fixes, for example
-"Fixes #500":
-
+If it resolves an open issue, keep the line below with its number, for example
+"Fixes #500".
 -->
 Fixes #
 
 I have:
 
-- [ ] Read and followed the [Contribution Guidelines](https://github.com/genesary/pupitre/blob/main/CONTRIBUTING.md)
-- [ ] Followed the git conventional commit message format.
-- [ ] Made sure all changes are covered by proper tests, reaching a coverage of at least 80% when applicable.
-- [ ] Run `make go/lint` & `make go/test` & `make dev` to ensure this PR is ready for review.
+- [ ] Followed the Conventional Commits message format and a Conventional Branch name.
+- [ ] Run `pnpm typecheck`, `pnpm lint`, `pnpm test` and `pnpm build`.
+- [ ] Run `pnpm api:lint`, `pnpm api:test` and `pnpm api:build` when `apps/api` changes.
 
 ### How has this code been tested
 
 I have:
 
-- [ ] Successfully built and ran the platform locally against a kubernetes cluster.
-- [ ] Ensured connection still works
-- [ ] Ensured that the platform is still functional and all features are working as expected.
+- [ ] Added or updated unit tests and Playwright tests (`pnpm test:e2e`).
+- [ ] Checked a UI change in the browser with `pnpm dev:mock`, in light and dark mode.
+- [ ] Run `pnpm test:e2e:backend` when the change crosses the frontend and the API.

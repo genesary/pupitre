@@ -1,0 +1,70 @@
+name: Strix
+
+# Strix (https://github.com/usestrix/strix), AI penetration testing: on a pull
+# request, a quick scan of the changed files; by hand (workflow_dispatch), a
+# scan of the whole repository, for instance on main before a release. Fails
+# when Strix reports a medium or worse vulnerability; its report is kept as an
+# artifact.
+#
+# Needs the LLM_API_KEY secret (an Anthropic key); the model is the STRIX_LLM
+# variable, anthropic/claude-sonnet-5-5 by default. Without the key, or on a
+# pull request from a fork (no secrets), the job is skipped.
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+  workflow_dispatch:
+    inputs:
+      scan-mode:
+        description: Strix scan mode
+        type: choice
+        options: [quick, standard, deep]
+        default: standard
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  scan:
+    name: Strix scan
+    if: ${{ github.event_name == 'workflow_dispatch' || (!github.event.pull_request.draft && github.event.pull_request.head.repo.full_name == github.repository) }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
+      STRIX_LLM: ${{ vars.STRIX_LLM || 'anthropic/claude-sonnet-5-5' }}
+    steps:
+      - name: Check the API key
+        if: ${{ env.LLM_API_KEY == '' }}
+        run: echo "::notice::LLM_API_KEY is not set, Strix scan skipped."
+      - uses: actions/checkout@v7
+        if: ${{ env.LLM_API_KEY != '' }}
+        with:
+          # Strix scopes a pull request scan to the changed files.
+          fetch-depth: 0
+      - uses: actions/setup-python@v7
+        if: ${{ env.LLM_API_KEY != '' }}
+        with:
+          python-version: '3.12'
+      - name: Install Strix
+        if: ${{ env.LLM_API_KEY != '' }}
+        run: pipx install strix-agent==1.7.0
+      - name: Run Strix
+        if: ${{ env.LLM_API_KEY != '' }}
+        run: >-
+          strix -n -t ./
+          --scan-mode ${{ inputs.scan-mode || 'quick' }}
+          --scope-mode ${{ github.event_name == 'workflow_dispatch' && 'full' || 'diff' }}
+          --fail-on medium
+          --instruction "pupitre: React apps (apps/app, apps/admin, packages/*) and the Go API
+          (apps/api)."
+      - uses: actions/upload-artifact@v7
+        if: ${{ always() && env.LLM_API_KEY != '' }}
+        with:
+          name: strix-report
+          path: strix_runs
+          if-no-files-found: ignore

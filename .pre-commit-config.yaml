@@ -1,0 +1,36 @@
+# Git hooks, run by prek (https://github.com/j178/prek). Install them with: mise run setup:prek
+default_install_hook_types: [pre-commit, commit-msg, pre-push]
+
+repos:
+  - repo: https://github.com/compilerla/conventional-pre-commit
+    rev: 91ab4bf57e58b32adf1a122681f6ebe164d081c8 # v4.4.0
+    hooks:
+      - id: conventional-pre-commit
+        stages: [commit-msg]
+
+  - repo: builtin
+    hooks:
+      # pre-commit: work happens on a feature branch, main changes through pull requests
+      - id: no-commit-to-branch
+        args: [--branch, main]
+        stages: [pre-commit]
+      # pre-push: every pushed commit passes git verify-commit (prek >= 0.5.6)
+      - id: check-signed-commit
+
+  - repo: local
+    hooks:
+      - id: lint
+        name: lint (mise run lint)
+        entry: mise run lint
+        language: system
+        stages: [pre-commit]
+        pass_filenames: false
+        types_or: [ts, tsx, javascript, jsx, json, css]
+
+      - id: build
+        name: build (mise run build)
+        entry: mise run build
+        language: system
+        stages: [pre-commit]
+        pass_filenames: false
+        types_or: [ts, tsx, javascript, jsx, json, css, html]

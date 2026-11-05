@@ -8,6 +8,9 @@ Thank you for helping to improve Pupitre!
 
 Please be sure to search for open issues before raising a new one. We use issues
 for bug reports and feature requests.
+
+A security vulnerability must not be reported in a public issue: see
+SECURITY.md.
 -->
 
 ### What happened?
@@ -28,12 +31,11 @@ appreciated!
 Pupitre version:
 
 <!--
-Include at least the version or commit of Pupitre you were running. Consider
-also including your:
+Include at least the version or commit of Pupitre you were running, and:
 
-* Cloud provider or hardware configuration
-* Kubernetes version (use `kubectl version`)
-* Kubernetes distribution (e.g. Tectonic, GKE, OpenShift)
-* OS (e.g. from /etc/os-release)
-* Kernel (e.g. `uname -a`)
+* The app: learner (/) or admin (/admin, /manager)
+* The role of the account: student, manager or admin
+* How it runs: mock mode (pnpm dev:mock), local backend (pnpm dev), Docker
+  images, or Kubernetes with the Helm chart (chart version)
+* The browser and its version, and the theme (light or dark)
 -->
