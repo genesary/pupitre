@@ -8,6 +8,7 @@ They replace the Astro frontend and the three Go services of this repository at 
   pnpm.
 - Authentication: OIDC through Keycloak only.
 - Calling the admin API to add courses (PowerShell and Linux): [`docs/guides/admin-api-courses.md`](docs/guides/admin-api-courses.md).
+- Dev environment: [`CONTRIBUTING.md`](CONTRIBUTING.md). Architecture, courses, labs and SSO: [`docs/`](docs/ARCHITECTURE.md).
 
 ## Requirements
 

@@ -1,10 +1,7 @@
 # Adding courses through the admin API
 
 How an administrator creates and edits courses by calling the API directly, from PowerShell
-(Windows) or a Linux shell, instead of the « Administration » pages. The routes and their rules
-are those of [042](../specs/042-admin-courses.md), [106](../specs/106-backend-courses-and-content.md)
-and the route inventory of [103](../specs/103-backend-http-api.md); this guide only shows how to
-call them.
+(Windows) or a Linux shell, instead of the « Administration » pages.
 
 Two ways to write a course:
 
@@ -16,9 +13,8 @@ Both examples of this guide are in [`examples/`](examples/) and are accepted as 
 
 ## 1. Get a token
 
-The API takes the session token of the web app (`Authorization: Bearer <token>`,
-[105](../specs/105-backend-authentication.md)). It is valid 8 hours, and « Déconnexion » revokes
-it at once.
+The API takes the session token of the web app (`Authorization: Bearer <token>`). It is valid
+8 hours, and « Déconnexion » revokes it at once.
 
 1. Sign in to pupitre with an **admin** account (locally: `admin.kc`, see `apps/api/compose.yaml`).
 2. Open the browser's developer tools (F12), « Console » tab, on a pupitre page.
@@ -115,7 +111,7 @@ A module has a `name`, a `type` and its body:
 | `text` | `content` (markdown), **or** `src` / `ref` / `path` to read a file from a git repository |
 | `video`, `image` | `src`: a URL (`replication: true` downloads it once and serves it locally) |
 | `quiz` | `questions` (below), `passingScore` (percentage needed to pass) |
-| `lab` | `steps` checked against GitLab ([107](../specs/107-backend-labs-and-checker.md)) |
+| `lab` | `steps` checked against GitLab ([interactive labs](../interactive-labs.md)) |
 
 Optional on every module: `skills` (tags such as `docker`), `hidden`, `prerequisites` (module
 slugs). A quiz question has an `id`, a `type`, `points` and the `question`:
@@ -186,8 +182,7 @@ curl -fsS "$API/admin/courses/git-basics/export/markdown" -H "$AUTH" -o git-basi
 ## 5. Edit or delete a course
 
 A course is always written whole: read its definition, change it, send it back. Read it again
-right before writing, so you do not overwrite another admin's change
-([042](../specs/042-admin-courses.md), "Concurrency rule").
+right before writing, so you do not overwrite another admin's change.
 
 PowerShell (rename the course):
 
@@ -264,7 +259,7 @@ curl -fsS -X POST "$API/admin/courses/docker-intro/cache/clear" -H "$AUTH"
 
 The API must reach the repository: a module whose repository is unreachable shows « Module
 introuvable » to the learner. A private repository needs `GIT_TOKEN` or `GIT_CREDENTIALS_PATH`
-([101](../specs/101-backend-configuration.md)).
+([configuration](../ARCHITECTURE.md#secret-git--course-repo-secret)).
 
 ## Errors
 
