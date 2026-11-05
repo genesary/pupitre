@@ -4973,6 +4973,60 @@ func TestCompleteSSOLogin_NonAdminGroupRevokesStoredAdminRole(t *testing.T) {
 	}
 }
 
+// TestCompleteSSOLogin_NonAdminGroupKeepsManagerRole verifies the admin groups
+// only decide who is an admin: a manager outside them stays a manager.
+func TestCompleteSSOLogin_NonAdminGroupKeepsManagerRole(t *testing.T) {
+	t.Parallel()
+
+	providerUserID := "oidc-sub-manager"
+	repos := fake.NewRepositories()
+	repos.Users = fake.NewUserRepository(models.User{
+		ID:             uuid.New(),
+		Username:       "manager",
+		Email:          "manager@test.com",
+		Role:           groupsRoleManager,
+		IsActive:       true,
+		AuthProvider:   oidcProviderKey,
+		ProviderUserID: &providerUserID,
+	})
+	s := newStateWithRepos(repos)
+	ctx := context.Background()
+
+	stored, err := repos.Users.FindByEmail(ctx, "manager@test.com")
+	if err != nil {
+		t.Fatalf("find stored user: %v", err)
+	}
+
+	groups, ok := repos.Groups.(*fake.GroupRepository)
+	if !ok {
+		t.Fatalf("unexpected group repository %T", repos.Groups)
+	}
+
+	groups.UserRoles[stored.ID.String()] = groupsRoleManager
+
+	rec := httptest.NewRecorder()
+	s.completeSSOLogin(
+		ctx, rec,
+		"manager@test.com", "Manager", nil, nil,
+		"oidc", providerUserID,
+		[]string{"dev"},
+		[]string{"seanergy-admins"},
+	)
+
+	if rec.Code != http.StatusOK {
+		t.Fatalf("want 200, got %d: %s", rec.Code, rec.Body.String())
+	}
+
+	persisted, err := repos.Users.FindByEmail(ctx, "manager@test.com")
+	if err != nil {
+		t.Fatalf("find persisted user: %v", err)
+	}
+
+	if persisted.Role != groupsRoleManager {
+		t.Errorf("persisted role = %q, want %q", persisted.Role, groupsRoleManager)
+	}
+}
+
 // TestCompleteSSOLogin_NilGroupAdminsHasNoEffect verifies nil groupAdmins
 // leaves role assignment unaffected.
 func TestCompleteSSOLogin_NilGroupAdminsHasNoEffect(t *testing.T) {

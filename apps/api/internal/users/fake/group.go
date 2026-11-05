@@ -253,23 +253,25 @@ func (f *GroupRepository) SyncGroupsAndDeriveRole(
 		}
 	}
 
-	roleMapped := false
+	var mapped []string
 
 	for _, name := range groupNames {
 		if name == "" {
 			continue
 		}
 
-		var mapped bool
+		var mappedRole string
 
-		userGroups, role, mapped = f.applyGroupMembership(userGroups, userID, name, source, role)
-		if mapped {
-			roleMapped = true
+		userGroups, mappedRole = f.applyGroupMembership(userGroups, userID, name, source)
+		if mappedRole != "" {
+			mapped = append(mapped, mappedRole)
 		}
 	}
 
 	f.UserGroup = userGroups
-	if roleMapped {
+	role = repository.DeriveRole(role, mapped)
+
+	if len(mapped) > 0 {
 		f.UserRoles[userID] = role
 	}
 
@@ -821,29 +823,23 @@ func groupBy[R any](wanted []string, rows []R, split func(R) (string, string)) m
 }
 
 // applyGroupMembership adds userID to the group named name (creating it if
-// absent) and returns the updated userGroups slice, the (possibly updated)
-// role, and whether a group-role mapping applied.
+// absent) and returns the updated userGroups slice and the role the group
+// maps to, "" when it has no mapping.
+//
+//nolint:gocritic // unnamedResult conflicts with project nonamedreturns policy
 func (f *GroupRepository) applyGroupMembership(
-	userGroups []models.UserGroup, userID, name, source, role string,
-) ([]models.UserGroup, string, bool) {
+	userGroups []models.UserGroup, userID, name, source string,
+) ([]models.UserGroup, string) {
 	groupID := f.findOrCreateGroup(name, source)
 	userGroups = append(userGroups, models.UserGroup{UserID: userID, GroupID: groupID})
 
 	for _, mapping := range f.Mappings {
-		if mapping.GroupName != name {
-			continue
+		if mapping.GroupName == name {
+			return userGroups, mapping.PlatformRole
 		}
-
-		if mapping.PlatformRole == groupsRoleAdmin {
-			role = groupsRoleAdmin
-		} else if role != groupsRoleAdmin {
-			role = mapping.PlatformRole
-		}
-
-		return userGroups, role, true
 	}
 
-	return userGroups, role, false
+	return userGroups, ""
 }
 
 // findOrCreateGroup returns the ID of the group named name, upserting it

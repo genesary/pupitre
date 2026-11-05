@@ -2,8 +2,11 @@ package checker
 
 import (
 	"context"
+	"net/http"
+	"net/http/httptest"
 	"strings"
 	"testing"
+	"time"
 )
 
 // TestFetchCourseCheckPolicyContent_InvalidURL rejects sources that are not
@@ -70,9 +73,45 @@ func TestNewFetcher_Error(t *testing.T) {
 	t.Parallel()
 
 	// A control character in the base URL makes url.Parse fail inside the SDK.
-	_, err := NewFetcher("tok", "http://exa\x7fmple.com")
+	_, err := NewFetcher(t.Context(), "tok", "http://exa\x7fmple.com")
 	if err == nil {
 		t.Fatal("expected NewFetcher error for malformed base URL")
+	}
+}
+
+// TestNewFetcher_StopsWithTheContext verifies a stalled GitLab does not hold
+// a call beyond the fetcher's context.
+func TestNewFetcher_StopsWithTheContext(t *testing.T) {
+	t.Parallel()
+
+	release := make(chan struct{})
+	srv := httptest.NewServer(http.HandlerFunc(func(http.ResponseWriter, *http.Request) { <-release }))
+
+	defer srv.Close()
+	defer close(release)
+
+	ctx, cancel := context.WithTimeout(t.Context(), 50*time.Millisecond)
+	defer cancel()
+
+	fetcher, err := NewFetcher(ctx, "tok", srv.URL)
+	if err != nil {
+		t.Fatalf("NewFetcher: %v", err)
+	}
+
+	done := make(chan error, 1)
+
+	go func() {
+		_, fetchErr := fetcher.Fetch("group/alice", nil)
+		done <- fetchErr
+	}()
+
+	select {
+	case fetchErr := <-done:
+		if fetchErr == nil {
+			t.Fatal("expected an error from a stalled GitLab")
+		}
+	case <-time.After(5 * time.Second):
+		t.Fatal("Fetch ignored its context")
 	}
 }
 

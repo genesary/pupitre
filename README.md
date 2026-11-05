@@ -7,9 +7,7 @@ They replace the Astro frontend and the three Go services of this repository at 
 - Stack: React 19, TypeScript, Vite, React Router, Tailwind CSS v4, shadcn/ui, TanStack Query,
   pnpm.
 - Authentication: OIDC through Keycloak only.
-- Specs: [`docs/specs`](docs/specs/README.md).
 - Calling the admin API to add courses (PowerShell and Linux): [`docs/guides/admin-api-courses.md`](docs/guides/admin-api-courses.md).
-- Agent rules: [`AGENTS.md`](AGENTS.md).
 
 ## Requirements
 
@@ -28,7 +26,7 @@ task installs the dependencies first when needed.
 ```sh
 mise install          # Node.js 24, pnpm, prek, Go and golangci-lint, versions from mise.toml
 mise run setup:prek        # Git hooks, see "Contributing"
-mise run dev:mock     # http://localhost:3000, no backend needed (docs/specs/006-mock-mode.md)
+mise run dev:mock     # http://localhost:3000, no backend needed
 mise run dev          # http://localhost:3000, against the Go services
 # Both start the two apps; the admin app is opened through http://localhost:3000/admin
 mise run check        # typecheck, lint, test and build
@@ -36,21 +34,12 @@ mise run api:dev      # pupitre-api on http://localhost:8080 (after mise run api
 mise tasks            # every task: build, lint, typecheck, test, test:e2e, api:test…
 ```
 
-### In a dev container
-
-`.devcontainer/` builds an image with mise, Node.js, pnpm, Go, golangci-lint and Playwright's Chromium already
-installed. Open the folder in VS Code, run "Dev Containers: Reopen in Container", then
-`mise run dev:mock`. `node_modules` lives in a Docker volume, apart from the host's.
-
-With Podman, set `"dev.containers.dockerPath": "podman"` in the VS Code user settings: through the
-Docker CLI, VS Code can stay stuck after "Container started".
-
 ### With pnpm only
 
 ```sh
 corepack enable
 pnpm install
-pnpm dev:mock   # http://localhost:3000, no backend needed (docs/specs/006-mock-mode.md)
+pnpm dev:mock   # http://localhost:3000, no backend needed
 
 pnpm api:up     # PostgreSQL and Keycloak (apps/api/compose.yaml)
 pnpm api:dev    # pupitre-api on http://localhost:8080 (settings: apps/api/.env)
@@ -65,7 +54,7 @@ pnpm dev        # http://localhost:3000, against the API
 | `pnpm test:e2e:backend` | End-to-end tests against the real backend (after `pnpm api:up`) |
 | `pnpm api:test`, `pnpm api:lint`, `pnpm api:build` | Go tests, lint and build of `apps/api` |
 | `pnpm test` | Unit and component tests (Vitest), every package |
-| `pnpm lint` | ESLint, including the security rules of `docs/specs/003-security.md` |
+| `pnpm lint` | ESLint, including the security rules |
 | `pnpm typecheck` | TypeScript only, every package |
 
 The dev proxy target can be changed with `VITE_API_URL`. Keycloak test accounts (local only):
@@ -80,9 +69,6 @@ The dev proxy target can be changed with `VITE_API_URL`. Keycloak test accounts 
 | `packages/core` | `@pupitre/core` | Shared by both apps: API client, session, top bar, guards, markdown, mocks |
 | `packages/ui` | `@pupitre/ui` | Design system: shadcn components, pupitre CSS, security helpers |
 | `apps/api` | Go module | The backend, `pupitre-api`: one application on port 8080 |
-| `docs/specs` | | Functional and technical specs |
-
-Details: [`docs/specs/000-scope-and-stack.md`](docs/specs/000-scope-and-stack.md).
 
 ## Contributing
 

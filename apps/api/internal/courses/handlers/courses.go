@@ -306,19 +306,7 @@ func (s *State) isEnrolledViaPath(ctx context.Context, courseSlug, userID string
 // a course that is not public: an admin, a user enrolled in the course, or
 // a user enrolled in any path that contains the course.
 func (s *State) canViewPrivateCourse(req *http.Request, slug string) bool {
-	claims := s.claims(req)
-	if claims == nil {
-		auth := req.Header.Get("Authorization")
-
-		rest, hasBearer := strings.CutPrefix(auth, "Bearer ")
-		if hasBearer {
-			parsed, err := middleware.VerifyToken(rest, s.Config.JWTSecret)
-			if err == nil {
-				claims = parsed
-			}
-		}
-	}
-
+	claims := s.requesterClaims(req)
 	if claims == nil {
 		return false
 	}
@@ -330,6 +318,40 @@ func (s *State) canViewPrivateCourse(req *http.Request, slug string) bool {
 	ctx := req.Context()
 
 	return s.enrollmentCheck(ctx, slug, claims.Subject) || s.isEnrolledViaPath(ctx, slug, claims.Subject)
+}
+
+// requesterClaims returns the claims of the signed-in requester, or nil. A
+// public route has no guard, so it reads the bearer token here and applies
+// the same session check as the guards: a revoked token, or the old role of
+// a demoted user, opens nothing (docs/specs/190-backend-defects.md B7).
+func (s *State) requesterClaims(req *http.Request) *middleware.Claims {
+	claims := s.claims(req)
+	if claims != nil {
+		return claims
+	}
+
+	token, hasBearer := strings.CutPrefix(req.Header.Get("Authorization"), "Bearer ")
+	if !hasBearer {
+		return nil
+	}
+
+	claims, err := middleware.VerifyToken(token, s.Config.JWTSecret)
+	if err != nil {
+		return nil
+	}
+
+	valid, err := middleware.ResolveSession(req.Context(), claims, s.Sessions)
+	if err != nil {
+		zap.L().Error("session check failed", zap.Error(err))
+
+		return nil
+	}
+
+	if !valid {
+		return nil
+	}
+
+	return claims
 }
 
 // GetCourse godoc

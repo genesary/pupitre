@@ -90,7 +90,7 @@ func (h *Handler) CheckStep(resp http.ResponseWriter, httpReq *http.Request) {
 		return
 	}
 
-	result, fail := h.RunCheckStep(req)
+	result, fail := h.RunCheckStep(httpReq.Context(), req)
 	writeResult(resp, result, fail, "encode check-step response")
 }
 

@@ -2,7 +2,9 @@ package handlers
 
 import (
 	"net/http"
+	"strings"
 	"testing"
+	"time"
 
 	"github.com/google/uuid"
 
@@ -34,5 +36,21 @@ func TestLogin_DoesNotRevealAccounts(t *testing.T) {
 	if unknown.Body.String() != sso.Body.String() {
 		t.Errorf("the answers differ, so they tell an SSO account exists:\nunknown: %s\nSSO:     %s",
 			unknown.Body.String(), sso.Body.String())
+	}
+}
+
+// TestSpendPasswordCheckTime_LongPassword verifies a password over bcrypt's
+// limit costs the time of a check too: hashing would refuse it at once, while
+// comparing it with a stored hash does not, so an unknown email would answer
+// faster than a known one.
+func TestSpendPasswordCheckTime_LongPassword(t *testing.T) {
+	t.Parallel()
+
+	started := time.Now()
+
+	spendPasswordCheckTime(strings.Repeat("x", bcryptMaxPasswordBytes+1))
+
+	if elapsed := time.Since(started); elapsed < 10*time.Millisecond {
+		t.Errorf("took %s: the password was not hashed", elapsed)
 	}
 }

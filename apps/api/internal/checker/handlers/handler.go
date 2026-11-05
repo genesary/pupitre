@@ -58,7 +58,7 @@ func (h *Handler) RunEvaluate(ctx context.Context, req checker.EvaluateRequest) 
 		return nil, fail
 	}
 
-	state, fail := h.fetchStudentGitLabProjectState(req)
+	state, fail := h.fetchStudentGitLabProjectState(ctx, req)
 	if fail != nil {
 		return nil, fail
 	}
@@ -89,7 +89,7 @@ func requireEvaluateFields(req checker.EvaluateRequest) *Failure {
 
 // RunCheckStep runs one named step check. POST /check-step decodes its
 // body and calls it; the monolith calls it directly.
-func (h *Handler) RunCheckStep(req checker.StepRequest) (*checker.StepResponse, *Failure) {
+func (h *Handler) RunCheckStep(ctx context.Context, req checker.StepRequest) (*checker.StepResponse, *Failure) {
 	if req.Username == "" || req.Project == "" || req.CheckType == "" {
 		return nil, failure(http.StatusBadRequest, "username, project and checkType are required")
 	}
@@ -98,7 +98,7 @@ func (h *Handler) RunCheckStep(req checker.StepRequest) (*checker.StepResponse, 
 		return nil, failure(http.StatusInternalServerError, "GITLAB_TOKEN not configured")
 	}
 
-	fetcher, err := checker.NewFetcher(h.config.GitLabToken, h.config.GitLabBaseURL)
+	fetcher, err := checker.NewFetcher(ctx, h.config.GitLabToken, h.config.GitLabBaseURL)
 	if err != nil {
 		zap.L().Error("gitlab client init", zap.Error(err))
 
@@ -153,8 +153,8 @@ func (h *Handler) fetchCourseCheckPolicy(ctx context.Context, req checker.Evalua
 
 // fetchStudentGitLabProjectState fetches the student's GitLab project and MR
 // state using the checker-service's GitLab token.
-func (h *Handler) fetchStudentGitLabProjectState(req checker.EvaluateRequest) (*checker.GitLabState, *Failure) {
-	fetcher, err := checker.NewFetcher(h.config.GitLabToken, h.config.GitLabBaseURL)
+func (h *Handler) fetchStudentGitLabProjectState(ctx context.Context, req checker.EvaluateRequest) (*checker.GitLabState, *Failure) {
+	fetcher, err := checker.NewFetcher(ctx, h.config.GitLabToken, h.config.GitLabBaseURL)
 	if err != nil {
 		zap.L().Error("gitlab client init", zap.Error(err))
 

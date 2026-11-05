@@ -44,7 +44,7 @@ func newMockGitLab(t *testing.T) *mockGitLab {
 func (m *mockGitLab) fetcher() (*GitLabFetcher, *httptest.Server) {
 	srv := httptest.NewServer(http.HandlerFunc(m.route))
 
-	f, err := NewFetcher("test-token", srv.URL)
+	f, err := NewFetcher(m.t.Context(), "test-token", srv.URL)
 	if err != nil {
 		m.t.Fatalf("NewFetcher: %v", err)
 	}

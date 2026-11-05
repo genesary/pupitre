@@ -15,9 +15,8 @@ import (
 // FetchCourseCheckPolicyContent fetches a Rego policy file from a GitLab repo
 // using the GitLab SDK. src is the git clone URL, ref is the branch/tag,
 // filePath is the relative path to the .rego file, and token is the OAuth2
-// access token. The context is accepted for API compatibility but the SDK
-// handles its own request lifecycle.
-func FetchCourseCheckPolicyContent(_ context.Context, src, ref, filePath, token string) (string, error) {
+// access token.
+func FetchCourseCheckPolicyContent(ctx context.Context, src, ref, filePath, token string) (string, error) {
 	parsed, err := url.Parse(src)
 	if err != nil || (parsed.Scheme != "http" && parsed.Scheme != "https") {
 		return "", fmt.Errorf("invalid policy source URL: %q", src)
@@ -25,7 +24,7 @@ func FetchCourseCheckPolicyContent(_ context.Context, src, ref, filePath, token 
 
 	baseURL := parsed.Scheme + "://" + parsed.Host
 
-	fetcher, err := NewFetcher(token, baseURL)
+	fetcher, err := NewFetcher(ctx, token, baseURL)
 	if err != nil {
 		return "", fmt.Errorf("create gitlab client: %w", err)
 	}
@@ -43,9 +42,13 @@ type GitLabFetcher struct {
 }
 
 // NewFetcher creates a GitLabFetcher authenticated against the given GitLab
-// instance.
-func NewFetcher(token, baseURL string) (*GitLabFetcher, error) {
-	client, err := gitlab.NewClient(token, gitlab.WithBaseURL(baseURL+"/api/v4"))
+// instance. Every call it makes stops with ctx: the SDK has no timeout of its
+// own, so a stalled GitLab would otherwise hold the request for good.
+func NewFetcher(ctx context.Context, token, baseURL string) (*GitLabFetcher, error) {
+	client, err := gitlab.NewClient(token,
+		gitlab.WithBaseURL(baseURL+"/api/v4"),
+		gitlab.WithRequestOptions(gitlab.WithContext(ctx)),
+	)
 	if err != nil {
 		return nil, fmt.Errorf("gitlab new client: %w", err)
 	}

@@ -31,5 +31,6 @@ const (
 // admin/mock-student seeding helpers.
 const (
 	roleAdmin   = "admin"
+	roleManager = "manager"
 	roleStudent = "student"
 )

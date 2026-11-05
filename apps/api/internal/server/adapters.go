@@ -239,6 +239,11 @@ const labCheckRateLimitKey = "lab-checks:"
 // checker-service failed without a message of its own.
 const genericCheckerMessage = "checker-service error"
 
+// labCheckTimeout bounds one lab check, within the server's write timeout:
+// course-service gave up on checker-service after 10 s, and the checker's
+// GitLab client has no timeout of its own.
+const labCheckTimeout = 30 * time.Second
+
 // labChecker gives the courses domain the checker.
 type labChecker struct {
 	checker *checkerhandlers.Handler
@@ -267,6 +272,9 @@ func (a *labChecker) Evaluate(ctx context.Context, req courseshandlers.EvaluateR
 		return courseshandlers.CheckResponse{}, a.rateLimited()
 	}
 
+	ctx, cancel := context.WithTimeout(ctx, labCheckTimeout)
+	defer cancel()
+
 	result, fail := a.checker.RunEvaluate(ctx, checker.EvaluateRequest(req))
 
 	return checkResult(result, fail)
@@ -278,7 +286,10 @@ func (a *labChecker) CheckStep(ctx context.Context, req courseshandlers.StepChec
 		return courseshandlers.CheckResponse{}, a.rateLimited()
 	}
 
-	result, fail := a.checker.RunCheckStep(checker.StepRequest(req))
+	ctx, cancel := context.WithTimeout(ctx, labCheckTimeout)
+	defer cancel()
+
+	result, fail := a.checker.RunCheckStep(ctx, checker.StepRequest(req))
 
 	return checkResult(result, fail)
 }

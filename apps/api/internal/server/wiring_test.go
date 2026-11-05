@@ -39,7 +39,7 @@ type wiredApp struct {
 }
 
 // newWiredApp wires both domains on fakes, with one public course of two
-// lessons.
+// lessons and one private course.
 func newWiredApp(t *testing.T) *wiredApp {
 	t.Helper()
 
@@ -65,7 +65,7 @@ func newWiredApp(t *testing.T) *wiredApp {
 				{Name: "Intro", Type: "text", InlineContent: "Hello", Skills: []string{"kubernetes"}},
 				{Name: "Next", Type: "text", InlineContent: "More"},
 			},
-		}),
+		}, &content.Course{Slug: "private", Title: "Private", Difficulty: "beginner"}),
 		Paths:        coursesfake.NewPathRepository(),
 		QuizAttempts: coursesfake.NewQuizAttemptRepository(),
 		LabChecks:    coursesfake.NewLabCheckRepository(),
@@ -275,6 +275,51 @@ func TestWiring_LabCheckerLimit(t *testing.T) {
 	_, err = checker.Evaluate(t.Context(), request("bob"))
 	if !errors.As(err, &checkerErr) || checkerErr.Status != http.StatusBadGateway {
 		t.Fatalf("first check of another learner: %v, want the checker's 502, not the limit", err)
+	}
+}
+
+// TestWiring_PrivateCourseChecksTheSession verifies the session check of
+// GET /api/courses/{slug}: the route has no guard, and reads the token
+// itself to open a private course.
+func TestWiring_PrivateCourseChecksTheSession(t *testing.T) {
+	t.Parallel()
+
+	app := newWiredApp(t)
+
+	// The role comes from the row, not from the token.
+	token := app.token
+
+	forged, err := middleware.CreateToken(learnerID, "learner@example.com", "admin", "learner", testJWTSecret, 1)
+	if err != nil {
+		t.Fatalf("create token: %v", err)
+	}
+
+	app.token = forged
+	if rec := app.do(t, http.MethodGet, "/api/courses/private"); rec.Code != http.StatusNotFound {
+		t.Fatalf("private course with a student's row: %d, want 404", rec.Code)
+	}
+
+	app.token = token
+
+	err = app.domains.Users.AutoEnroll(t.Context(), learnerID, "private")
+	if err != nil {
+		t.Fatalf("enroll: %v", err)
+	}
+
+	if rec := app.do(t, http.MethodGet, "/api/courses/private"); rec.Code != http.StatusOK {
+		t.Fatalf("private course when enrolled: %d %s", rec.Code, rec.Body.String())
+	}
+
+	// A revoked token opens nothing, enrolled or not. JWT times have a
+	// one-second resolution: wait so the revocation follows the token.
+	time.Sleep(time.Until(time.Now().Truncate(time.Second).Add(time.Second)))
+
+	if rec := app.do(t, http.MethodPost, "/api/auth/logout"); rec.Code != http.StatusOK {
+		t.Fatalf("logout: %d %s", rec.Code, rec.Body.String())
+	}
+
+	if rec := app.do(t, http.MethodGet, "/api/courses/private"); rec.Code != http.StatusNotFound {
+		t.Fatalf("private course after sign-out: %d, want 404", rec.Code)
 	}
 }
 

@@ -746,9 +746,12 @@ func (s *State) completeSSOLogin(
 	}
 
 	if len(groupAdmins) > 0 {
-		role = groupsRoleStudent
+		// The admin groups decide who is an admin, and nothing else: a role
+		// a mapping or an admin gave, such as manager, stays.
 		if isMemberOfAny(groups, groupAdmins) {
 			role = groupsRoleAdmin
+		} else if role == groupsRoleAdmin {
+			role = groupsRoleStudent
 		}
 
 		userID, parseErr := uuid.Parse(user.ID)

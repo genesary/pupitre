@@ -1,0 +1,15 @@
+# Build context of docker/front/Dockerfile (the repository root). apps/api
+# has its own context and .dockerignore.
+**/node_modules
+**/dist
+**/coverage
+**/*.tsbuildinfo
+.git
+.github
+apps/api
+docs
+e2e
+test-results
+playwright-report*
+**/.env
+**/.env.*

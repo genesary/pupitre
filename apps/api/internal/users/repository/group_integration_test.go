@@ -261,6 +261,33 @@ func TestGroupRepository_CourseEnrollmentCascade(t *testing.T) { //nolint:parall
 	}
 }
 
+// TestGroupRepository_SyncKeepsTheStrongestMapping verifies the order of the
+// groups does not decide the role: a student mapping after a manager mapping
+// does not demote the user.
+func TestGroupRepository_SyncKeepsTheStrongestMapping(t *testing.T) { //nolint:paralleltest // shared db
+	gdb := crudDB(t)
+	repo := repository.NewGormGroupRepository(gdb)
+	ctx := t.Context()
+
+	uid := mkUser(t, gdb)
+
+	for name, role := range map[string]string{"trainers": "manager", "learners": "student"} {
+		err := repo.UpsertMapping(ctx, name, role)
+		if err != nil {
+			t.Fatalf("UpsertMapping: %v", err)
+		}
+	}
+
+	role, err := repo.SyncGroupsAndDeriveRole(ctx, uid, []string{"trainers", "learners"}, "oidc")
+	if err != nil {
+		t.Fatalf("SyncGroupsAndDeriveRole: %v", err)
+	}
+
+	if role != "manager" {
+		t.Errorf("derived role = %q, want manager", role)
+	}
+}
+
 // TestGroupRepository_SyncGroupsAndDeriveRole covers the login-time group
 // sync and its role derivation from the mapping table.
 func TestGroupRepository_SyncGroupsAndDeriveRole(t *testing.T) { //nolint:paralleltest // shared db

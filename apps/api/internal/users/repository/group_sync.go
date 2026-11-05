@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"fmt"
+	"slices"
 
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -71,7 +72,7 @@ func (r *gormGroupRepository) SyncEnrollments(ctx context.Context, userID string
 
 // SyncGroupsAndDeriveRole upserts groups from an IdP into the groups table,
 // replaces the user's group memberships, and returns the highest platform
-// role found in group_role_mappings ('admin' beats 'student'). Defaults to
+// role found in group_role_mappings (see DeriveRole). Defaults to
 // the user's current role, falling back to 'student' if unknown. The whole
 // operation runs in a transaction so a failure partway through leaves the
 // user's prior groups/role untouched instead of landing in a broken
@@ -119,42 +120,53 @@ func (r *gormGroupRepository) SyncGroupsAndDeriveRole(
 	return role, nil
 }
 
+// DeriveRole returns the role of a user currently holding current, whose
+// groups map to the roles in mapped: the strongest of them, whatever the order
+// of the groups, which the identity provider does not guarantee. An admin
+// stays one, and a user without any mapping keeps current.
+func DeriveRole(current string, mapped []string) string {
+	switch {
+	case current == roleAdmin || slices.Contains(mapped, roleAdmin):
+		return roleAdmin
+	case slices.Contains(mapped, roleManager):
+		return roleManager
+	case slices.Contains(mapped, roleStudent):
+		return roleStudent
+	default:
+		return current
+	}
+}
+
 // applyGroupMemberships syncs userID's membership in every non-empty name in
-// groupNames, deriving the platform role along the way. It returns the
+// groupNames, deriving the platform role from their mappings. It returns the
 // (possibly updated) role, whether any group mapping was applied, and any
 // error.
 //
 //nolint:gocritic // named results here would trip nonamedreturns instead; see doc comment above for the meaning of each value
 func applyGroupMemberships(groupTx *gorm.DB, userID string, groupNames []string, source, role string) (string, bool, error) {
-	roleMapped := false
+	var mapped []string
 
 	for _, name := range groupNames {
 		if name == "" {
 			continue
 		}
 
-		updatedRole, mapped, err := syncGroupMembership(groupTx, userID, name, source, role)
+		mappedRole, err := syncGroupMembership(groupTx, userID, name, source)
 		if err != nil {
 			return role, false, err
 		}
 
-		role = updatedRole
-
-		if mapped {
-			roleMapped = true
+		if mappedRole != "" {
+			mapped = append(mapped, mappedRole)
 		}
 	}
 
-	return role, roleMapped, nil
+	return DeriveRole(role, mapped), len(mapped) > 0, nil
 }
 
 // syncGroupMembership upserts a single group, links userID to it, and
-// derives the platform role implied by that group's role mapping (if any).
-// It returns the (possibly updated) role, whether a mapping was applied,
-// and any error.
-//
-//nolint:gocritic // named results here would trip nonamedreturns instead; see doc comment above for the meaning of each value
-func syncGroupMembership(groupTx *gorm.DB, userID, name, source, currentRole string) (string, bool, error) {
+// returns the platform role the group maps to, "" when it has no mapping.
+func syncGroupMembership(groupTx *gorm.DB, userID, name, source string) (string, error) {
 	group := models.Group{Name: name, Source: source}
 
 	err := groupTx.Clauses(clause.OnConflict{
@@ -162,14 +174,14 @@ func syncGroupMembership(groupTx *gorm.DB, userID, name, source, currentRole str
 		DoUpdates: clause.Assignments(map[string]any{"source": source, colUpdatedAt: gorm.Expr("NOW()")}),
 	}).Create(&group).Error
 	if err != nil {
-		return currentRole, false, fmt.Errorf("upsert group %q: %w", name, err)
+		return "", fmt.Errorf("upsert group %q: %w", name, err)
 	}
 
 	userGroup := models.UserGroup{UserID: userID, GroupID: group.ID}
 
 	err = groupTx.Clauses(clause.OnConflict{DoNothing: true}).Create(&userGroup).Error
 	if err != nil {
-		return currentRole, false, fmt.Errorf("link user to group %q: %w", name, err)
+		return "", fmt.Errorf("link user to group %q: %w", name, err)
 	}
 
 	var mappedRole string
@@ -177,19 +189,8 @@ func syncGroupMembership(groupTx *gorm.DB, userID, name, source, currentRole str
 	scanErr := groupTx.Model(&models.GroupRoleMapping{}).
 		Select("platformrole").Where("groupname = ?", name).Scan(&mappedRole).Error
 	if scanErr != nil {
-		return currentRole, false, fmt.Errorf("lookup group mapping %q: %w", name, scanErr)
+		return "", fmt.Errorf("lookup group mapping %q: %w", name, scanErr)
 	}
 
-	if mappedRole == "" {
-		return currentRole, false, nil
-	}
-
-	updatedRole := currentRole
-	if mappedRole == roleAdmin {
-		updatedRole = roleAdmin
-	} else if updatedRole != roleAdmin {
-		updatedRole = mappedRole
-	}
-
-	return updatedRole, true, nil
+	return mappedRole, nil
 }

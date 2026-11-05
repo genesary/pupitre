@@ -22,6 +22,9 @@ import (
 // bcryptCost is the bcrypt hashing cost used for all stored passwords.
 const bcryptCost = 12
 
+// bcryptMaxPasswordBytes is the longest password bcrypt hashes.
+const bcryptMaxPasswordBytes = 72
+
 // Settings/validation literals shared across this file, pulled out to
 // satisfy goconst and mnd.
 const (
@@ -297,9 +300,16 @@ func (s *State) loginLookup(ctx context.Context, email string) (loginUserRow, er
 
 // spendPasswordCheckTime takes about as long as checking a password, for
 // the sign-ins that have no hash to check: hashing costs the same as
-// comparing.
+// comparing. Hashing refuses a password over bcrypt's limit at once while
+// comparing does not, so the password is cut to that limit: a long password
+// would otherwise tell an unknown email from a known one.
 func spendPasswordCheckTime(password string) {
-	_, _ = bcrypt.GenerateFromPassword([]byte(password), bcryptCost)
+	secret := []byte(password)
+	if len(secret) > bcryptMaxPasswordBytes {
+		secret = secret[:bcryptMaxPasswordBytes]
+	}
+
+	_, _ = bcrypt.GenerateFromPassword(secret, bcryptCost)
 }
 
 // Login godoc

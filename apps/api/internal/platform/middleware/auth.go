@@ -201,15 +201,9 @@ func guard(secret, forbiddenMsg string, allowedRoles []string, opts []Option) fu
 }
 
 // applySession runs the session check of a verified token. It writes the
-// error response and returns false when the session is not valid; otherwise
-// it replaces the token's role with the user's current one.
+// error response and returns false when the session is not valid.
 func applySession(resp http.ResponseWriter, req *http.Request, claims *Claims, check SessionCheck) bool {
-	var issuedAt time.Time
-	if claims.IssuedAt != nil {
-		issuedAt = claims.IssuedAt.Time
-	}
-
-	session, err := check(req.Context(), claims.Subject, issuedAt)
+	valid, err := ResolveSession(req.Context(), claims, check)
 	if err != nil {
 		zap.L().Error("session check failed", zap.Error(err))
 		httperr.Write(resp, http.StatusInternalServerError, "Session check failed")
@@ -217,16 +211,42 @@ func applySession(resp http.ResponseWriter, req *http.Request, claims *Claims, c
 		return false
 	}
 
-	if !session.Valid {
+	if !valid {
 		httperr.Write(resp, http.StatusUnauthorized, "Session expired")
 
 		return false
 	}
 
+	return true
+}
+
+// ResolveSession reports whether the session of verified claims is still
+// valid, and replaces their role with the user's current one when it is. A
+// route that reads a token without a guard calls it too, so that a revoked
+// token is refused there as well. A nil check accepts every session.
+func ResolveSession(ctx context.Context, claims *Claims, check SessionCheck) (bool, error) {
+	if check == nil {
+		return true, nil
+	}
+
+	var issuedAt time.Time
+	if claims.IssuedAt != nil {
+		issuedAt = claims.IssuedAt.Time
+	}
+
+	session, err := check(ctx, claims.Subject, issuedAt)
+	if err != nil {
+		return false, err
+	}
+
+	if !session.Valid {
+		return false, nil
+	}
+
 	// The role of the database, not the one frozen in the token.
 	claims.Role = session.Role
 
-	return true
+	return true, nil
 }
 
 // Auth returns middleware that requires a valid bearer token.
