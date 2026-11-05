@@ -259,7 +259,7 @@ curl -fsS -X POST "$API/admin/courses/docker-intro/cache/clear" -H "$AUTH"
 
 The API must reach the repository: a module whose repository is unreachable shows « Module
 introuvable » to the learner. A private repository needs `GIT_TOKEN` or `GIT_CREDENTIALS_PATH`
-([configuration](../ARCHITECTURE.md#secret-git--course-repo-secret)).
+([configuration](../ARCHITECTURE.md#git-secret--course-repo-secret)).
 
 ## Errors
 

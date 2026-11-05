@@ -1,50 +1,52 @@
-# Labs interactifs — Lab Checker
+# Interactive labs — Lab Checker
 
-## Vue d'ensemble
+## Overview
 
-Les labs sont des modules de type `lab` d'un cours. L'apprenant lit l'énoncé directement dans la plateforme, réalise le travail dans GitLab, puis clique **Vérifier mon travail**. Le checker évalue automatiquement le travail via une policy OPA/Rego.
+Labs are modules of type `lab` in a course. The learner reads the instructions directly in the platform, does the work in GitLab, then clicks **Vérifier mon travail**. The checker evaluates the work automatically through an OPA/Rego policy.
 
 ```
-Apprenant                    pupitre-api                 Checker (même processus)
+Learner                      pupitre-api                 Checker (same process)
     │                            │                              │
-    ├── lit l'énoncé ────────────► rendu markdown inline        │
+    ├── reads the instructions ──► inline markdown rendering    │
     │   (lesson page)             │                              │
-    ├── travaille dans GitLab     │                              │
+    ├── works in GitLab           │                              │
     │                             │                              │
-    ├── clique "Vérifier" ───────►│                              │
+    ├── clicks "Vérifier" ───────►│                              │
     │                      POST /api/courses/:slug/modules/:i/check
-    │                             ├── lit check.yaml + check.rego depuis git
-    │                             ├── appelle le checker ──────►│
-    │                             │                    ├── fetch GitLab state
-    │                             │                    │   (MRs, commits, pipeline, fichiers)
-    │                             │                    └── évalue Rego policy
+    │                             ├── reads check.yaml + check.rego from git
+    │                             ├── calls the checker ───────►│
+    │                             │                    ├── fetches the GitLab state
+    │                             │                    │   (MRs, commits, pipeline, files)
+    │                             │                    └── evaluates the Rego policy
     │                             │◄── {allow, violations} ─────┤
-    │                             ├── stocke en DB (lab_checks)  │
-    │◄── résultat affiché ────────┤                              │
+    │                             ├── stores in DB (lab_checks)  │
+    │◄── result displayed ────────┤                              │
 ```
 
-## Structure des fichiers
+## File structure
 
-Pour chaque lab, deux fichiers doivent être co-localisés avec `content.md` dans le repo git :
+For each lab, two files must sit next to `content.md` in the git repository:
 
 ```
 modules/lab1/
-  ├── content.md     # Énoncé du lab (markdown)
-  ├── check.yaml     # Configuration du checker
-  └── check.rego     # Policy OPA/Rego
+  ├── content.md     # Lab instructions (markdown)
+  ├── check.yaml     # Checker configuration
+  └── check.rego     # OPA/Rego policy
 ```
 
 ### check.yaml
 
 ```yaml
 provider: gitlab
-project: "e-learning/{{ .Username }}"   # template résolu avec le username de l'apprenant
+project: "e-learning/{{ .Username }}"   # template resolved with the learner's username
 files:
-  - "lab.py"                            # fichiers à vérifier sur la branche par défaut
-policy: "check.rego"                    # chemin relatif vers la policy Rego
+  - "lab.py"                            # files to check on the default branch
+policy: "check.rego"                    # relative path to the Rego policy
 ```
 
-### check.rego — exemple Lab 1
+### check.rego — Lab 1 example
+
+The violation messages are shown to learners, so they stay in French.
 
 ```rego
 package checker.lab
@@ -83,7 +85,7 @@ mr_has_conventional_commit(mr) if {
 }
 ```
 
-### Input OPA fourni par le checker
+### OPA input provided by the checker
 
 ```json
 {
@@ -102,24 +104,24 @@ mr_has_conventional_commit(mr) if {
 }
 ```
 
-## Configuration du module dans la définition du cours
+## Module configuration in the course definition
 
 ```yaml
 modules:
-  - name: "Lab 1 : GitLab Branching & CI/CD with Conventional Commits"
+  - name: "Lab 1: GitLab Branching & CI/CD with Conventional Commits"
     type: "lab"
-    src: "http://10.89.0.1:8880/e-learning/devops-course.git"   # URL interne (pod → host)
+    src: "http://10.89.0.1:8880/e-learning/devops-course.git"   # internal URL (pod → host)
     ref: "main"
     path: "modules/lab1/content.md"
-    labUrl: "http://localhost:8880/e-learning/devops-course"    # URL navigateur (optionnel)
+    labUrl: "http://localhost:8880/e-learning/devops-course"    # browser URL (optional)
 ```
 
-> **Note :** `src` utilise l'IP hôte accessible depuis les pods (`10.89.0.1:8880`).
-> `labUrl` est l'URL affichée dans le navigateur si besoin de lien direct.
+> **Note:** `src` uses the host IP reachable from the pods (`10.89.0.1:8880`).
+> `labUrl` is the URL shown in the browser when a direct link is needed.
 
-## Credentials git pour les repos privés
+## Git credentials for private repositories
 
-L'API lit les credentials depuis le secret `course-repo-secret` :
+The API reads the credentials from the `course-repo-secret` secret:
 
 ```yaml
 # git-credentials.yaml
@@ -128,12 +130,12 @@ credentials:
     token: "glpat-xxx"
 ```
 
-> **Important :** le pattern utilise `path.Match` — `*` ne traverse pas les `/`.
-> Utiliser `10.89.0.1:8880/e-learning/*` et non `10.89.0.1:8880/*`.
+> **Important:** the pattern uses `path.Match` — `*` does not cross `/`.
+> Use `10.89.0.1:8880/e-learning/*`, not `10.89.0.1:8880/*`.
 
-## GitLab Runner (environnement local Kind)
+## GitLab Runner (local Kind environment)
 
-Un runner shell est déployé dans le cluster pour exécuter les pipelines CI/CD :
+A shell runner is deployed in the cluster to run the CI/CD pipelines:
 
 ```yaml
 # /tmp/gitlab-runner.yaml
@@ -141,41 +143,41 @@ Un runner shell est déployé dans le cluster pour exécuter les pipelines CI/CD
   url = "http://10.89.0.1:8880"
   token = "glrt-xxx"
   executor = "shell"
-  clone_url = "http://gitlab-http.gitlab.svc.cluster.local"  # DNS interne Kind
+  clone_url = "http://gitlab-http.gitlab.svc.cluster.local"  # Kind internal DNS
 ```
 
-Le `clone_url` est nécessaire car `gitlab.local` ne résout pas depuis l'intérieur du cluster.
+The `clone_url` is needed because `gitlab.local` does not resolve from inside the cluster.
 
-## Traçabilité formateur — /admin/labs
+## Trainer tracking — /admin/labs
 
-Chaque vérification est enregistrée en base de données :
+Each check is recorded in the database:
 
 ```sql
 CREATE TABLE lab_checks (
     id           BIGSERIAL PRIMARY KEY,
-    username     TEXT        NOT NULL,   -- email de l'apprenant
+    username     TEXT        NOT NULL,   -- the learner's email
     courseSlug  TEXT        NOT NULL,
     moduleIndex INT         NOT NULL,
     moduleName  TEXT        NOT NULL,
     allow        BOOLEAN     NOT NULL,
     violations   TEXT[]      NOT NULL DEFAULT '{}',
     checkedAt   TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    verified     BOOLEAN     NOT NULL DEFAULT FALSE   -- vérifié par le serveur, ou signalé par le client
+    verified     BOOLEAN     NOT NULL DEFAULT FALSE   -- verified by the server, or reported by the client
 );
 ```
 
-La page `/admin/labs` affiche :
+The `/admin/labs` page shows:
 
-- Stats globales (total vérifications, validés, échoués, apprenants actifs)
-- Tableau filtrable par cours avec violations détaillées
-- Endpoint : `GET /api/admin/lab-checks?course=<slug>`
+- Global stats (total checks, passed, failed, active learners)
+- A table filterable by course, with detailed violations
+- Endpoint: `GET /api/admin/lab-checks?course=<slug>`
 
-## Scénarios d'échec testés
+## Tested failure scenarios
 
-| Condition | Message retourné |
+| Condition | Returned message |
 |---|---|
-| Aucune MR ouverte | "Aucune Merge Request ouverte trouvée. Créez une MR sans la fusionner." |
-| Branche non conventionnelle | "Nom de branche non conventionnel. Format attendu : `<type>/<description>`" |
-| Commit non conventionnel | "Aucun commit conventionnel sur la branche '...'. Format attendu : `feat: ...`" |
-| Pipeline échouée ou absente | "Pipeline CI/CD non validée sur '...' (statut : '...')." |
-| `lab.py` absent sur main | "Fichier lab.py introuvable sur main." |
+| No open MR | "Aucune Merge Request ouverte trouvée. Créez une MR sans la fusionner." |
+| Non-conventional branch | "Nom de branche non conventionnel. Format attendu : `<type>/<description>`" |
+| Non-conventional commit | "Aucun commit conventionnel sur la branche '...'. Format attendu : `feat: ...`" |
+| Failed or missing pipeline | "Pipeline CI/CD non validée sur '...' (statut : '...')." |
+| `lab.py` missing on main | "Fichier lab.py introuvable sur main." |

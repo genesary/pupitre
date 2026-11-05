@@ -1,19 +1,19 @@
 # Architecture — E-Learning Platform
 
-## Décision : une seule application
+## Decision: a single application
 
-Le backend est une seule application Go, `pupitre-api` (`apps/api`), sur le port 8080. Elle regroupe trois domaines dans un même processus : `users`, `courses` et `checker`. Ils s'appellent directement, sans API interne. Le frontend est composé de deux applications React, servies sur la même origine.
+The backend is a single Go application, `pupitre-api` (`apps/api`), on port 8080. It brings three domains together in one process: `users`, `courses` and `checker`. They call each other directly, without an internal API. The frontend is made of two React applications, served on the same origin.
 
-## Source de vérité des cours : PostgreSQL
+## Source of truth for courses: PostgreSQL
 
-La seule source de vérité est la **base de données**. Les cours sont créés et modifiés via l'API d'administration ; il n'y a ni fichier YAML sur disque, ni ressource Kubernetes, ni cache en mémoire.
+The only source of truth is the **database**. Courses are created and edited through the admin API; there is no YAML file on disk, no Kubernetes resource and no in-memory cache.
 
-Chaque requête lit ce dont elle a besoin :
+Each request reads what it needs:
 
-- le catalogue (`GET /api/courses`) filtre en SQL et ne charge aucune ligne de module ;
-- l'affichage d'un cours charge ses modules en une requête indexée sur `(course_slug, position)`.
+- the catalogue (`GET /api/courses`) filters in SQL and loads no module row;
+- displaying a course loads its modules with one query indexed on `(course_slug, position)`.
 
-Aucune réplique ne conserve de contenu en mémoire : une réplique qui vient de démarrer sert exactement le même catalogue qu'une réplique en place depuis une semaine, et un redéploiement ne perd rien.
+No replica keeps content in memory: a replica that has just started serves exactly the same catalogue as one that has been running for a week, and a redeployment loses nothing.
 
 ```jsonc
 // POST /api/admin/courses
@@ -21,76 +21,76 @@ Aucune réplique ne conserve de contenu en mémoire : une réplique qui vient de
   "slug": "kubernetes-basics",
   "spec": {
     "title": "Kubernetes Basics",
-    "description": "Apprenez les bases de Kubernetes",
+    "description": "Learn the basics of Kubernetes",
     "public": true,
     "category": "kubernetes",
     "difficulty": "beginner",
     "modules": [
       { "name": "Introduction", "type": "text",
         "src": "https://github.com/org/courses", "ref": "main", "path": "intro.md" },
-      { "name": "Démo vidéo", "type": "video", "src": "/uploads/demo.mp4" }
+      { "name": "Video demo", "type": "video", "src": "/uploads/demo.mp4" }
     ]
   }
 }
 ```
 
-### Schéma
+### Schema
 
-| Table | Rôle |
+| Table | Role |
 |---|---|
-| `courses` | Métadonnées du cours ; colonnes indexées pour le filtrage catalogue (`category`, `difficulty`, `public`, `title`) et `skills` dénormalisé |
-| `course_modules` | Un module = une ligne, ordonnée par `position` ; charges utiles opaques (`questions`, `steps`, `check_params`) en `jsonb` |
-| `course_prerequisites` | Conditions d'inscription |
-| `course_sessions` | Sessions présentielles, clé `(course_slug, session_id)` — une écriture rejouée écrase la même ligne |
-| `paths`, `path_courses`, `path_skills` | Parcours et leurs membres ordonnés |
-| `quiz_question_attempts` | Compteur de tentatives et fin de cooldown par question |
-| `lab_checks` | Historique des vérifications de labs |
+| `courses` | Course metadata; columns indexed for catalogue filtering (`category`, `difficulty`, `public`, `title`) and denormalized `skills` |
+| `course_modules` | One module = one row, ordered by `position`; opaque payloads (`questions`, `steps`, `check_params`) as `jsonb` |
+| `course_prerequisites` | Enrollment conditions |
+| `course_sessions` | In-person sessions, key `(course_slug, session_id)` — a replayed write overwrites the same row |
+| `paths`, `path_courses`, `path_skills` | Paths and their ordered members |
+| `quiz_question_attempts` | Attempt counter and end of cooldown per question |
+| `lab_checks` | History of lab checks |
 
 ## Architecture
 
 ```
-                    Navigateur
+                     Browser
                         │
                         ▼
-              Ingress ou HTTPRoute (chart Helm)
+              Ingress or HTTPRoute (Helm chart)
                  │                  │
-    /api, /uploads, /metrics,     le reste
+    /api, /uploads, /metrics,     the rest
     /health      │                  │
                  ▼                  ▼
   ┌─────────────────────────┐  ┌───────────────────────┐
   │       pupitre-api       │  │   Frontend (nginx)    │
   │                         │  │                       │
-  │  users                  │  │  apps/app : apprenant │
-  │  - auth OIDC, JWT       │  │  apps/admin :         │
-  │  - profil, inscriptions │  │    /admin et /manager │
-  │  - progression, réglages│  └───────────────────────┘
+  │  users                  │  │  apps/app: learners   │
+  │  - OIDC auth, JWT       │  │  apps/admin:          │
+  │  - profile, enrollments │  │    /admin and /manager│
+  │  - progress, settings   │  └───────────────────────┘
   │                         │
   │  courses                │
   │  - catalogue (SQL)      │
   │  - modules, git         │
-  │  - upload de médias     │
+  │  - media upload         │
   │  - lab_checks           │
   │                         │
   │  checker (OPA/Rego)     │
-  │  - état GitLab via API  │
-  │  - évalue la policy     │
+  │  - GitLab state via API │
+  │  - evaluates the policy │
   └────────────┬────────────┘
                ▼
           PostgreSQL
 ```
 
-En développement, le serveur Vite joue le rôle de l'ingress : il envoie `/api` et `/uploads` à l'API.
+In development, the Vite server plays the role of the ingress: it sends `/api` and `/uploads` to the API.
 
-## Parcours (Paths)
+## Paths
 
-Un parcours est une séquence ordonnée de cours (`kind: course`) ou de compétences (`kind: skill`), stockée dans `paths` + `path_courses` / `path_skills`. Voir `docs/Skills.md` pour le détail.
+A path is an ordered sequence of courses (`kind: course`) or skills (`kind: skill`), stored in `paths` + `path_courses` / `path_skills`. See `docs/Skills.md` for the details.
 
 ```jsonc
 // POST /api/admin/courses/paths
 {
   "slug": "devops-path",
   "spec": {
-    "title": "Parcours DevOps",
+    "title": "DevOps path",
     "kind": "skill",
     "level": "intermediate",
     "skills": ["linux", "docker", "kubernetes", "ci-cd"]
@@ -98,53 +98,53 @@ Un parcours est une séquence ordonnée de cours (`kind: course`) ou de compéte
 }
 ```
 
-## Endpoints des parcours et compétences
+## Path and skill endpoints
 
-| Méthode | Path | Description |
+| Method | Path | Description |
 |---|---|---|
-| `GET` | `/api/paths` | Liste tous les parcours |
-| `GET` | `/api/paths/{slug}` | Détail d'un parcours |
-| `GET` | `/api/skills/{slug}/modules` | Modules enseignant une compétence |
-| `GET` | `/api/my/paths` | Parcours de l'utilisateur avec statut par cours/compétence |
-| `GET` | `/api/my/skills/{slug}` | Modules d'une compétence avec statut pour l'utilisateur |
-| `POST` | `/api/admin/paths/{slug}/enrollments` | Inscrire un utilisateur dans un parcours (admin) |
-| `DELETE` | `/api/admin/paths/{slug}/enrollments/{userId}` | Désinscrire (admin) |
+| `GET` | `/api/paths` | Lists every path |
+| `GET` | `/api/paths/{slug}` | Details of a path |
+| `GET` | `/api/skills/{slug}/modules` | Modules teaching a skill |
+| `GET` | `/api/my/paths` | The user's paths, with a status per course or skill |
+| `GET` | `/api/my/skills/{slug}` | Modules of a skill, with the user's status |
+| `POST` | `/api/admin/paths/{slug}/enrollments` | Enrolls a user in a path (admin) |
+| `DELETE` | `/api/admin/paths/{slug}/enrollments/{userId}` | Unenrolls a user (admin) |
 
-## Contenu des modules
+## Module content
 
-L'API lit les cours et modules depuis PostgreSQL, à la demande, puis résout leur contenu :
+The API reads courses and modules from PostgreSQL on demand, then resolves their content:
 
-- `type: video/image` → sert l'URL
-- `type: text` avec `src` git → clone et lit le fichier
-- `type: quiz` → questions inline ou YAML depuis git, avec score
-- `type: modules` → fetche un fichier YAML d'index depuis git et expand les entrées en place (héritage `src`/`ref` depuis le module parent)
+- `type: video/image` → serves the URL
+- `type: text` with a git `src` → clones the repository and reads the file
+- `type: quiz` → inline questions or YAML from git, with a score
+- `type: modules` → fetches a YAML index file from git and expands its entries in place (`src`/`ref` inherited from the parent module)
 
-## Authentification
+## Authentication
 
-L'interface se connecte uniquement en OIDC via Keycloak : voir `docs/SSO.md`. L'API produit puis valide elle-même ses tokens JWT, signés avec `JWT_SECRET` (32 caractères minimum).
+The interface signs in through OIDC with Keycloak only: see `docs/SSO.md`. The API issues and validates its own JWT tokens, signed with `JWT_SECRET` (32 characters minimum).
 
 ## Configuration
 
-L'API charge sa configuration depuis un fichier YAML optionnel, indiqué par `CONFIG_PATH`. Les variables d'environnement **surchargent** les valeurs du fichier.
+The API loads its configuration from an optional YAML file, set by `CONFIG_PATH`. Environment variables **override** the values of the file.
 
-Le chart Helm monte ce fichier depuis une ConfigMap dans `/etc/pupitre/config.yaml`. Les valeurs sensibles (JWT, base de données) restent dans des Secrets Kubernetes. En local, `pnpm api:dev` lit `apps/api/.env`.
+The Helm chart mounts this file from a ConfigMap at `/etc/pupitre/config.yaml`. Sensitive values (JWT, database) stay in Kubernetes Secrets. Locally, `pnpm api:dev` reads `apps/api/.env`.
 
-**Derrière un ingress, renseignez `TRUSTED_PROXIES`** avec les adresses de l'ingress, par exemple via `api.extraEnv`. Par défaut, seul le loopback est de confiance : tous les clients partagent alors l'adresse de l'ingress et une seule limite de débit, et les connexions finissent en `429` dès la 11ᵉ tentative dans la minute.
+**Behind an ingress, set `TRUSTED_PROXIES`** to the addresses of the ingress, for example through `api.extraEnv`. By default only loopback is trusted: all clients then share the address of the ingress and a single rate limit, and sign-ins end in `429` from the 11th attempt within a minute.
 
-Le frontend est statique : l'image `docker/front` sert les deux applications avec nginx. Ne mettez aucun secret dans les variables `VITE_*`, elles sont livrées au navigateur.
+The frontend is static: the `docker/front` image serves both applications with nginx. Put no secret in `VITE_*` variables: they ship to the browser.
 
-### Personnalisation
+### Customization
 
 ```bash
-# Surcharger une valeur via Helm
+# Override a value through Helm
 helm upgrade pupitre oci://ghcr.io/genesary/charts/pupitre --reuse-values --set api.env.GIT_CACHE_TTL=30
 
-# Ou modifier les values.yaml puis helm upgrade
+# Or edit the values.yaml, then run helm upgrade
 ```
 
-## Secret git — course-repo-secret
+## Git secret — course-repo-secret
 
-Pour les modules de cours qui référencent un **dépôt git privé**, l'API a besoin d'un token d'accès. Ce token est fourni via un Secret K8s monté dans le pod :
+For course modules that reference a **private git repository**, the API needs an access token. This token comes from a Kubernetes Secret mounted in the pod:
 
 ```
 course-repo-secret (type: Opaque)
@@ -154,17 +154,17 @@ course-repo-secret (type: Opaque)
                 token: "github_pat_xxx..."
 ```
 
-Le fichier suit le format YAML avec une liste d'entrées **url → token**. La première entrée qui correspond (via `path.Match`) est utilisée.
+The file is YAML, with a list of **url → token** entries. The first matching entry (through `path.Match`) is used.
 
-**Création :**
+**Creation:**
 
 ```bash
 kubectl create secret generic course-repo-secret \
   --from-file=git-credentials.yaml=./git-credentials.yaml
 ```
 
-**Chemin de montage dans le pod :** `/etc/git-credentials/git-credentials.yaml`
+**Mount path in the pod:** `/etc/git-credentials/git-credentials.yaml`
 
-Le chart indique cet emplacement à l'API (`gitCredentialsPath`, ou la variable `GIT_CREDENTIALS_PATH`). Si le secret n'existe pas, le pod démarre, mais le clone de dépôts privés échoue.
+The chart gives this location to the API (`gitCredentialsPath`, or the `GIT_CREDENTIALS_PATH` variable). If the secret does not exist, the pod starts, but cloning private repositories fails.
 
-Voir `apps/api/infra/examples/course-service/course-secret.yaml` pour un exemple complet.
+See `apps/api/infra/examples/course-service/course-secret.yaml` for a complete example.

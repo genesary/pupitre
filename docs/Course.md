@@ -1,18 +1,18 @@
-Un cours est un objet constitué d'une liste de modules, d'une description, d'un titre, d'un état de publication, d'une catégorie et d'une difficulté.
+A course is an object made of a list of modules, a description, a title, a publication state, a category and a difficulty.
 
-### Définition
+### Definition
 
-Un cours est stocké en base de données et se crée ou se modifie via l'API d'administration :
+A course is stored in the database, and is created or edited through the admin API:
 
-- `POST   /api/admin/courses` — création, corps `{ "slug": "...", "spec": { ... } }`
-- `GET    /api/admin/courses/{slug}/definition` — définition complète
-- `PUT    /api/admin/courses/{slug}/definition` — remplacement de la définition
-- `DELETE /api/admin/courses/{slug}/definition` — suppression
-- `POST   /api/admin/courses/import` — création / mise à jour depuis un document markdown
-- `POST   /api/admin/courses/import/preview` — même résolution, sans rien écrire
-- `GET    /api/admin/courses/{slug}/export/markdown` — export du cours en markdown
+- `POST   /api/admin/courses` — creation, body `{ "slug": "...", "spec": { ... } }`
+- `GET    /api/admin/courses/{slug}/definition` — full definition
+- `PUT    /api/admin/courses/{slug}/definition` — replaces the definition
+- `DELETE /api/admin/courses/{slug}/definition` — deletion
+- `POST   /api/admin/courses/import` — creation or update from a markdown document
+- `POST   /api/admin/courses/import/preview` — same resolution, without writing anything
+- `GET    /api/admin/courses/{slug}/export/markdown` — exports the course as markdown
 
-Le champ `spec` a la forme suivante (présenté ici en YAML pour la lisibilité ; l'API attend du JSON) :
+The `spec` field has the following shape (shown as YAML for readability; the API expects JSON):
 
 ```yaml
 slug: kubernetes-basics
@@ -26,8 +26,8 @@ spec:
     - name: "What is Kubernetes"
       type: "text"
       content: |
-        Kubernetes est un orchestrateur de conteneurs.
-    - name: "Depuis un dépôt"
+        Kubernetes is a container orchestrator.
+    - name: "From a repository"
       type: "text"
       src: "https://github.com/user/repo"
       ref: "main"
@@ -59,42 +59,42 @@ spec:
               correct: false
 ```
 
-Module types: `text` (markdown depuis git), `video` / `image` (URL hébergée sur le serveur), `quiz` (questions inline ou YAML depuis git), `modules` (index file — expansion en place de plusieurs modules depuis git).
+Module types: `text` (markdown from git), `video` / `image` (URL hosted on the server), `quiz` (inline questions or YAML from git), `modules` (index file — expands several modules from git in place).
 
-Le champ `skills` sur un module liste les **compétences** que ce module enseigne (tags libres en kebab-case). Les compétences sont agrégées automatiquement au niveau du cours (union de tous les modules) et exposées dans `/api/courses`.
+The `skills` field of a module lists the **skills** this module teaches (free kebab-case tags). Skills are aggregated automatically at course level (union of all the modules) and exposed in `/api/courses`.
 
 ```yaml
 modules:
-  - name: "Introduction aux conteneurs"
+  - name: "Introduction to containers"
     type: text
     src: "https://github.com/org/repo"
     ref: "main"
     path: "docker/intro.md"
-    skills: [conteneurs, docker]
-  - name: "Quiz Docker"
+    skills: [containers, docker]
+  - name: "Docker quiz"
     type: quiz
     passingScore: 80
     skills: [docker]
     questions: [...]
 ```
 
-- `metadata.name` : slug du cours (utilisé dans les URLs)
-- `spec.title` : titre du cours
-- `spec.description` : description du cours
-- `spec.public` : boolean — `true` = visible dans le catalogue et auto-enrôlement à la première visite d'un module ; `false` = cours privé, accessible uniquement aux utilisateurs déjà enrôlés (non visible dans le catalogue public)
-- `spec.category` : catégorie du cours (ex: kubernetes, linux)
-- `spec.difficulty` : niveau de difficulté (beginner, intermediate, advanced)
-- `spec.modules[].name` : nom du module
-- `spec.modules[].type` : type de module (`text`, `video`, `image`, `quiz`, `modules`)
-- `spec.modules[].src` : URL du dépôt git ou de la ressource média
-- `spec.modules[].ref` : branche git
-- `spec.modules[].path` : chemin du fichier dans le dépôt
-- `spec.modules[].content` : le markdown du module, stocké en base — alternative à `src`/`ref`/`path`. Si les deux sont renseignés, la source git l'emporte.
-- `spec.modules[].replication` : boolean (optionnel) — si `true`, le serveur télécharge la ressource distante (video/image) et la sert localement via `/uploads/`
+- `slug`: slug of the course (used in URLs)
+- `spec.title`: title of the course
+- `spec.description`: description of the course
+- `spec.public`: boolean — `true` = visible in the catalogue, with auto-enrollment on the first visit to a module; `false` = private course, reachable only by users already enrolled (not visible in the public catalogue)
+- `spec.category`: category of the course (e.g. kubernetes, linux)
+- `spec.difficulty`: difficulty level (beginner, intermediate, advanced)
+- `spec.modules[].name`: name of the module
+- `spec.modules[].type`: type of the module (`text`, `video`, `image`, `quiz`, `modules`)
+- `spec.modules[].src`: URL of the git repository or of the media resource
+- `spec.modules[].ref`: git branch
+- `spec.modules[].path`: path of the file in the repository
+- `spec.modules[].content`: the module's markdown, stored in the database — an alternative to `src`/`ref`/`path`. If both are set, the git source wins.
+- `spec.modules[].replication`: boolean (optional) — if `true`, the server downloads the remote resource (video/image) and serves it locally through `/uploads/`
 
-#### Type `modules` — inclusion par index file
+#### `modules` type — inclusion through an index file
 
-Pour les cours à nombreux modules hébergés dans git, le type `modules` évite de déclarer chaque module individuellement dans la définition du cours. Une seule entrée pointe vers un fichier YAML d'index dans git ; l'API l'expand en place à chaque requête.
+For courses with many modules hosted in git, the `modules` type avoids declaring each module individually in the course definition. A single entry points to a YAML index file in git; the API expands it in place on each request.
 
 ```yaml
 modules:
@@ -105,27 +105,26 @@ modules:
     path: "courses/linux-intro/index.yaml"
 ```
 
-Le fichier `index.yaml` liste les modules dans l'ordre d'affichage. Les champs `src` et `ref` sont hérités de l'entrée parente si absents. Voir `docs/Module.md` pour le format complet de l'index.
+The `index.yaml` file lists the modules in display order. The `src` and `ref` fields are inherited from the parent entry when absent. See `docs/Module.md` for the complete format of the index.
 
-### Import / export markdown
+### Markdown import and export
 
-Un cours entier s'écrit et se relit comme **un seul document markdown**. C'est la
-voie d'édition mise en avant dans l'interface d'administration : elle ne demande
-aucun dépôt git.
+A whole course is written and read back as **a single markdown document**. This is the
+editing path the admin interface puts forward: it needs no git repository.
 
 ```markdown
 ---
-slug: introduction-linux
-title: Introduction à Linux
+slug: linux-introduction
+title: Introduction to Linux
 category: linux
 difficulty: beginner
 public: true
 split: h2
 ---
 
-## Qu'est-ce que Linux ?
+## What is Linux?
 
-Linux est un **noyau**.
+Linux is a **kernel**.
 
 ## Quiz
 
@@ -136,69 +135,66 @@ questions:
   - id: q1
     type: single
     points: 1
-    question: "Que fait chmod ?"
+    question: "What does chmod do?"
     answers:
-      - {id: a, text: "Change les permissions", correct: true}
-      - {id: b, text: "Change le propriétaire", correct: false}
+      - {id: a, text: "Changes the permissions", correct: true}
+      - {id: b, text: "Changes the owner", correct: false}
 -->
 ```
 
-**En-tête (`---`)** — optionnel. C'est la définition du cours, avec exactement les
-mêmes clés que le `spec` de l'API, plus :
+**Header (`---`)** — optional. It is the course definition, with exactly the same keys
+as the API's `spec`, plus:
 
-| Clé | Description |
+| Key | Description |
 |---|---|
-| `slug` | Slug du cours. À défaut : le `slug` de la requête, sinon dérivé du `title` (accents repliés, `[a-z0-9-]`). |
-| `split` | Niveau de titre qui commence un nouveau module : `none`, `h1`…`h6`. La requête peut l'outrepasser. |
+| `slug` | Slug of the course. Otherwise: the `slug` of the request, or else derived from the `title` (accents folded, `[a-z0-9-]`). |
+| `split` | Heading level that starts a new module: `none`, `h1`…`h6`. The request can override it. |
 
-**Découpage** — `split: none` fait du document entier un seul module. Sinon, chaque
-titre du niveau choisi commence un module, nommé d'après ce titre. Le texte situé
-avant le premier titre devient un module de tête ; s'il ne contient que le titre du
-document, il est ignoré. Les titres à l'intérieur d'un bloc de code (``` ou ~~~)
-ne découpent rien.
+**Splitting** — `split: none` makes the whole document one module. Otherwise, each
+heading of the chosen level starts a module, named after this heading. The text before
+the first heading becomes a leading module; if it only holds the document's title, it
+is ignored. Headings inside a code block (``` or ~~~) split nothing.
 
-**Directive `<!--pupitre …-->`** — bloc YAML optionnel placé juste sous un titre,
-qui porte tout ce que le markdown ne sait pas exprimer : `type`, `src`/`ref`/`path`,
-`questions`, `skills`, `prerequisites`, `hidden`, `passingScore`, `steps`… Les clés
-sont celles du module dans le `spec`. Aucun moteur de rendu ne l'affiche, donc le
-document reste lisible tel quel. Un module texte avec du contenu inline n'en a pas
-besoin.
+**`<!--pupitre …-->` directive** — optional YAML block placed right under a heading,
+holding everything markdown cannot express: `type`, `src`/`ref`/`path`, `questions`,
+`skills`, `prerequisites`, `hidden`, `passingScore`, `steps`… The keys are those of the
+module in the `spec`. No renderer displays it, so the document stays readable as it is.
+A text module with inline content does not need it.
 
-Quand un module tire son contenu d'ailleurs (source git, `questions` inline, `video`,
-`image`, `modules`), le markdown écrit sous son titre est ignoré et un avertissement
-est renvoyé dans `warnings`.
+When a module takes its content from elsewhere (git source, inline `questions`, `video`,
+`image`, `modules`), the markdown written under its heading is ignored, and a warning is
+returned in `warnings`.
 
-#### Modes d'import
+#### Import modes
 
-| Mode | Effet |
+| Mode | Effect |
 |---|---|
-| `create` (défaut) | Crée le cours. `409` si le slug est déjà pris. |
-| `replace` | Remplace les modules du cours. Si le document a un en-tête, il remplace aussi les champs du cours ; sinon les métadonnées stockées sont conservées. |
-| `append` | Ajoute les modules du document à la suite des modules existants. L'en-tête est ignoré. |
+| `create` (default) | Creates the course. `409` if the slug is already taken. |
+| `replace` | Replaces the course's modules. If the document has a header, it also replaces the course's fields; otherwise the stored metadata is kept. |
+| `append` | Adds the document's modules after the existing ones. The header is ignored. |
 
-`replace` et `append` renvoient `404` si le slug ne correspond à aucun cours.
+`replace` and `append` return `404` if the slug matches no course.
 
-`POST /api/admin/courses/import/preview` résout le document exactement comme
-l'import (conflits et 404 compris) mais n'écrit rien : il renvoie le slug visé, les
-champs du cours, la liste des modules (avec la taille du corps de chacun et un
-marqueur `existing` pour ceux déjà en place) et les `warnings`.
+`POST /api/admin/courses/import/preview` resolves the document exactly as the import
+does (conflicts and 404 included) but writes nothing: it returns the target slug, the
+course's fields, the list of modules (with the body size of each one and an `existing`
+marker for those already in place) and the `warnings`.
 
 #### Export
 
-`GET /api/admin/courses/{slug}/export/markdown` rend le cours stocké sous la forme
-du document que l'import relit à l'identique. Le niveau de titre est choisi parmi
-ceux qu'aucun corps de module n'utilise déjà — puis inscrit dans `split` — pour que
-le cycle export → import ne recoupe pas un module en deux. Le paramètre `?split=h2`
-force un niveau.
+`GET /api/admin/courses/{slug}/export/markdown` renders the stored course as the
+document the import reads back identically. The heading level is chosen among those no
+module body already uses — then written in `split` — so that the export → import cycle
+does not cut a module in two. The `?split=h2` parameter forces a level.
 
-Les corps de requête admin sont plafonnés à 10 Mo (contre 1 Mo ailleurs), un cours
-entier tenant dans un seul document.
+Admin request bodies are capped at 10 MB (against 1 MB elsewhere), since a whole course
+fits in a single document.
 
 ### Endpoints
 
 #### GET /api/courses/{slug}/modules
 
-Retourne la liste des modules avec le statut `viewed` par utilisateur :
+Returns the list of modules, with the `viewed` status per user:
 
 ```json
 {
@@ -206,14 +202,14 @@ Retourne la liste des modules avec le statut `viewed` par utilisateur :
         {
             "index": 0,
             "slug": "what-is-kubernetes",
-            "name": "Qu'est-ce que Kubernetes ?",
+            "name": "What is Kubernetes?",
             "type": "text",
             "viewed": false
         },
         {
             "index": 1,
             "slug": "core-concepts",
-            "name": "Concepts fondamentaux",
+            "name": "Core concepts",
             "type": "text",
             "viewed": false
         }
@@ -223,18 +219,18 @@ Retourne la liste des modules avec le statut `viewed` par utilisateur :
 
 #### GET /api/courses/{slug}/modules/{index}
 
-Retourne un module avec son contenu :
+Returns a module with its content:
 
 ```json
 {
     "index": 0,
     "slug": "what-is-kubernetes",
-    "name": "Qu'est-ce que Kubernetes ?",
+    "name": "What is Kubernetes?",
     "type": "text",
     "content": "# Markdown content...",
     "viewed": false
 }
 ```
 
-Le champ `viewed` est relatif aux données personnelles stockées en base de données.
-Le champ `slug` est la version DNS-compliant du nom du module.
+The `viewed` field comes from the personal data stored in the database.
+The `slug` field is the DNS-compliant version of the module's name.

@@ -1,17 +1,17 @@
-Un module est un élément d'un cours. Il est composé d'un nom, d'un type et de son contenu — soit du markdown stocké directement sur le module (`content`), soit une source externe (`src`, `ref`, `path`). Il représente une ressource qui compose un cours : texte (markdown), vidéo, image, quiz ou liste de modules.
+A module is an element of a course. It is made of a name, a type and its content — either markdown stored directly on the module (`content`), or an external source (`src`, `ref`, `path`). It represents a resource that makes up a course: text (markdown), video, image, quiz or list of modules.
 
-Le markdown inline est la voie d'édition par défaut : un module se crée en collant du markdown dans l'interface d'administration, ou en important un document entier (voir `docs/Course.md`, « Import / export markdown »). La source git reste disponible pour du contenu qui vit déjà dans un dépôt.
+Inline markdown is the default editing path: a module is created by pasting markdown into the admin interface, or by importing a whole document (see `docs/Course.md`, "Markdown import and export"). The git source remains available for content that already lives in a repository.
 
-- **video / image** : l'URL de la ressource hébergée sur le serveur est renvoyée directement
-- **text** : le markdown stocké sur le module (`content`), ou fetché depuis un dépôt git si `src`, `ref` et `path` sont renseignés — la source git l'emporte quand les deux sont présents
-- **quiz** : questions inline dans la définition du cours ou fichier YAML fetché depuis git
-- **modules** : entrée spéciale qui pointe vers un fichier YAML d'index dans git — expansée en place en une liste plate de modules au moment de la requête (voir ci-dessous)
+- **video / image**: the URL of the resource hosted on the server is returned directly
+- **text**: the markdown stored on the module (`content`), or fetched from a git repository if `src`, `ref` and `path` are set — the git source wins when both are present
+- **quiz**: inline questions in the course definition, or a YAML file fetched from git
+- **modules**: special entry pointing to a YAML index file in git — expanded in place into a flat list of modules at request time (see below)
 
-### Type `modules` — index file
+### `modules` type — index file
 
-Permet de regrouper plusieurs modules dans un fichier YAML externe plutôt que de les déclarer un par un dans la définition du cours. L'API fetche et parse l'index au moment de la requête, via le `GitCache` existant.
+Groups several modules in an external YAML file rather than declaring them one by one in the course definition. The API fetches and parses the index at request time, through the existing `GitCache`.
 
-**Entrée dans `spec.modules` :**
+**Entry in `spec.modules`:**
 
 ```yaml
 - name: "Linux Introduction"
@@ -21,42 +21,42 @@ Permet de regrouper plusieurs modules dans un fichier YAML externe plutôt que d
   path: "courses/linux-intro/index.yaml"
 ```
 
-**Format du fichier index (`index.yaml`) :**
+**Format of the index file (`index.yaml`):**
 
 ```yaml
-- name: "Qu'est-ce que Linux ?"
+- name: "What is Linux?"
   type: text
   path: courses/linux-intro/01-what-is-linux.md
 
-- name: "Quiz Bases Linux"
+- name: "Linux basics quiz"
   type: quiz
-  path: courses/linux-intro/quizzes/quiz-bases-linux.yaml
+  path: courses/linux-intro/quizzes/linux-basics-quiz.yaml
   prerequisites:
-    - qu-est-ce-que-linux
+    - what-is-linux
 
-- name: "Module depuis un autre dépôt"
+- name: "Module from another repository"
   type: text
-  src: "https://github.com/org/autre-repo"   # override src
+  src: "https://github.com/org/other-repo"   # override src
   ref: "main"                                 # override ref
-  path: courses/autre/lecon.md
+  path: courses/other/lesson.md
 ```
 
-Champs disponibles dans une entrée d'index :
+Fields available in an index entry:
 
-| Champ | Requis | Description |
+| Field | Required | Description |
 |---|---|---|
-| `name` | oui | Nom du module |
-| `type` | non | Type de module (`text`, `quiz`, `video`, `image`). Défaut : `text` |
-| `path` | oui | Chemin du fichier dans le dépôt |
-| `src` | non | URL du dépôt git — hérité de l'entrée parente si absent |
-| `ref` | non | Branche git — hérité de l'entrée parente si absent |
-| `hidden` | non | Cache le module aux utilisateurs non-admin |
-| `prerequisites` | non | Liste de slugs de modules à compléter avant d'accéder à celui-ci |
+| `name` | yes | Name of the module |
+| `type` | no | Type of the module (`text`, `quiz`, `video`, `image`). Default: `text` |
+| `path` | yes | Path of the file in the repository |
+| `src` | no | URL of the git repository — inherited from the parent entry if absent |
+| `ref` | no | Git branch — inherited from the parent entry if absent |
+| `hidden` | no | Hides the module from non-admin users |
+| `prerequisites` | no | List of module slugs to complete before reaching this one |
 
-**Comportement :**
-- Si `src` ou `ref` sont absents d'une entrée index, ils sont hérités de l'entrée parente
-- Si le fichier index est introuvable ou invalide, l'entrée est ignorée et un warning est loggué
-- L'expansion est transparente : les handlers `ListModules`, `GetModule`, `SubmitModule` voient une liste plate de modules normaux
+**Behaviour:**
+- If `src` or `ref` are absent from an index entry, they are inherited from the parent entry
+- If the index file is missing or invalid, the entry is ignored and a warning is logged
+- Expansion is transparent: the `ListModules`, `GetModule` and `SubmitModule` handlers see a flat list of normal modules
 
 ### Endpoint
 
@@ -64,7 +64,7 @@ Champs disponibles dans une entrée d'index :
 GET /api/courses/{slug}/modules/{index}
 ```
 
-Réponse :
+Response:
 
 ```json
 {
