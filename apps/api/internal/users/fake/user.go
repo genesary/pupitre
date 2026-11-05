@@ -31,10 +31,10 @@ type UserRepository struct {
 	// separate so tests can simulate ExistsByEmailOrUsername succeeding right
 	// before Create fails.
 	CreateErr error
-	// UpdatePasswordHashErr, when set, is returned by UpdatePasswordHash only,
-	// on top of Err — kept separate so tests can simulate GetPasswordHash
-	// succeeding right before UpdatePasswordHash fails.
-	UpdatePasswordHashErr error
+	// ChangePasswordErr, when set, is returned by ChangePassword only, on top
+	// of Err — kept separate so tests can simulate GetPasswordHash succeeding
+	// right before ChangePassword fails.
+	ChangePasswordErr error
 	// RefreshSSOProfileErr, when set, is returned by RefreshSSOProfile only,
 	// on top of Err — kept separate so tests can simulate FindByProviderIdentity
 	// succeeding right before RefreshSSOProfile fails.
@@ -208,8 +208,11 @@ func (f *UserRepository) GetPasswordHash(_ context.Context, userID uuid.UUID) (*
 	return f.users[i].PasswordHash, nil
 }
 
-// UpdatePasswordHash sets the password hash of the user with the given id.
-func (f *UserRepository) UpdatePasswordHash(_ context.Context, userID uuid.UUID, hash string) error {
+// ChangePassword sets the password hash of the user with the given id and
+// records the revocation date of their sessions.
+func (f *UserRepository) ChangePassword(
+	_ context.Context, userID uuid.UUID, hash string, sessionsValidAfter time.Time,
+) error {
 	f.mu.Lock()
 	defer f.mu.Unlock()
 
@@ -217,8 +220,8 @@ func (f *UserRepository) UpdatePasswordHash(_ context.Context, userID uuid.UUID,
 		return f.Err
 	}
 
-	if f.UpdatePasswordHashErr != nil {
-		return f.UpdatePasswordHashErr
+	if f.ChangePasswordErr != nil {
+		return f.ChangePasswordErr
 	}
 
 	idx := f.findIndexByID(userID)
@@ -227,6 +230,7 @@ func (f *UserRepository) UpdatePasswordHash(_ context.Context, userID uuid.UUID,
 	}
 
 	f.users[idx].PasswordHash = &hash
+	f.users[idx].SessionsValidAfter = &sessionsValidAfter
 	f.users[idx].UpdatedAt = time.Now()
 
 	return nil

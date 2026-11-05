@@ -5,6 +5,7 @@ import { toast } from 'sonner';
 import { adminCourses, clearAllCache, courseDefinition, createCourse, deleteCourse, exportCourseMarkdown } from '@pupitre/core/lib/api';
 import type { Course } from '@pupitre/core/lib/api-types';
 import { metaOf, saveDefinition, toYaml, withMeta, type CourseMeta } from '@/lib/course-definition';
+import { saveBlob } from '@/lib/save-blob';
 import { ConfirmDialog } from '@pupitre/core/components/ConfirmDialog';
 import { DefinitionModal } from '@/components/admin/DefinitionModal';
 import { CourseForm } from '@/components/admin/courses/CourseForm';
@@ -17,15 +18,6 @@ import { ModulesTab } from '@/components/admin/courses/ModulesTab';
 // read again and compared before every write.
 
 const DIFFICULTY_BADGES: Record<string, string> = { beginner: 'badge-green', intermediate: 'badge-orange', advanced: 'badge-red' };
-
-function saveBlob(blob: Blob, filename: string) {
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = filename;
-  link.click();
-  URL.revokeObjectURL(url);
-}
 
 function CoursePanel({ slug, editing, onEditDone }: { slug: string; editing: boolean; onEditDone: () => void }) {
   const queryClient = useQueryClient();

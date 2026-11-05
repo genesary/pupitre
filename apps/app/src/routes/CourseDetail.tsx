@@ -16,7 +16,7 @@ import { loginPath } from '@pupitre/core/lib/auth-paths';
 import { useSession } from '@pupitre/core/lib/session';
 
 import { COURSE_XP, courseIcon, DIFFICULTY_BADGES, DIFFICULTY_LABELS } from '@pupitre/core/lib/course-meta';
-import { hostOf, inlineQuizzesByHost, isModuleDone, moduleHref } from '@/lib/module-links';
+import { hostOf, inlineQuizzesByHost, isModuleDone, moduleHref, skillHref } from '@/lib/module-links';
 import { ModuleRow } from '@/components/ModuleList';
 import { SessionCard } from '@/components/sessions/SessionCard';
 
@@ -167,7 +167,7 @@ export function CourseDetail() {
             )}
             {data.category && <span className="badge badge-blue">{data.category}</span>}
             {(data.skills ?? []).map((skill) => (
-              <Link key={skill} to={`/skills/${skill}`} className="badge badge-purple text-[.75rem] no-underline">
+              <Link key={skill} to={skillHref(skill)} className="badge badge-purple text-[.75rem] no-underline">
                 🎯 {skill}
               </Link>
             ))}

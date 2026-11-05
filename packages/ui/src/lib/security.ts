@@ -18,6 +18,9 @@ export function safeRedirect(raw: string | null | undefined, fallback: string): 
   try {
     const url = new URL(raw, window.location.origin);
     if (url.origin !== window.location.origin) return fallback;
+    // Dot segments are resolved here, after the checks above: "/.//evil.com"
+    // has the pathname "//evil.com", which leaves the site.
+    if (url.pathname.startsWith('//')) return fallback;
     return url.pathname + url.search + url.hash;
   } catch {
     return fallback;
@@ -95,9 +98,9 @@ function installHooks() {
       if (allowed === null) node.removeAttribute(attr);
     }
     if (node.tagName === 'A' && node.hasAttribute('href')) {
-      const href = node.getAttribute('href') ?? '';
-      const external = /^https?:\/\//i.test(href) && !href.startsWith(window.location.origin);
-      if (external) {
+      const url = new URL(node.getAttribute('href') ?? '', window.location.href);
+      // Origins, not prefixes: https://site.example@evil.test starts like the site.
+      if (SAFE_PROTOCOLS.has(url.protocol) && url.origin !== window.location.origin) {
         node.setAttribute('target', '_blank');
         node.setAttribute('rel', 'noopener noreferrer');
       }

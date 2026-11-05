@@ -45,4 +45,10 @@ func TestLimitByEmail(t *testing.T) {
 	if code := post("198.51.100.9:1", `{"code":"x","state":"y"}`); code != http.StatusOK {
 		t.Fatalf("a body without email: %d", code)
 	}
+
+	// The handlers decode the first JSON value and ignore the rest: bytes
+	// after it must not hide the email from the limit.
+	if code := post("198.51.100.9:1", `{"email":"alice@example.com"} trailing`); code != http.StatusTooManyRequests {
+		t.Fatalf("an email followed by trailing bytes: %d, want 429", code)
+	}
 }

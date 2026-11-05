@@ -4,6 +4,7 @@ import { Link, useSearchParams } from 'react-router';
 
 import { myPaths } from '@pupitre/core/lib/api';
 import type { MyPath } from '@pupitre/core/lib/api-types';
+import { skillHref } from '@/lib/module-links';
 import { LoadError, LoadingState } from '@pupitre/core/components/PageStates';
 import { PathMap } from '@/components/paths/PathMap';
 
@@ -74,7 +75,7 @@ function PathDetail({ path }: { path: MyPath }) {
         {!isSkillPath && (path.skills?.length ?? 0) > 0 && (
           <div className="flex flex-wrap gap-[.3rem] my-[.4rem]">
             {path.skills!.map((skill) => (
-              <Link key={skill} to={`/skills/${skill}`} className="badge badge-purple text-[.65rem] no-underline">
+              <Link key={skill} to={skillHref(skill)} className="badge badge-purple text-[.65rem] no-underline">
                 🎯 {skill}
               </Link>
             ))}

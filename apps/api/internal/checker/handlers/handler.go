@@ -117,7 +117,9 @@ func (h *Handler) RunCheckStep(ctx context.Context, req checker.StepRequest) (*c
 // validateEvaluateRequest guards against SSRF by ensuring the policy source
 // points to the configured GitLab instance and that ref/path are safe.
 func (h *Handler) validateEvaluateRequest(req checker.EvaluateRequest) error {
-	if !strings.HasPrefix(req.PolicySrc, h.config.GitLabBaseURL) {
+	// The slash ends the host: http://gitlab.local.evil.example starts like
+	// http://gitlab.local, and the policy token would go there.
+	if !strings.HasPrefix(req.PolicySrc, strings.TrimRight(h.config.GitLabBaseURL, "/")+"/") {
 		return errors.New("policySrc must point to the configured GitLab instance")
 	}
 

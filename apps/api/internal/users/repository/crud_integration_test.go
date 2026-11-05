@@ -9,6 +9,8 @@ package repository_test
 
 import (
 	"os"
+	"sync"
+	"sync/atomic"
 	"testing"
 
 	"github.com/google/uuid"
@@ -402,6 +404,67 @@ func TestSkillLevelRepository_CRUD(t *testing.T) { //nolint:paralleltest // shar
 	err = repo.Upsert(ctx, uid, "invalid-level", "not-a-level", 0)
 	if err != nil {
 		t.Errorf("Upsert(bad level) = %v, want nil no-op", err)
+	}
+}
+
+// TestSessionBookingRepository_BookSeatConcurrent books the last seats of a
+// session from many learners at once: the session never holds more bookings
+// than its capacity, and a learner already seated keeps the seat once it is
+// full.
+func TestSessionBookingRepository_BookSeatConcurrent(t *testing.T) { //nolint:paralleltest // shared db
+	const capacity, learners = 3, 12
+
+	gdb := crudDB(t)
+	repo := repository.NewGormSessionBookingRepository(gdb)
+	ctx := t.Context()
+
+	uids := make([]string, learners)
+	for i := range uids {
+		uids[i] = mkUser(t, gdb)
+	}
+
+	var (
+		group  sync.WaitGroup
+		seated atomic.Int64
+	)
+
+	for _, uid := range uids {
+		group.Go(func() {
+			ok, err := repo.BookSeat(ctx, uid, "linux-intro", "sess-seats", capacity)
+			if err != nil {
+				t.Errorf("BookSeat: %v", err)
+			}
+
+			if ok {
+				seated.Add(1)
+			}
+		})
+	}
+
+	group.Wait()
+
+	count, err := repo.CountBySession(ctx, "linux-intro", "sess-seats")
+	if err != nil {
+		t.Fatalf("CountBySession: %v", err)
+	}
+
+	if count != capacity || seated.Load() != capacity {
+		t.Fatalf("bookings = %d, seated = %d, want %d of each", count, seated.Load(), capacity)
+	}
+
+	parts, err := repo.ListBySession(ctx, "linux-intro", "sess-seats")
+	if err != nil || len(parts) != capacity {
+		t.Fatalf("ListBySession = %d, %v", len(parts), err)
+	}
+
+	ok, err := repo.BookSeat(ctx, parts[0].UserID, "linux-intro", "sess-seats", capacity)
+	if err != nil || !ok {
+		t.Fatalf("BookSeat of a seated learner = %v, %v", ok, err)
+	}
+
+	ok, err = repo.BookSeat(ctx, uids[0], "linux-intro", "sess-unlimited", 0)
+	if err != nil || !ok {
+		t.Fatalf("BookSeat without a limit = %v, %v", ok, err)
 	}
 }
 

@@ -3,6 +3,11 @@ import { describe, expect, it } from 'vitest';
 import { renderLab } from '@/lib/render-lab';
 
 describe('renderLab', () => {
+  it('gives the headings of different segments different ids', () => {
+    const lab = renderLab('# Lab\n\n## Objectif\n\n<!-- check:0 -->\n\n## Objectif\n', {}, 1);
+    expect(lab.toc.map((entry) => entry.id)).toEqual(['objectif', 'objectif-2']);
+  });
+
   const md = '## Lab\n\n### Étape 1\n\nFaire A.\n\n<!-- check:0 -->\n\n### Étape 2\n\n<!-- check:1 -->\n\nFin.';
 
   it('places each step at its marker', () => {

@@ -1,3 +1,5 @@
+import { useMemo } from 'react';
+
 import { sanitizeHtml } from '../lib/security';
 
 type SafeHtmlProps = {
@@ -12,5 +14,7 @@ type SafeHtmlProps = {
  * its input itself, so a caller cannot forget to.
  */
 export function SafeHtml({ html, className, as: Tag = 'div' }: SafeHtmlProps) {
-  return <Tag className={className} dangerouslySetInnerHTML={{ __html: sanitizeHtml(html) }} />;
+  // Memoised: a quiz re-renders every second while a cooldown runs.
+  const clean = useMemo(() => sanitizeHtml(html), [html]);
+  return <Tag className={className} dangerouslySetInnerHTML={{ __html: clean }} />;
 }

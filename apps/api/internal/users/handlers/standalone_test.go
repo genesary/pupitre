@@ -518,6 +518,12 @@ func (c *httpCourseSource) PathTitles(ctx context.Context) (map[string]string, e
 	return c.fetchTitleMap(ctx, "/api/paths", "paths")
 }
 
+// titleEntry is a slug+title pair from course-service list responses.
+type titleEntry struct {
+	Slug  string `json:"slug"`
+	Title string `json:"title"`
+}
+
 // fetchTitleMap calls the internal course-service at the given path constant
 // and returns a slug→title map. endpointPath must be a hardcoded constant —
 // it is never derived from user input.

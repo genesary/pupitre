@@ -2,6 +2,7 @@ import type { CSSProperties } from 'react';
 import { Link } from 'react-router';
 
 import type { Course } from '@pupitre/core/lib/api-types';
+import { skillHref } from '@/lib/module-links';
 import {
   categoryIcon,
   categoryLabel,
@@ -58,7 +59,7 @@ export function CourseCard({ course, color, enrolled, index, tour = false }: Cou
           )}
           <span className="badge badge-xp-reward text-[.65rem]">+200 XP</span>
           {(course.skills ?? []).slice(0, 3).map((skill) => (
-            <Link key={skill} to={`/skills/${skill}`} className="badge badge-purple text-[.65rem] no-underline relative z-10">
+            <Link key={skill} to={skillHref(skill)} className="badge badge-purple text-[.65rem] no-underline relative z-10">
               🎯 {skill}
             </Link>
           ))}

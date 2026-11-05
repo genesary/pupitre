@@ -60,7 +60,7 @@ function QuizScreen({ slug, courseTitle, quiz, modules }: { slug: string; course
   if (result) {
     const pct = result.maxScore > 0 ? Math.round((result.totalScore / result.maxScore) * 100) : 0;
     const passingScore = quiz.quizConfig?.passingScore;
-    const next = modules.find((m) => m.index > quiz.index && !m.locked);
+    const next = modules.find((m) => m.index > quiz.index && !m.locked && !m.inline);
     const subtitle = result.passed
       ? `Félicitations — ${result.totalScore} pts sur ${result.maxScore}.`
       : passingScore

@@ -145,6 +145,27 @@ func TestLoad_TrustedProxies(t *testing.T) {
 	}
 }
 
+// TestLoad_LabCheckWindowIsPositive checks that a window of 0, which would
+// have the limiter divide by zero and never refuse a check, is not taken,
+// under the new name or the old one.
+func TestLoad_LabCheckWindowIsPositive(t *testing.T) {
+	for _, key := range []string{"LAB_CHECK_RATE_LIMIT_WINDOW_SECONDS", "RATE_LIMIT_WINDOW_SECONDS"} {
+		t.Run(key, func(t *testing.T) {
+			clearEnv(t)
+			t.Setenv(key, "0")
+
+			cfg, _, err := Load()
+			if err != nil {
+				t.Fatalf("Load: %v", err)
+			}
+
+			if cfg.Checker.RateLimitWindowSeconds != defaultLabCheckRateLimitWindowSeconds {
+				t.Errorf("window = %d, want the default %d", cfg.Checker.RateLimitWindowSeconds, defaultLabCheckRateLimitWindowSeconds)
+			}
+		})
+	}
+}
+
 // TestLoad_OldRateLimitVariables checks that checker-service's variables
 // still set the limit, unless the new ones are set.
 func TestLoad_OldRateLimitVariables(t *testing.T) {

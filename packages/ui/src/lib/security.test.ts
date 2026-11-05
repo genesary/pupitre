@@ -32,6 +32,18 @@ describe('safeRedirect (genesary/pupitre#194)', () => {
   });
 });
 
+describe('safeRedirect, dot segments', () => {
+  it('refuses a path that normalises to a protocol-relative URL', () => {
+    for (const raw of ['/.//evil.com', '/..//evil.com', '/a/..//evil.com', '/././/evil.com/x?y#z']) {
+      expect(safeRedirect(raw, '/courses')).toBe('/courses');
+    }
+  });
+
+  it('keeps a double slash inside a path', () => {
+    expect(safeRedirect('/a//b', '/courses')).toBe('/a//b');
+  });
+});
+
 describe('safeUrl', () => {
   it.each(['https://example.com/a.png', 'http://example.com/', '/uploads/video.mp4'])(
     'accepts %s',
@@ -97,6 +109,23 @@ describe('sanitizeHtml', () => {
   it('keeps markdown output intact', () => {
     const html = sanitizeHtml('<h2 id="intro">Intro</h2><pre><code class="language-bash">ls</code></pre>');
     expect(html).toBe('<h2 id="intro">Intro</h2><pre><code class="language-bash">ls</code></pre>');
+  });
+});
+
+describe('sanitizeHtml, external links', () => {
+  it('treats a URL that starts like the site as external', () => {
+    const html = sanitizeHtml(`<a href="${window.location.origin}@evil.test/x">x</a>`);
+    expect(html).toContain('rel="noopener noreferrer"');
+  });
+
+  it('treats a protocol-relative link as external', () => {
+    expect(sanitizeHtml('<a href="//evil.test/x">x</a>')).toContain('rel="noopener noreferrer"');
+  });
+
+  it('leaves links of the site and anchors alone', () => {
+    for (const href of [`${window.location.origin}/courses`, '/courses', '#top', 'mailto:a@b.test']) {
+      expect(sanitizeHtml(`<a href="${href}">x</a>`)).not.toContain('target=');
+    }
   });
 });
 

@@ -1,6 +1,7 @@
 import { Link } from 'react-router';
 
 import type { MyPath, ProgressStatus } from '@pupitre/core/lib/api-types';
+import { skillHref } from '@/lib/module-links';
 import { setCourseReturn } from '@/lib/course-return';
 import { MAP, nodePosition, roadPath, viewBox, wrapLabel } from '@/lib/path-map';
 import { useTheme } from '@pupitre/ui/lib/theme';
@@ -154,7 +155,7 @@ export function PathMap({ path }: { path: MyPath }) {
         return (
           <Link
             key={step.slug}
-            to={isSkillPath ? `/skills/${step.slug}` : `/courses/${step.slug}`}
+            to={isSkillPath ? skillHref(step.slug) : `/courses/${step.slug}`}
             className="cursor-pointer"
             aria-label={`${stepName(step.slug)} — ${th.label}`}
             onClick={() => {

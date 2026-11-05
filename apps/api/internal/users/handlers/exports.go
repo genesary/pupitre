@@ -42,12 +42,6 @@ var enrichSlugField = map[string]string{
 	exportFieldPathTitle:   "path_slug",
 }
 
-// titleEntry is a slug+title pair from course-service list responses.
-type titleEntry struct {
-	Slug  string `json:"slug"`
-	Title string `json:"title"`
-}
-
 // ExportCategories returns the list of available export categories.
 func (s *State) ExportCategories(writer http.ResponseWriter, req *http.Request) {
 	cats := s.Repos.Export.Categories()

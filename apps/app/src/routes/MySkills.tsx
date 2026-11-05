@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router';
 
 import { listCourses, myCourses, mySkills } from '@pupitre/core/lib/api';
+import { skillHref } from '@/lib/module-links';
 import { LoadError, LoadingState } from '@pupitre/core/components/PageStates';
 
 // /my-skills, markup of pupitre's my-skills.astro.
@@ -46,7 +47,7 @@ function SkillCard({ skill, level, completed, total }: SkillCardProps) {
   const maitre = level === 'maître';
   const meta = level ? (LEVELS[level] ?? { label: level, className: '' }) : null;
   return (
-    <Link to={`/skills/${skill}`} className={`ms-card${maitre ? ' card-maitre' : ''} no-underline text-inherit`}>
+    <Link to={skillHref(skill)} className={`ms-card${maitre ? ' card-maitre' : ''} no-underline text-inherit`}>
       <div className="ms-card-skill">{skill}</div>
       {meta ? (
         <div className={`ms-level ${meta.className}`}>{meta.label}</div>

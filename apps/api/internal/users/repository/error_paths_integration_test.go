@@ -11,6 +11,7 @@ import (
 	"context"
 	"io"
 	"testing"
+	"time"
 
 	"github.com/google/uuid"
 
@@ -135,6 +136,8 @@ func TestRepository_CancelledContext(t *testing.T) {
 
 	sb := repository.NewGormSessionBookingRepository(gdb)
 	wantErr(t, "SessionBookings.Book", sb.Book(ctx, id.String(), "c", "s"))
+	_, err = sb.BookSeat(ctx, id.String(), "c", "s", 1)
+	wantErr(t, "SessionBookings.BookSeat", err)
 	_, err = sb.ExistsByUser(ctx, id.String(), "c", "s")
 	wantErr(t, "SessionBookings.ExistsByUser", err)
 	_, err = sb.ListByUser(ctx, id.String())
@@ -202,7 +205,7 @@ func TestRepository_CancelledContext(t *testing.T) {
 	wantErr(t, "Users.FindByProviderIdentity", err)
 	_, err = users.GetPasswordHash(ctx, id)
 	wantErr(t, "Users.GetPasswordHash", err)
-	wantErr(t, "Users.UpdatePasswordHash", users.UpdatePasswordHash(ctx, id, "h"))
+	wantErr(t, "Users.ChangePassword", users.ChangePassword(ctx, id, "h", time.Now()))
 	_, err = users.ExistsByUsername(ctx, "x")
 	wantErr(t, "Users.ExistsByUsername", err)
 	_, err = users.GetForAdmin(ctx, id)

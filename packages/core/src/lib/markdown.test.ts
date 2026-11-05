@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
+import { sanitizeHtml } from '@pupitre/ui/lib/security';
+
 import { applyPatterns, processAdmonitions, renderInline, renderMarkdown } from './markdown';
 
 const patterns = {
@@ -74,6 +76,23 @@ describe('renderMarkdown', () => {
     );
     expect(html).not.toMatch(/onerror|javascript:|<script|<iframe/i);
     expect(html).toContain('lien');
+  });
+});
+
+describe('heading ids', () => {
+  it('survive the sanitizing of <SafeHtml> when they name a DOM property', () => {
+    const { html, toc } = renderMarkdown('## Images\n\n## Scripts\n\n## Objectifs\n');
+    const ids = toc.map((entry) => entry.id);
+    expect(ids).toEqual(['images-section', 'scripts-section', 'objectifs']);
+    const kept = sanitizeHtml(html);
+    for (const id of ids) expect(kept).toContain(`id="${id}"`);
+  });
+
+  it('stay unique across the parts of one page', () => {
+    const usedIds = new Set<string>();
+    const first = renderMarkdown('## Objectif\n', { usedIds });
+    const second = renderMarkdown('## Objectif\n', { usedIds });
+    expect([first.toc[0]?.id, second.toc[0]?.id]).toEqual(['objectif', 'objectif-2']);
   });
 });
 

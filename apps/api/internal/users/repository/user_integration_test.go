@@ -10,6 +10,7 @@ package repository_test
 import (
 	"errors"
 	"testing"
+	"time"
 
 	"github.com/google/uuid"
 
@@ -40,14 +41,25 @@ func TestUserRepository_PasswordHash(t *testing.T) { //nolint:paralleltest // sh
 		t.Fatalf("GetPasswordHash = %v, %v", got, err)
 	}
 
-	err = repo.UpdatePasswordHash(ctx, id, "new-hash")
+	validAfter := time.Now().Truncate(time.Microsecond)
+
+	err = repo.ChangePassword(ctx, id, "new-hash", validAfter)
 	if err != nil {
-		t.Fatalf("UpdatePasswordHash: %v", err)
+		t.Fatalf("ChangePassword: %v", err)
 	}
 
 	got, _ = repo.GetPasswordHash(ctx, id)
 	if got == nil || *got != "new-hash" {
 		t.Errorf("hash not updated: %v", got)
+	}
+
+	state, err := repo.SessionState(ctx, id)
+	if err != nil {
+		t.Fatalf("SessionState: %v", err)
+	}
+
+	if state.SessionsValidAfter == nil || !state.SessionsValidAfter.Equal(validAfter) {
+		t.Errorf("sessions not revoked: %v, want %v", state.SessionsValidAfter, validAfter)
 	}
 
 	active, err := repo.FindByEmailActive(ctx, "carol@t.test")

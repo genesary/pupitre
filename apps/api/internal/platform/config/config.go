@@ -36,8 +36,8 @@ const (
 	defaultDBMaxConns = 30
 	// defaultGitCredentialsPath is where per-repository git tokens are read.
 	defaultGitCredentialsPath = "/etc/pupitre/git-credentials.yaml"
-	// defaultLabCheckRateLimitRequests is how many lab checks the whole
-	// process runs per window.
+	// defaultLabCheckRateLimitRequests is how many lab checks each learner
+	// runs per window.
 	defaultLabCheckRateLimitRequests = 20
 	// defaultLabCheckRateLimitWindowSeconds is the lab check window.
 	defaultLabCheckRateLimitWindowSeconds = 60
@@ -238,12 +238,14 @@ func applyLabCheckRateLimit(checker *checkerconfig.Config, file fileConfig) []st
 		requests = checker.RateLimitRequests
 	}
 
-	if os.Getenv("RATE_LIMIT_WINDOW_SECONDS") != "" {
+	if os.Getenv("RATE_LIMIT_WINDOW_SECONDS") != "" && checker.RateLimitWindowSeconds > 0 {
 		window = checker.RateLimitWindowSeconds
 	}
 
 	checker.RateLimitRequests = nonNegativeSetting("LAB_CHECK_RATE_LIMIT_REQUESTS", file.LabCheckRateLimitRequests, requests)
-	checker.RateLimitWindowSeconds = nonNegativeSetting("LAB_CHECK_RATE_LIMIT_WINDOW_SECONDS", file.LabCheckRateLimitWindowSeconds, window)
+	// The limit is switched off through the requests: a window of 0 would
+	// have the limiter divide by zero and never refuse a check.
+	checker.RateLimitWindowSeconds = intSetting("LAB_CHECK_RATE_LIMIT_WINDOW_SECONDS", file.LabCheckRateLimitWindowSeconds, window, true)
 
 	return warnings
 }

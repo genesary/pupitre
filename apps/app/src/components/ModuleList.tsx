@@ -1,7 +1,7 @@
 import { Link, useNavigate } from 'react-router';
 
 import type { ModuleSummary } from '@pupitre/core/lib/api-types';
-import { moduleHref, moduleIcon } from '@/lib/module-links';
+import { moduleHref, moduleIcon, skillHref } from '@/lib/module-links';
 
 // Module rows of the course page.
 
@@ -67,9 +67,9 @@ export function ModuleRow({ slug, module, inlineQuiz }: { slug: string; module: 
                 onClick={(event) => {
                   event.preventDefault();
                   event.stopPropagation();
-                  navigate(`/skills/${skill}`);
+                  navigate(skillHref(skill));
                 }}
-                onKeyDown={(event) => event.key === 'Enter' && navigate(`/skills/${skill}`)}
+                onKeyDown={(event) => event.key === 'Enter' && navigate(skillHref(skill))}
               >
                 🎯 {skill}
               </span>

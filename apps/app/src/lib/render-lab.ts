@@ -12,10 +12,12 @@ export function renderLab(md: string, patterns: PatternMap, stepCount: number): 
   const segments: Segment[] = [];
   const toc: TocEntry[] = [];
   const placed = new Set<number>();
+  // The segments are one page: their heading ids must differ.
+  const usedIds = new Set<string>();
   let last = 0;
   let first = true;
   const push = (text: string, step: number | null) => {
-    const rendered = renderMarkdown(text, { patterns, dropFirstHeading: first });
+    const rendered = renderMarkdown(text, { patterns, dropFirstHeading: first, usedIds });
     first = false;
     toc.push(...rendered.toc);
     segments.push({ html: rendered.html, step });

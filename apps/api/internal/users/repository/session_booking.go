@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"errors"
+	"fmt"
 	"time"
 
 	"gorm.io/gorm"
@@ -29,6 +30,9 @@ type SessionParticipantRow struct {
 // SessionBookingRepository manages seat reservations for in-person sessions.
 type SessionBookingRepository interface {
 	Book(ctx context.Context, userID, courseSlug, sessionID string) error
+	// BookSeat books within capacity, 0 meaning no limit, and reports whether
+	// the user holds a seat afterwards.
+	BookSeat(ctx context.Context, userID, courseSlug, sessionID string, capacity int) (bool, error)
 	Unbook(ctx context.Context, userID, courseSlug, sessionID string) error
 	ListByUser(ctx context.Context, userID string) ([]SessionBookingRow, error)
 	ListBySession(ctx context.Context, courseSlug, sessionID string) ([]SessionParticipantRow, error)
@@ -61,6 +65,55 @@ func (r *gormSessionBookingRepository) Book(ctx context.Context, userID, courseS
 	return r.db.WithContext(ctx).
 		Where(models.SessionBooking{UserID: userID, CourseSlug: courseSlug, SessionID: sessionID}).
 		FirstOrCreate(&booking).Error
+}
+
+// BookSeat implements SessionBookingRepository. The lock serializes the
+// bookings of one session: two learners counting apart would both see the
+// last seat free. A learner who already holds a seat keeps it, full or not.
+func (r *gormSessionBookingRepository) BookSeat(ctx context.Context, userID, courseSlug, sessionID string, capacity int) (bool, error) {
+	if capacity <= 0 {
+		return true, r.Book(ctx, userID, courseSlug, sessionID)
+	}
+
+	seated := false
+
+	err := r.db.WithContext(ctx).Transaction(func(txDB *gorm.DB) error {
+		lockErr := txDB.Exec("SELECT pg_advisory_xact_lock(hashtextextended(?, 0))", courseSlug+"/"+sessionID).Error
+		if lockErr != nil {
+			return fmt.Errorf("lock session seats: %w", lockErr)
+		}
+
+		txRepo := &gormSessionBookingRepository{db: txDB}
+
+		held, existsErr := txRepo.ExistsByUser(ctx, userID, courseSlug, sessionID)
+		if existsErr != nil {
+			return fmt.Errorf("check own booking: %w", existsErr)
+		}
+
+		if held {
+			seated = true
+
+			return nil
+		}
+
+		seats, countErr := txRepo.CountBySession(ctx, courseSlug, sessionID)
+		if countErr != nil {
+			return fmt.Errorf("count session seats: %w", countErr)
+		}
+
+		if seats >= int64(capacity) {
+			return nil
+		}
+
+		seated = true
+
+		return txRepo.Book(ctx, userID, courseSlug, sessionID)
+	})
+	if err != nil {
+		return false, fmt.Errorf("book seat: %w", err)
+	}
+
+	return seated, nil
 }
 
 // Unbook removes a booking.

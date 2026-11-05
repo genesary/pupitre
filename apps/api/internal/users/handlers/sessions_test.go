@@ -70,7 +70,28 @@ func TestBookSession_SessionFull(t *testing.T) {
 	}
 }
 
-// TestBookSession_CountError verifies that a DB error on CountBySession
+// TestBookSession_FullSessionKeepsOwnSeat verifies that booking again a full
+// session a learner already holds a seat in succeeds.
+func TestBookSession_FullSessionKeepsOwnSeat(t *testing.T) {
+	t.Parallel()
+
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintln(w, `{"sessions":[{"id":"sess-1","capacity":1}]}`)
+	}))
+	defer srv.Close()
+
+	r := newSessionsRouter(t, fake.NewRepositories(), srv.URL)
+	header := htAuthHeader(t, "student")
+
+	for attempt := range 2 {
+		rec := htDo(t, r, http.MethodPost, "/api/session-bookings/my-course/sess-1", "", header)
+		if rec.Code != http.StatusNoContent {
+			t.Fatalf("attempt %d: want 204, got %d: %s", attempt, rec.Code, rec.Body.String())
+		}
+	}
+}
+
+// TestBookSession_CountError verifies that a DB error while counting the seats
 // returns 500.
 func TestBookSession_CountError(t *testing.T) {
 	t.Parallel()

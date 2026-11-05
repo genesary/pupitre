@@ -4,6 +4,7 @@ import { toast } from 'sonner';
 
 import { exportCategories, exportDownload, exportPreview, type ExportSource } from '@pupitre/core/lib/api';
 import type { ExportCategory, ExportRequest } from '@pupitre/core/lib/api-types';
+import { saveBlob } from '@/lib/save-blob';
 
 // /admin/exports, markup of pupitre's
 // admin/exports/index.astro. Two sources: user-service and the lab checks of
@@ -20,15 +21,6 @@ function useDebounced<T>(value: T, delay: number): T {
     return () => clearTimeout(timer);
   }, [value, delay]);
   return debounced;
-}
-
-function saveBlob(blob: Blob, filename: string) {
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = filename;
-  link.click();
-  URL.revokeObjectURL(url);
 }
 
 function FilterControl({

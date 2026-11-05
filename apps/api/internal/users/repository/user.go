@@ -20,10 +20,11 @@ var ErrUserNotFound = errors.New("user not found")
 // searchUsersLimit caps the number of rows returned by Search.
 const searchUsersLimit = 10
 
-// Column-map keys shared by the profile-update Updates() calls below.
+// Column names shared by the queries below.
 const (
-	colAvatarURL = "avatarurl"
-	colBio       = "bio"
+	colAvatarURL    = "avatarurl"
+	colBio          = "bio"
+	colPasswordHash = "password_hash"
 )
 
 // AuthProviderCount is a single row of the admin auth-provider breakdown.
@@ -97,7 +98,7 @@ type UserRepository interface {
 	ExistsUsernameExcluding(ctx context.Context, username string, excludeID uuid.UUID) (bool, error)
 	UpdateProfile(ctx context.Context, id uuid.UUID, username, bio, avatarURL *string) (*models.User, error)
 	GetPasswordHash(ctx context.Context, id uuid.UUID) (*string, error)
-	UpdatePasswordHash(ctx context.Context, id uuid.UUID, hash string) error
+	ChangePassword(ctx context.Context, id uuid.UUID, hash string, sessionsValidAfter time.Time) error
 
 	// SSO provisioning (oauth.go)
 	ExistsByUsername(ctx context.Context, username string) (bool, error)
@@ -242,7 +243,7 @@ func (r *gormUserRepository) UpdateProfile(
 func (r *gormUserRepository) GetPasswordHash(ctx context.Context, id uuid.UUID) (*string, error) {
 	var user models.User
 
-	err := r.db.WithContext(ctx).Select("password_hash").First(&user, "id = ?", id).Error
+	err := r.db.WithContext(ctx).Select(colPasswordHash).First(&user, "id = ?", id).Error
 	if err != nil {
 		return nil, wrapNotFound(err, ErrUserNotFound)
 	}
@@ -250,12 +251,17 @@ func (r *gormUserRepository) GetPasswordHash(ctx context.Context, id uuid.UUID) 
 	return user.PasswordHash, nil
 }
 
-// UpdatePasswordHash sets the password hash for the user identified by id.
-func (r *gormUserRepository) UpdatePasswordHash(ctx context.Context, id uuid.UUID, hash string) error {
+// ChangePassword sets the password hash of the user identified by id and
+// revokes the tokens issued until sessionsValidAfter. One statement writes
+// both, so a password never changes while the old sessions stay open.
+func (r *gormUserRepository) ChangePassword(
+	ctx context.Context, id uuid.UUID, hash string, sessionsValidAfter time.Time,
+) error {
 	err := r.db.WithContext(ctx).Model(&models.User{}).
-		Where("id = ?", id).Update("password_hash", hash).Error
+		Where("id = ?", id).
+		Updates(map[string]any{colPasswordHash: hash, "sessionsvalidafter": sessionsValidAfter}).Error
 	if err != nil {
-		return fmt.Errorf("update password hash: %w", err)
+		return fmt.Errorf("change password: %w", err)
 	}
 
 	return nil
@@ -666,7 +672,7 @@ func (r *gormUserRepository) UpsertAdminPassword(ctx context.Context, username, 
 
 	err := r.db.WithContext(ctx).Clauses(clause.OnConflict{
 		Columns:   []clause.Column{{Name: colUsername}},
-		DoUpdates: clause.AssignmentColumns([]string{"email", "password_hash", colUpdatedAt}),
+		DoUpdates: clause.AssignmentColumns([]string{"email", colPasswordHash, colUpdatedAt}),
 	}).Create(&user).Error
 	if err != nil {
 		return fmt.Errorf("upsert admin password: %w", err)

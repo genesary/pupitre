@@ -114,6 +114,9 @@ function FieldControl({ field, value, onChange }: { field: SettingField; value: 
 
 function SectionCard({ section, initial }: { section: SettingSection; initial: SettingValues }) {
   const [values, setValues] = useState(initial);
+  // Bumped by a save that changes no server value (a secret stays masked),
+  // to bring the fields back to their state on opening.
+  const [revision, setRevision] = useState(0);
   const save = useSaveSettings();
   const changes = changedValues(section, initial, values);
   const dirty = Object.keys(changes).length > 0;
@@ -122,13 +125,13 @@ function SectionCard({ section, initial }: { section: SettingSection; initial: S
     <div className="flex flex-col gap-4">
       {section.fields.map((field) => (
         <FieldControl
-          key={field.key}
+          key={`${field.key}-${revision}`}
           field={field}
           value={values[field.key] ?? ''}
           onChange={(value) => setValues((current) => ({ ...current, [field.key]: value }))}
         />
       ))}
-      {section.id === 'sso' && values.sso_local_login_enabled === 'false' && values.oidc_enabled !== 'true' && (
+      {section.id === 'sso' && values.sso_local_login_enabled === 'false' && initial.oidc_enabled !== 'true' && (
         <div className="warn-box">⚠️ La connexion locale est désactivée : vérifiez que la connexion OIDC est activée.</div>
       )}
       {section.id === 'oidc' && values.oidc_enabled === 'true' && !values.oidc_provider_url?.trim() && (
@@ -138,7 +141,18 @@ function SectionCard({ section, initial }: { section: SettingSection; initial: S
         <div className="info-box">Les groupes OIDC sont mappés aux rôles depuis la page Groupes.</div>
       )}
       <div className="flex justify-end">
-        <button className="btn btn-primary" disabled={!dirty || save.isPending} onClick={() => save.mutate(changes)}>
+        <button
+          className="btn btn-primary"
+          disabled={!dirty || save.isPending}
+          onClick={() =>
+            save.mutate(changes, {
+              onSuccess: (data) => {
+                setValues(toValues(data.settings));
+                setRevision((current) => current + 1);
+              },
+            })
+          }
+        >
           {save.isPending ? 'Enregistrement…' : 'Enregistrer'}
         </button>
       </div>
@@ -209,9 +223,13 @@ export function Settings() {
               </ul>
             </div>
           )}
-          {/* Remounted when the server values change, so each form starts from them. */}
+          {/* Remounted when its own server values change: saving one section keeps what is being typed in the others. */}
           {SETTING_SECTIONS.map((section) => (
-            <SectionCard key={`${section.id}-${settings.dataUpdatedAt}`} section={section} initial={values} />
+            <SectionCard
+              key={`${section.id}-${JSON.stringify(section.fields.map((field) => values[field.key]))}`}
+              section={section}
+              initial={values}
+            />
           ))}
         </div>
       )}

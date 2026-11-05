@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import type { QuizQuestion } from '@pupitre/core/lib/api-types';
 import { SafeHtml } from '@pupitre/ui/components/safe-html';
@@ -11,7 +11,8 @@ import type { AnswerValue } from '@/lib/use-quiz';
 // markup and classes. Texts are sanitised inline markdown.
 
 export function InlineText({ text, as = 'span', className }: { text: string; as?: 'span' | 'div' | 'p'; className?: string }) {
-  return <SafeHtml as={as} html={renderInline(text)} className={className} />;
+  const html = useMemo(() => renderInline(text), [text]);
+  return <SafeHtml as={as} html={html} className={className} />;
 }
 
 type OptionsProps = {

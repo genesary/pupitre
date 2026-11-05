@@ -45,9 +45,14 @@ func (s *State) CheckSession(ctx context.Context, subject string, issuedAt time.
 	return middleware.Session{Valid: state.IsActive && !revoked, Role: state.Role}, nil
 }
 
+// revocationTime is the date that revokes every token issued until now.
+func revocationTime() time.Time {
+	return time.Now().Truncate(time.Microsecond)
+}
+
 // revokeSessions ends every session of the user issued until now.
 func (s *State) revokeSessions(ctx context.Context, userID uuid.UUID) error {
-	err := s.Repos.Users.RevokeSessions(ctx, userID, time.Now().Truncate(time.Microsecond))
+	err := s.Repos.Users.RevokeSessions(ctx, userID, revocationTime())
 	if err != nil {
 		return fmt.Errorf("revoke sessions of %s: %w", userID, err)
 	}

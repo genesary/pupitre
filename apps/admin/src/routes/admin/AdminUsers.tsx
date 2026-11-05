@@ -80,7 +80,7 @@ function EditUserModal({ user, isSelf, onClose }: { user: ScopeUser; isSelf: boo
         <p className="text-soft text-[.8rem]">
           {isSelf
             ? 'Vous ne pouvez pas modifier votre propre rôle ni désactiver votre compte.'
-            : "Le changement s'appliquera à la prochaine connexion de l'utilisateur (au plus tard dans 8 h)."}
+            : "Le changement s'applique immédiatement, y compris aux sessions ouvertes."}
         </p>
       </div>
       <div className="modal-footer">

@@ -120,6 +120,11 @@ func TestValidateEvaluateRequest(t *testing.T) {
 			wantErr: true,
 		},
 		{
+			name:    "host that starts like the instance",
+			req:     checker.EvaluateRequest{PolicySrc: "http://gitlab.local.evil.example/g/p", PolicyRef: "main", PolicyPath: "check.rego"},
+			wantErr: true,
+		},
+		{
 			name:    "ref traversal",
 			req:     checker.EvaluateRequest{PolicySrc: "http://gitlab.local/g/p", PolicyRef: "../../etc", PolicyPath: "check.rego"},
 			wantErr: true,

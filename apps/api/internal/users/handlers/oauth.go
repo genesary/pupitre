@@ -133,13 +133,14 @@ func (s *State) checkOAuthState(writer http.ResponseWriter, request *http.Reques
 		return "", false
 	}
 
-	http.SetCookie(writer, &http.Cookie{ //nolint:gosec // G124: clears the cookie with the Secure flag it was set with
+	// A request cookie carries no attributes, so the Secure flag it was set
+	// with is unknown here; a deletion holds nothing that needs it.
+	http.SetCookie(writer, &http.Cookie{ //nolint:gosec // G124: deletes the cookie, its value is empty
 		Name:     oauthStateCookie,
 		Value:    "",
 		Path:     oauthStateCookiePath,
 		MaxAge:   -1,
 		HttpOnly: true,
-		Secure:   cookie.Secure,
 		SameSite: http.SameSiteLaxMode,
 	})
 
@@ -720,6 +721,31 @@ func upsertSSOUser(
 	return &created, nil
 }
 
+// activeSSOUser provisions or refreshes the local user of an SSO identity. It
+// writes the error response and returns ok=false when that fails, or when the
+// account is deactivated: the guards refuse a deactivated user's token, so
+// issuing one would only bring them back here with "Session expired".
+func (s *State) activeSSOUser(
+	ctx context.Context, writer http.ResponseWriter,
+	email, displayName string, avatarURL, bio *string, provider, providerUserID string,
+) (*userPublicRow, bool) {
+	user, err := upsertSSOUser(ctx, s.Repos.Users, email, displayName, avatarURL, bio, provider, providerUserID)
+	if err != nil {
+		zap.L().Error("upsert SSO user failed", zap.Error(err))
+		s.Error(writer, http.StatusInternalServerError, "failed to update user identity from SSO")
+
+		return nil, false
+	}
+
+	if !user.IsActive {
+		s.Error(writer, http.StatusForbidden, "This account is deactivated")
+
+		return nil, false
+	}
+
+	return user, true
+}
+
 // completeSSOLogin provisions/refreshes the local user for an SSO identity,
 // syncs their group membership and role, issues a JWT, and writes the auth
 // response. Shared by every SSO login flow (OIDC, LDAP, ...).
@@ -731,11 +757,8 @@ func (s *State) completeSSOLogin(
 	email, displayName string, avatarURL, bio *string, provider, providerUserID string, groups []string,
 	groupAdmins []string,
 ) {
-	user, err := upsertSSOUser(ctx, s.Repos.Users, email, displayName, avatarURL, bio, provider, providerUserID)
-	if err != nil {
-		zap.L().Error("upsert SSO user failed", zap.Error(err))
-		s.Error(writer, http.StatusInternalServerError, "failed to update user identity from SSO")
-
+	user, active := s.activeSSOUser(ctx, writer, email, displayName, avatarURL, bio, provider, providerUserID)
+	if !active {
 		return
 	}
 

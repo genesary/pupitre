@@ -58,26 +58,7 @@ func (s *State) BookSession(writer http.ResponseWriter, req *http.Request) {
 	slug := param(req, "slug")
 	sessionID := param(req, "sessionId")
 
-	if capacity := s.sessionCapacity(req, slug, sessionID); capacity > 0 {
-		count, err := s.Repos.SessionBookings.CountBySession(req.Context(), slug, sessionID)
-		if err != nil {
-			zap.L().Error("failed to count session bookings",
-				zap.String("courseSlug", slug),
-				zap.String("sessionID", sessionID),
-				zap.Error(err))
-			s.Error(writer, http.StatusInternalServerError, "Failed to check session capacity")
-
-			return
-		}
-
-		if count >= int64(capacity) {
-			s.Error(writer, http.StatusConflict, "Session is full")
-
-			return
-		}
-	}
-
-	err := s.Repos.SessionBookings.Book(req.Context(), claims.Subject, slug, sessionID)
+	seated, err := s.Repos.SessionBookings.BookSeat(req.Context(), claims.Subject, slug, sessionID, s.sessionCapacity(req, slug, sessionID))
 	if err != nil {
 		zap.L().Error("failed to book session",
 			zap.String("userID", claims.Subject),
@@ -85,6 +66,12 @@ func (s *State) BookSession(writer http.ResponseWriter, req *http.Request) {
 			zap.String("sessionID", sessionID),
 			zap.Error(err))
 		s.Error(writer, http.StatusInternalServerError, "Failed to book session")
+
+		return
+	}
+
+	if !seated {
+		s.Error(writer, http.StatusConflict, "Session is full")
 
 		return
 	}

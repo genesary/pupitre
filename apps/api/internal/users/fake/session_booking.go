@@ -54,6 +54,28 @@ func (f *SessionBookingRepository) Book(_ context.Context, userID, courseSlug, s
 	return nil
 }
 
+// BookSeat books within capacity, 0 meaning no limit, and reports whether
+// the user holds a seat afterwards.
+func (f *SessionBookingRepository) BookSeat(ctx context.Context, userID, courseSlug, sessionID string, capacity int) (bool, error) {
+	if capacity > 0 {
+		held, err := f.ExistsByUser(ctx, userID, courseSlug, sessionID)
+		if err != nil {
+			return false, err
+		}
+
+		seats, err := f.CountBySession(ctx, courseSlug, sessionID)
+		if err != nil {
+			return false, err
+		}
+
+		if !held && seats >= int64(capacity) {
+			return false, nil
+		}
+	}
+
+	return true, f.Book(ctx, userID, courseSlug, sessionID)
+}
+
 // Unbook removes a booking.
 func (f *SessionBookingRepository) Unbook(_ context.Context, userID, courseSlug, sessionID string) error {
 	f.mu.Lock()

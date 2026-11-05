@@ -123,8 +123,12 @@ export function LabContent({ slug, module, patterns, onTocChange, onCompleted }:
   const allDone = steps.length > 0 && validated.every(Boolean);
   useEffect(() => {
     if (!allDone || done.current) return;
-    done.current = true;
-    const timer = setTimeout(onCompleted, 1200);
+    // done is set when the timer fires: a new onCompleted cancels this timer,
+    // and the effect must then start another one.
+    const timer = setTimeout(() => {
+      done.current = true;
+      onCompleted();
+    }, 1200);
     return () => clearTimeout(timer);
   }, [allDone, onCompleted]);
 

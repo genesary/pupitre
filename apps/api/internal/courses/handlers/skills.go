@@ -84,14 +84,6 @@ func (s *State) ListSkillModulesBatch(writer http.ResponseWriter, req *http.Requ
 		return
 	}
 
-	out := make(map[string][]SkillModuleEntry, len(skills))
-
-	if len(skills) == 0 {
-		s.JSON(writer, http.StatusOK, map[string]any{skillsJSONKey: out})
-
-		return
-	}
-
 	out, err := s.BatchSkillModules(req.Context(), skills)
 	if err != nil {
 		zap.L().Error("batch skill modules lookup failed", zap.Int("skills", len(skills)), zap.Error(err))

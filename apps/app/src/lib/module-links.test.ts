@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import type { ModuleSummary } from '@pupitre/core/lib/api-types';
 
-import { hostOf, inlineQuizzesByHost, isModuleDone, moduleHref } from '@/lib/module-links';
+import { hostOf, inlineQuizzesByHost, isModuleDone, moduleHref, skillHref } from '@/lib/module-links';
 
 const mod = (index: number, type: ModuleSummary['type'], extra: Partial<ModuleSummary> = {}): ModuleSummary => ({
   index,
@@ -16,6 +16,11 @@ const mod = (index: number, type: ModuleSummary['type'], extra: Partial<ModuleSu
 });
 
 describe('module links', () => {
+  it('keeps a skill in one path segment', () => {
+    expect(skillHref('linux')).toBe('/skills/linux');
+    expect(skillHref('CI/CD')).toBe('/skills/CI%2FCD');
+  });
+
   const modules = [mod(0, 'text'), mod(1, 'text'), mod(2, 'quiz', { inline: true }), mod(3, 'quiz')];
 
   it('sends quizzes to the quiz page and the rest to the lesson player', () => {

@@ -14,12 +14,6 @@ import (
 	"github.com/genesary/pupitre/apps/api/internal/platform/middleware"
 )
 
-// pathCheckResponse is the JSON body returned by user-service
-// /internal/paths/check.
-type pathCheckResponse struct {
-	Enrolled bool `json:"enrolled"`
-}
-
 // prerequisiteResponse describes a single course prerequisite in API
 // responses.
 type prerequisiteResponse struct {

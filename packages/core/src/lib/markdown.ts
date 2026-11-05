@@ -117,14 +117,21 @@ export function applyPatterns(md: string, patterns: PatternMap): string {
   return out;
 }
 
+/** DOMPurify removes an id that names a property of document or of a form. */
+function clobbers(id: string): boolean {
+  return id in document || id in document.createElement('form');
+}
+
 function headingId(text: string, used: Set<string>): string {
-  const base =
+  const slug =
     text
       .toLowerCase()
       .normalize('NFD')
       .replace(/[̀-ͯ]/g, '')
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/^-+|-+$/g, '') || 'section';
+  // <SafeHtml> sanitizes again: « ## Images » would lose its anchor.
+  const base = clobbers(slug) ? `${slug}-section` : slug;
   let id = base;
   for (let n = 2; used.has(id); n++) id = `${base}-${n}`;
   used.add(id);
@@ -135,6 +142,8 @@ type RenderOptions = {
   patterns?: PatternMap;
   /** Drop the first h1/h2, which repeats the module title. */
   dropFirstHeading?: boolean;
+  /** Heading ids already taken, by the other parts of one page. */
+  usedIds?: Set<string>;
 };
 
 /** Markdown of a lesson → sanitised HTML and its table of contents. */
@@ -147,7 +156,7 @@ export function renderMarkdown(md: string, options: RenderOptions = {}): Rendere
   const doc = new DOMParser().parseFromString(html, 'text/html');
   if (options.dropFirstHeading) doc.body.querySelector('h1, h2')?.remove();
 
-  const used = new Set<string>();
+  const used = options.usedIds ?? new Set<string>();
   const toc: TocEntry[] = [];
   doc.body.querySelectorAll('h2, h3').forEach((heading) => {
     const text = heading.textContent?.trim() ?? '';

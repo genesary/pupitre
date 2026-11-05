@@ -25,8 +25,8 @@ type User struct {
 	UpdatedAt      time.Time  `gorm:"column:updatedat;not null;default:now()"`
 	LastLoginAt    *time.Time `gorm:"column:lastloginat"`
 	// SessionsValidAfter revokes every token issued before it: set on a
-	// password change, a role change, a deactivation and a sign-out.
-	// Nil revokes nothing.
+	// password change, a deactivation and a sign-out. A role change needs
+	// none, the guards reading the role of this row. Nil revokes nothing.
 	SessionsValidAfter *time.Time `gorm:"column:sessionsvalidafter"`
 	// IdentityName is the login the identity provider gave at the last
 	// sign-in (OIDC preferred_username). Unlike Username, the user cannot

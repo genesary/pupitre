@@ -49,7 +49,9 @@ func bodyEmail(req *http.Request) string {
 		Email string `json:"email"`
 	}
 
-	if json.Unmarshal(data, &body) != nil {
+	// A Decoder, as the handlers' decode: Unmarshal refuses bytes after the
+	// first value, which decode ignores, so they would skip the limit.
+	if json.NewDecoder(bytes.NewReader(data)).Decode(&body) != nil {
 		return ""
 	}
 

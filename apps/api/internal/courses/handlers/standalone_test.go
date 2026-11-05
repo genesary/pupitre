@@ -144,6 +144,11 @@ func (c *httpUserProgress) CourseSummaries(ctx context.Context, userID string, c
 	return body.Summaries, nil
 }
 
+// pathCheckResponse is the JSON body of user-service /internal/paths/check.
+type pathCheckResponse struct {
+	Enrolled bool `json:"enrolled"`
+}
+
 // EnrolledInAnyPath implements UserProgress.
 func (c *httpUserProgress) EnrolledInAnyPath(ctx context.Context, userID string, pathSlugs []string) (bool, error) {
 	var result pathCheckResponse

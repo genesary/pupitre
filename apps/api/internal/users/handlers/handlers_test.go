@@ -699,10 +699,19 @@ func TestChangePassword_Success(t *testing.T) {
 	if rec.Code != http.StatusOK {
 		t.Errorf("want 200, got %d: %s", rec.Code, rec.Body.String())
 	}
+
+	state, err := repos.Users.SessionState(t.Context(), uuid.MustParse(htUserID))
+	if err != nil {
+		t.Fatalf("session state: %v", err)
+	}
+
+	if state.SessionsValidAfter == nil {
+		t.Error("a password change must revoke the sessions of the user")
+	}
 }
 
-// TestChangePassword_DBUpdateError verifies change password DB update error
-// behavior.
+// TestChangePassword_DBUpdateError verifies that a failed update reports the
+// error and leaves the sessions of the user open.
 func TestChangePassword_DBUpdateError(t *testing.T) {
 	t.Parallel()
 
@@ -712,7 +721,7 @@ func TestChangePassword_DBUpdateError(t *testing.T) {
 		ID: uuid.MustParse(htUserID), Username: "testuser", Email: "t@test.com", PasswordHash: &hash,
 		Role: "student", IsActive: true, AuthProvider: "local",
 	})
-	users.UpdatePasswordHashErr = errors.New("db down")
+	users.ChangePasswordErr = errors.New("db down")
 	repos.Users = users
 	r := newTestRouterWithRepos(repos)
 	body := fmt.Sprintf(`{"oldPassword":%q,"newPassword":"NewPass9999"}`, htLoginPassword)
@@ -720,6 +729,15 @@ func TestChangePassword_DBUpdateError(t *testing.T) {
 	rec := htDo(t, r, "PUT", "/api/auth/password", body, htAuthHeaderForSubject(t, "student", htUserID))
 	if rec.Code != http.StatusInternalServerError {
 		t.Errorf("want 500, got %d: %s", rec.Code, rec.Body.String())
+	}
+
+	state, err := users.SessionState(t.Context(), uuid.MustParse(htUserID))
+	if err != nil {
+		t.Fatalf("session state: %v", err)
+	}
+
+	if state.SessionsValidAfter != nil {
+		t.Error("a failed password change must not revoke the sessions of the user")
 	}
 }
 
@@ -4855,6 +4873,47 @@ func TestIsMemberOfAny_EmptyTargets(t *testing.T) {
 }
 
 // ── completeSSOLogin admin group mapping ──────────────────────────────────────
+
+// TestCompleteSSOLogin_DeactivatedAccountRefused is a regression test: a
+// deactivated user gets a 403 at sign-in, not a token the guards then refuse
+// with "Session expired".
+func TestCompleteSSOLogin_DeactivatedAccountRefused(t *testing.T) {
+	t.Parallel()
+
+	repos := fake.NewRepositories()
+	s := newStateWithRepos(repos)
+	ctx := context.Background()
+
+	login := func() *httptest.ResponseRecorder {
+		rec := httptest.NewRecorder()
+		s.completeSSOLogin(ctx, rec, "gone@test.com", "Gone", nil, nil, "oidc", "oidc-sub-gone", nil, nil)
+
+		return rec
+	}
+
+	first := login()
+	if first.Code != http.StatusOK {
+		t.Fatalf("first sign-in: want 200, got %d: %s", first.Code, first.Body.String())
+	}
+
+	var resp authResponse
+
+	err := json.NewDecoder(first.Body).Decode(&resp)
+	if err != nil {
+		t.Fatalf("decode response: %v", err)
+	}
+
+	inactive := false
+
+	_, err = repos.Users.UpdateAdminFields(ctx, uuid.MustParse(resp.User.ID), nil, nil, nil, &inactive, nil)
+	if err != nil {
+		t.Fatalf("deactivate: %v", err)
+	}
+
+	if rec := login(); rec.Code != http.StatusForbidden {
+		t.Fatalf("sign-in once deactivated: want 403, got %d: %s", rec.Code, rec.Body.String())
+	}
+}
 
 // TestCompleteSSOLogin_AdminGroupGrantsAdminRole verifies a user in an admin
 // SSO group receives the admin role on login.

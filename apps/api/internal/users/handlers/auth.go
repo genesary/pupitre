@@ -564,20 +564,12 @@ func (s *State) ChangePassword(writer http.ResponseWriter, request *http.Request
 		return
 	}
 
-	// A new password ends the sessions opened with the old one, this one
-	// included.
-	userID, _ := uuid.Parse(claims.Subject) // parsed by applyNewPassword already
-
-	err = s.revokeSessions(ctx, userID)
-	if err != nil {
-		zap.L().Error("revoke sessions after password change", zap.Error(err))
-	}
-
 	s.JSON(writer, http.StatusOK, map[string]string{groupsRespKeyMessage: "Password changed successfully"})
 }
 
 // applyNewPassword hashes newPassword and persists it for the user
-// identified by subject. It returns the HTTP status/message to send back
+// identified by subject, ending the sessions opened with the old password,
+// the current one included. It returns the HTTP status/message to send back
 // when the update fails, or ok == true to proceed.
 //
 //nolint:gocritic // named results here would trip nonamedreturns instead; see doc comment above for the meaning of each value
@@ -592,7 +584,7 @@ func (s *State) applyNewPassword(ctx context.Context, subject, newPassword strin
 		return http.StatusInternalServerError, errDatabase, false
 	}
 
-	err = s.Repos.Users.UpdatePasswordHash(ctx, userID, string(newHash))
+	err = s.Repos.Users.ChangePassword(ctx, userID, string(newHash), revocationTime())
 	if err != nil {
 		return http.StatusInternalServerError, errDatabase, false
 	}

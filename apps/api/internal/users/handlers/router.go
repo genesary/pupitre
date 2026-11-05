@@ -14,7 +14,7 @@ import (
 )
 
 // remoteIP extracts the IP from r.RemoteAddr (already set to the real client
-// IP by chiMiddleware.RealIP) to use as the rate-limit key.
+// IP by clientip.Middleware) to use as the rate-limit key.
 func remoteIP(r *http.Request) (string, error) {
 	ip, _, err := net.SplitHostPort(r.RemoteAddr)
 	if err != nil {

@@ -8,6 +8,11 @@ export function moduleHref(slug: string, module: Pick<ModuleSummary, 'type' | 'i
   return module.type === 'quiz' ? `/courses/${slug}/quiz/${module.index}` : `/courses/${slug}/lessons/${module.index}`;
 }
 
+/** Page of a skill. A skill is free text, such as « CI/CD »: a slash would add a segment. */
+export function skillHref(skill: string): string {
+  return `/skills/${encodeURIComponent(skill)}`;
+}
+
 /** A module is done when its quiz is passed, or when it has been viewed. */
 export function isModuleDone(module: ModuleSummary): boolean {
   return module.type === 'quiz' ? Boolean(module.passed) : module.viewed;
