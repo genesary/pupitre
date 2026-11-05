@@ -129,6 +129,8 @@ L'API charge sa configuration depuis un fichier YAML optionnel, indiqué par `CO
 
 Le chart Helm monte ce fichier depuis une ConfigMap dans `/etc/pupitre/config.yaml`. Les valeurs sensibles (JWT, base de données) restent dans des Secrets Kubernetes. En local, `pnpm api:dev` lit `apps/api/.env`.
 
+**Derrière un ingress, renseignez `TRUSTED_PROXIES`** avec les adresses de l'ingress, par exemple via `api.extraEnv`. Par défaut, seul le loopback est de confiance : tous les clients partagent alors l'adresse de l'ingress et une seule limite de débit, et les connexions finissent en `429` dès la 11ᵉ tentative dans la minute.
+
 Le frontend est statique : l'image `docker/front` sert les deux applications avec nginx. Ne mettez aucun secret dans les variables `VITE_*`, elles sont livrées au navigateur.
 
 ### Personnalisation

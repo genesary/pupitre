@@ -33,6 +33,12 @@ Browser → GET /api/auth/oidc/authorize → redirect to Keycloak
 
 The redirect URI registered with Keycloak is `{redirectBase}/auth/callback`.
 
+« Déconnexion » ends the pupitre session only, not the Keycloak one: until that one ends, the login
+button signs the same user in again without asking for a password.
+
+Sign-in is rate limited per client address (`AUTH_RATE_LIMIT_REQUESTS`, 10 per minute by default).
+Behind an ingress, set `TRUSTED_PROXIES`: see `docs/ARCHITECTURE.md`.
+
 ---
 
 ## Profile sync
@@ -96,11 +102,10 @@ on startup: it never appears in the pod environment or the ConfigMap.
   start (GitOps). Editing these fields in the admin UI works but is reset on the next restart or
   upgrade. Leave `sso.oidc.enabled=false` to manage OIDC purely from the admin UI.
 - Rotating the client secret requires a pod restart so the new value is re-seeded.
-- When `groupAdmins` is non-empty, it is authoritative for OIDC users: every OIDC login synchronizes
-  the stored role to `admin` for a matching group and `student` otherwise, managers included. Leave
-  it empty when the platform has managers, and map the admin group in `/admin/groups` instead.
-  Removing a user from an admin group takes effect on their next OIDC login; existing JWTs remain
-  valid until they expire.
+- When `groupAdmins` is non-empty, it decides who is an admin: every OIDC login sets the stored role
+  to `admin` for a matching group, and turns an `admin` outside those groups into a `student`. Other
+  roles, such as `manager`, stay. Removing a user from an admin group takes effect on their next
+  OIDC login; the guards then read the new role from the database, even on an open session.
 
 **Keycloak client setup** (Clients → Create):
 
