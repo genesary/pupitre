@@ -17,6 +17,14 @@ test('a learner enrolls in a course, then finds it in « Mes cours »', async ({
   await expect(page.getByText('Les fondamentaux de Docker')).toBeVisible();
 });
 
+test('a click on a catalogue card thumbnail opens the course', async ({ page }) => {
+  await signIn(page, ACCOUNTS.alice, '/courses');
+  // A user's click, not locator.click(): the card's stretched link covers the thumbnail.
+  const box = (await page.locator('.rail-card-thumb').first().boundingBox())!;
+  await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
+  await expect(page).toHaveURL(/\/courses\/[^/]+$/);
+});
+
 test('a learner follows the lessons of a course and submits its quiz', async ({ page }) => {
   await signIn(page, ACCOUNTS.alice, '/my-courses');
 
