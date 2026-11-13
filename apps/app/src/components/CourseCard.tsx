@@ -33,7 +33,7 @@ export function CourseCard({ course, color, enrolled, index, tour = false }: Cou
       style={{ '--cat-color': color.dot, '--i': index } as CSSProperties}
     >
       {/* Stretched link: the whole card opens the course, skill chips stay links of their own. */}
-      <Link to={`/courses/${course.slug}`} className="absolute inset-0 z-0" aria-label={course.title} />
+      <Link to={`/courses/${course.slug}`} className="absolute inset-0 z-[1]" aria-label={course.title} />
       <div className="rail-card-thumb-wrap">
         {/* --thumb-bg, not an inline background: dark mode tints the thumbnail instead (index.css). */}
         <div className="rail-card-thumb" style={{ '--thumb-bg': color.thumbBg } as CSSProperties}>
