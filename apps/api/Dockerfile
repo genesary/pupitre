@@ -2,7 +2,7 @@
 #
 # The build context is apps/api: one module, one binary.
 # Build with:  docker build -t pupitre-api apps/api
-FROM docker.io/library/golang:1.26.10-alpine AS builder
+FROM docker.io/library/golang:1.26.11-alpine AS builder
 
 WORKDIR /src
 
