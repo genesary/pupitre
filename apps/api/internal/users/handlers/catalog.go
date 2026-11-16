@@ -127,6 +127,14 @@ func NewCatalogFrom(source CourseSource) *Catalog {
 // knows about. Cached entries are served from memory; the rest are fetched
 // in batches.
 func (c *Catalog) Courses(ctx context.Context, slugs []string) map[string]CourseInfo {
+	courses, _ := c.CoursesChecked(ctx, slugs)
+
+	return courses
+}
+
+// CoursesChecked is Courses, also reporting whether every lookup succeeded:
+// only then is a slug missing from the result known not to exist.
+func (c *Catalog) CoursesChecked(ctx context.Context, slugs []string) (map[string]CourseInfo, bool) {
 	return resolveCatalog(ctx, c, slugs, &c.courses, "courses", c.fetchCourses)
 }
 
@@ -139,7 +147,9 @@ func (c *Catalog) Course(ctx context.Context, slug string) (CourseInfo, bool) {
 
 // Paths resolves every path slug in slugs.
 func (c *Catalog) Paths(ctx context.Context, slugs []string) map[string]PathInfo {
-	return resolveCatalog(ctx, c, slugs, &c.paths, "paths", c.fetchPaths)
+	paths, _ := resolveCatalog(ctx, c, slugs, &c.paths, "paths", c.fetchPaths)
+
+	return paths
 }
 
 // Path resolves a single path slug.
@@ -151,7 +161,9 @@ func (c *Catalog) Path(ctx context.Context, slug string) (PathInfo, bool) {
 
 // SkillModules resolves the modules teaching each of skills.
 func (c *Catalog) SkillModules(ctx context.Context, skills []string) map[string][]SkillModule {
-	return resolveCatalog(ctx, c, skills, &c.skills, "skills", c.fetchSkillModules)
+	modules, _ := resolveCatalog(ctx, c, skills, &c.skills, "skills", c.fetchSkillModules)
+
+	return modules
 }
 
 // Invalidate drops every cached entry. Exposed so a write path that knows
@@ -167,7 +179,8 @@ func (c *Catalog) Invalidate() {
 
 // resolveCatalog is the shared read-through path for all three caches:
 // serve what is fresh, fetch the rest in batches under a per-kind
-// singleflight key, then cache both the hits and the misses.
+// singleflight key, then cache both the hits and the misses. The boolean
+// reports whether every fetch succeeded.
 func resolveCatalog[T any](
 	ctx context.Context,
 	catalog *Catalog,
@@ -175,13 +188,15 @@ func resolveCatalog[T any](
 	cache *map[string]catalogEntry[T],
 	kind string,
 	fetch func(context.Context, []string) (map[string]T, error),
-) map[string]T {
+) (map[string]T, bool) {
 	out := make(map[string]T, len(keys))
 
 	missing := readCached(catalog, keys, cache, out)
 	if len(missing) == 0 {
-		return out
+		return out, true
 	}
+
+	complete := true
 
 	for chunk := range slices.Chunk(missing, catalogBatchSize) {
 		// Keyed by the exact set requested: two dashboards loading at once
@@ -195,6 +210,8 @@ func resolveCatalog[T any](
 			zap.L().Warn("catalog fetch failed",
 				zap.String("kind", kind), zap.Int("slugs", len(chunk)), zap.Error(err))
 
+			complete = false
+
 			continue
 		}
 
@@ -204,7 +221,7 @@ func resolveCatalog[T any](
 		maps.Copy(out, found)
 	}
 
-	return out
+	return out, complete
 }
 
 // readCached copies every fresh entry for keys into out and returns the
