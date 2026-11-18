@@ -2175,20 +2175,12 @@ func TestRegister_Success(t *testing.T) {
 func TestMyCourses_WithCourseData(t *testing.T) {
 	t.Parallel()
 
-	mockCourse := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		json.NewEncoder(w).Encode(map[string]any{
-			"slug":            "kubernetes",
-			"id":              "k8s-1",
-			"title":           "Kubernetes",
-			"description":     "Learn K8s",
-			"category":        "devops",
-			"difficulty":      "beginner",
-			"isPublic":        true,
-			"labCount":        3,
-			"enrollmentCount": 100,
-		})
-	}))
-	defer mockCourse.Close()
+	mockCourse, _ := newCatalogServer(t, catalogFixture{Courses: map[string]CourseInfo{
+		"kubernetes": {
+			Slug: "kubernetes", ID: "k8s-1", Title: "Kubernetes", Description: "Learn K8s", Category: "devops",
+			Difficulty: "beginner", IsPublic: true, LabCount: 3, EnrollmentCount: 100,
+		},
+	}})
 
 	repos := fake.NewRepositories()
 	repos.Enrollments = fake.NewEnrollmentRepository(models.Enrollment{

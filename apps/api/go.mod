@@ -1,6 +1,6 @@
 module github.com/genesary/pupitre/apps/api
 
-go 1.26.10
+go 1.26.11
 
 require (
 	github.com/coreos/go-oidc/v3 v3.21.0

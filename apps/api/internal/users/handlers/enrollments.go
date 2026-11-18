@@ -134,9 +134,9 @@ func (s *State) MyCourses(writer http.ResponseWriter, req *http.Request) {
 	// One batched catalog lookup for every enrolled course, rather than one
 	// HTTP request per course in series: a learner with fifty enrollments
 	// used to pay fifty round-trips to render this list.
-	details := s.catalog().Courses(req.Context(), slugs)
+	details, resolved := s.catalog().CoursesChecked(req.Context(), slugs)
 
-	courses := buildMyCourses(enrolled, completed, details)
+	courses := buildMyCourses(enrolled, completed, details, resolved)
 
 	s.JSON(writer, http.StatusOK, map[string]any{myCoursesRespKeyCourses: courses})
 }
@@ -151,15 +151,22 @@ func (s *State) queryMyEnrollments(ctx context.Context, userID string) ([]reposi
 	return enrolled, nil
 }
 
-// buildMyCourses enriches each enrollment with course-service metadata,
-// falling back to the bare slug for any course the catalog could not
-// resolve (course-service unreachable, or the course since deleted).
+// buildMyCourses enriches each enrollment with the course's metadata. When
+// the catalog lookup failed, a course it could not resolve keeps its bare
+// slug as title. When the lookup succeeded, such a course was deleted and is
+// left out: its page no longer exists (the reference kept it).
 func buildMyCourses(
 	enrolled []repository.EnrollmentRow, completed map[string]struct{}, details map[string]CourseInfo,
+	resolved bool,
 ) []myCourse {
 	courses := make([]myCourse, 0, len(enrolled))
 
 	for _, row := range enrolled {
+		info, found := details[row.Slug]
+		if !found && resolved {
+			continue
+		}
+
 		_, isDone := completed[row.Slug]
 
 		course := myCourse{
@@ -172,7 +179,7 @@ func buildMyCourses(
 			Completed:     isDone,
 		}
 
-		if info, found := details[row.Slug]; found {
+		if found {
 			course.ID = info.ID
 			course.Title = info.Title
 			course.Description = info.Description

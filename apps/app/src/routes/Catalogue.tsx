@@ -78,7 +78,14 @@ export function Catalogue() {
   const categorySlugs = useMemo(() => [...new Set(all.map((c) => c.category).filter(Boolean))], [all]);
   const colorOf = useMemo(() => categoryColors(categorySlugs), [categorySlugs]);
 
-  const heroCourse = enrolled.find((c) => progressOf(c) > 0 && progressOf(c) < 1) ?? enrolled[0];
+  // The unfinished course worked on last; without any activity, the last one enrolled in (the
+  // API's order). A completed course is never one to resume. lastActivity always has the same
+  // timestamp format, so comparing the strings compares the dates.
+  const unfinished = enrolled.filter((c) => progressOf(c) < 1);
+  const heroCourse =
+    unfinished
+      .filter((c) => c.lastActivity)
+      .sort((a, b) => (a.lastActivity! < b.lastActivity! ? 1 : -1))[0] ?? unfinished[0];
 
   const visible = useMemo(() => {
     const q = query.toLowerCase().trim();
